@@ -42,7 +42,7 @@ export type AIFlavor = 'markdown' | 'claude_xml';
 export interface SavedTemplateSource {
   id: string;
   name: string;
-  type: 'default' | 'gist' | 'github_raw';
+  type: 'gist' | 'github_raw';
   urlOrId: string;
   author?: string;
   savedAt: number;

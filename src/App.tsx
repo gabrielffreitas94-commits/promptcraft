@@ -6,7 +6,7 @@ import { LivePreview } from './components/LivePreview';
 import { SourceConfigModal } from './components/SourceConfigModal';
 import { LibraryModal } from './components/LibraryModal';
 import { TemplateBuilder } from './components/TemplateBuilder';
-import { templateService } from './services/templateService';
+import { templateService, OFFICIAL_GIST_ID } from './services/templateService';
 import { storageService } from './services/storageService';
 import { interpolateTemplate, formatPromptForAI } from './services/promptEngine';
 import { AIFlavor, GeneratedHistoryItem, Scenario, TemplatePackage } from './types/template';
@@ -18,9 +18,9 @@ export function App() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [backgroundNotice, setBackgroundNotice] = useState<string | null>(null);
 
-  // Fonte ativa
+  // Fonte ativa (Default é o GIST oficial do projeto)
   const [activeSource, setActiveSource] = useState<{
-    type: 'default' | 'gist' | 'github_raw';
+    type: 'gist' | 'github_raw';
     urlOrId: string;
   }>(storageService.getActiveSource());
 
@@ -73,7 +73,7 @@ export function App() {
     }
   }, [getDefaultValuesForScenario]);
 
-  // Carrega a fonte de templates inicial (verificando parâmetros de URL)
+  // Carrega a fonte de templates inicial (100% via GitHub Gist)
   const initTemplates = useCallback(async () => {
     setLoading(true);
     setErrorMsg(null);
@@ -88,8 +88,8 @@ export function App() {
       setAiFlavor(flavorParam);
     }
 
-    let targetType: 'default' | 'gist' | 'github_raw' = 'default';
-    let targetId = 'default';
+    let targetType: 'gist' | 'github_raw' = 'gist';
+    let targetId = OFFICIAL_GIST_ID;
 
     if (gistParam) {
       targetType = 'gist';
@@ -100,7 +100,7 @@ export function App() {
     } else {
       const saved = storageService.getActiveSource();
       targetType = saved.type;
-      targetId = saved.urlOrId;
+      targetId = saved.urlOrId || OFFICIAL_GIST_ID;
     }
 
     try {
@@ -109,7 +109,7 @@ export function App() {
         targetId,
         (updatedPkg) => {
           setCurrentPackage(updatedPkg);
-          setBackgroundNotice('Novas atualizações do template foram sincronizadas!');
+          setBackgroundNotice('Novas atualizações do Gist foram sincronizadas!');
           setTimeout(() => setBackgroundNotice(null), 4000);
         }
       );
@@ -118,17 +118,15 @@ export function App() {
       setActiveSource({ type: targetType, urlOrId: targetId });
       storageService.setActiveSource({ type: targetType, urlOrId: targetId });
 
-      // Se for fonte remota válida, salva automaticamente na biblioteca
-      if (targetType !== 'default') {
-        storageService.saveSource({
-          id: targetId,
-          name: data.name,
-          type: targetType,
-          urlOrId: targetId,
-          author: data.author,
-          savedAt: Date.now(),
-        });
-      }
+      // Salva na biblioteca pessoal
+      storageService.saveSource({
+        id: targetId,
+        name: data.name,
+        type: targetType,
+        urlOrId: targetId,
+        author: data.author,
+        savedAt: Date.now(),
+      });
 
       // Seleciona cenário inicial
       const targetScenario = scenarioParam
@@ -138,7 +136,6 @@ export function App() {
       if (targetScenario) {
         setActiveScenarioId(targetScenario.id);
 
-        // Se houver parâmetros de campos codificados na URL
         const dataParam = urlParams.get('data');
         let parsedData: Record<string, unknown> | undefined;
         if (dataParam) {
@@ -152,13 +149,14 @@ export function App() {
         loadScenarioValues(targetScenario, parsedData);
       }
     } catch (err: any) {
-      setErrorMsg(err.message || 'Falha ao carregar catálogo de templates.');
-      // Fallback para os templates padrão se a fonte externa falhou
-      if (targetType !== 'default') {
+      setErrorMsg(err.message || 'Falha ao carregar catálogo de templates do Gist.');
+      
+      // Se uma fonte customizada falhar, tenta o Gist oficial como fallback de segurança
+      if (targetId !== OFFICIAL_GIST_ID) {
         try {
-          const fallback = await templateService.loadDefaultTemplates();
+          const fallback = await templateService.loadFromGist(OFFICIAL_GIST_ID);
           setCurrentPackage(fallback);
-          setActiveSource({ type: 'default', urlOrId: 'default' });
+          setActiveSource({ type: 'gist', urlOrId: OFFICIAL_GIST_ID });
           if (fallback.scenarios[0]) {
             setActiveScenarioId(fallback.scenarios[0].id);
             loadScenarioValues(fallback.scenarios[0]);
@@ -217,7 +215,7 @@ export function App() {
 
   // Aplica nova fonte de template via modal
   const handleApplySource = (
-    type: 'default' | 'gist' | 'github_raw',
+    type: 'gist' | 'github_raw',
     urlOrId: string,
     pkg: TemplatePackage
   ) => {
@@ -225,16 +223,14 @@ export function App() {
     setActiveSource({ type, urlOrId });
     storageService.setActiveSource({ type, urlOrId });
 
-    if (type !== 'default') {
-      storageService.saveSource({
-        id: urlOrId,
-        name: pkg.name,
-        type,
-        urlOrId,
-        author: pkg.author,
-        savedAt: Date.now(),
-      });
-    }
+    storageService.saveSource({
+      id: urlOrId,
+      name: pkg.name,
+      type,
+      urlOrId,
+      author: pkg.author,
+      savedAt: Date.now(),
+    });
 
     if (pkg.scenarios[0]) {
       setActiveScenarioId(pkg.scenarios[0].id);
@@ -256,7 +252,6 @@ export function App() {
     }
     url.searchParams.set('flavor', aiFlavor);
 
-    // Codifica os valores preenchidos em base64 seguro para URL
     try {
       const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(formValues))));
       url.searchParams.set('data', encodedData);
@@ -327,12 +322,12 @@ export function App() {
         {loading ? (
           <div className="min-h-[50vh] flex flex-col items-center justify-center text-neutral-500 gap-3">
             <Loader2 className="w-8 h-8 animate-spin text-neutral-800" />
-            <p className="text-sm font-medium">Carregando catálogo de templates...</p>
+            <p className="text-sm font-medium">Carregando templates do GitHub Gist...</p>
           </div>
         ) : errorMsg && !currentPackage ? (
           <div className="min-h-[50vh] flex flex-col items-center justify-center max-w-md mx-auto text-center gap-3">
             <AlertCircle className="w-10 h-10 text-red-500" />
-            <h3 className="font-semibold text-neutral-900 text-base">Falha ao carregar templates</h3>
+            <h3 className="font-semibold text-neutral-900 text-base">Falha ao carregar Gist</h3>
             <p className="text-xs text-neutral-500">{errorMsg}</p>
             <button
               onClick={() => initTemplates()}
@@ -384,9 +379,18 @@ export function App() {
       <footer className="border-t border-neutral-200 py-6 text-center text-xs text-neutral-400 bg-white">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p>© {new Date().getFullYear()} PromptCraft — 100% Client-Side &amp; Orientado à Comunidade.</p>
-          <p className="text-[11px] font-mono">
-            Hospedado no GitHub Pages • Templates em GitHub Gists
-          </p>
+          <div className="flex items-center gap-3 text-[11px] font-mono">
+            <span>Hospedado no GitHub Pages</span>
+            <span>•</span>
+            <a
+              href="https://gist.github.com/gabrielffreitas94-commits/7ee8786c7a503f114a223bdf7d66dae1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-neutral-600 hover:text-black underline"
+            >
+              Gist Oficial no GitHub
+            </a>
+          </div>
         </div>
       </footer>
 

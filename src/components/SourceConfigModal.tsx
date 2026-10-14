@@ -5,16 +5,17 @@ import {
   Check, 
   AlertCircle, 
   RotateCcw, 
-  Loader2 
+  Loader2, 
+  ExternalLink 
 } from 'lucide-react';
-import { templateService } from '../services/templateService';
+import { templateService, OFFICIAL_GIST_ID, OFFICIAL_GIST_URL } from '../services/templateService';
 import { TemplatePackage } from '../types/template';
 
 interface SourceConfigModalProps {
   isOpen: boolean;
   onClose: () => void;
-  activeSource: { type: 'default' | 'gist' | 'github_raw'; urlOrId: string };
-  onApplySource: (type: 'default' | 'gist' | 'github_raw', urlOrId: string, pkg: TemplatePackage) => void;
+  activeSource: { type: 'gist' | 'github_raw'; urlOrId: string };
+  onApplySource: (type: 'gist' | 'github_raw', urlOrId: string, pkg: TemplatePackage) => void;
 }
 
 export const SourceConfigModal: React.FC<SourceConfigModalProps> = ({
@@ -23,11 +24,11 @@ export const SourceConfigModal: React.FC<SourceConfigModalProps> = ({
   activeSource,
   onApplySource,
 }) => {
-  const [sourceType, setSourceType] = useState<'default' | 'gist' | 'github_raw'>(
-    activeSource.type
+  const [sourceType, setSourceType] = useState<'gist' | 'github_raw'>(
+    activeSource.type === 'github_raw' ? 'github_raw' : 'gist'
   );
   const [inputVal, setInputVal] = useState(
-    activeSource.type === 'default' ? '' : activeSource.urlOrId
+    activeSource.urlOrId === OFFICIAL_GIST_ID ? '' : activeSource.urlOrId
   );
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -41,15 +42,12 @@ export const SourceConfigModal: React.FC<SourceConfigModalProps> = ({
     try {
       let pkg: TemplatePackage;
 
-      if (sourceType === 'default') {
-        pkg = await templateService.loadDefaultTemplates();
-        onApplySource('default', 'default', pkg);
-      } else if (sourceType === 'gist') {
-        if (!inputVal.trim()) throw new Error('Por favor, informe o ID ou link do GitHub Gist.');
-        pkg = await templateService.loadFromGist(inputVal.trim());
-        onApplySource('gist', inputVal.trim(), pkg);
+      if (sourceType === 'gist') {
+        const targetGist = inputVal.trim() || OFFICIAL_GIST_ID;
+        pkg = await templateService.loadFromGist(targetGist);
+        onApplySource('gist', targetGist, pkg);
       } else {
-        if (!inputVal.trim()) throw new Error('Por favor, informe a URL do arquivo no GitHub.');
+        if (!inputVal.trim()) throw new Error('Por favor, informe a URL raw do arquivo no GitHub.');
         pkg = await templateService.loadFromRawUrl(inputVal.trim());
         onApplySource('github_raw', inputVal.trim(), pkg);
       }
@@ -62,14 +60,14 @@ export const SourceConfigModal: React.FC<SourceConfigModalProps> = ({
     }
   };
 
-  const handleResetToDefault = async () => {
+  const handleLoadOfficialGist = async () => {
     setLoading(true);
     setErrorMsg(null);
     try {
-      const pkg = await templateService.loadDefaultTemplates();
-      setSourceType('default');
+      const pkg = await templateService.loadFromGist(OFFICIAL_GIST_ID);
+      setSourceType('gist');
       setInputVal('');
-      onApplySource('default', 'default', pkg);
+      onApplySource('gist', OFFICIAL_GIST_ID, pkg);
       onClose();
     } catch (e: any) {
       setErrorMsg(e.message);
@@ -89,10 +87,10 @@ export const SourceConfigModal: React.FC<SourceConfigModalProps> = ({
             </div>
             <div>
               <h2 className="font-semibold text-neutral-900 text-sm">
-                Conectar Catálogo de Templates
+                Conectar Catálogo de Templates (GitHub Gist)
               </h2>
               <p className="text-xs text-neutral-500">
-                Alterne entre os templates padrão ou conecte seu próprio GitHub Gist
+                100% descentralizado — conecte qualquer Gist público da comunidade
               </p>
             </div>
           </div>
@@ -104,21 +102,36 @@ export const SourceConfigModal: React.FC<SourceConfigModalProps> = ({
           </button>
         </div>
 
-        {/* Seleção do Tipo de Fonte */}
-        <div className="space-y-3">
-          <label className="text-xs font-semibold text-neutral-700">Tipo de Fonte:</label>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              type="button"
-              onClick={() => setSourceType('default')}
-              className={`p-2.5 rounded-xl border text-xs font-medium transition-all ${
-                sourceType === 'default'
-                  ? 'bg-neutral-900 border-neutral-900 text-white'
-                  : 'bg-neutral-50 border-neutral-200 text-neutral-700 hover:bg-neutral-100'
-              }`}
+        {/* Gist Oficial em Destaque */}
+        <div className="bg-neutral-50 border border-neutral-200 p-3.5 rounded-xl space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-neutral-900">Gist Oficial Ativo</span>
+            <a
+              href={OFFICIAL_GIST_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium"
             >
-              Padrão Core
-            </button>
+              <span>Ver no GitHub</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+          <p className="text-[11px] font-mono text-neutral-500 truncate">
+            {OFFICIAL_GIST_ID}
+          </p>
+          <button
+            type="button"
+            onClick={handleLoadOfficialGist}
+            className="text-xs text-neutral-800 hover:text-black font-semibold underline"
+          >
+            Carregar Gist Oficial
+          </button>
+        </div>
+
+        {/* Opções de Fonte */}
+        <div className="space-y-3">
+          <label className="text-xs font-semibold text-neutral-700">Carregar Outro Template:</label>
+          <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={() => setSourceType('gist')}
@@ -128,7 +141,7 @@ export const SourceConfigModal: React.FC<SourceConfigModalProps> = ({
                   : 'bg-neutral-50 border-neutral-200 text-neutral-700 hover:bg-neutral-100'
               }`}
             >
-              GitHub Gist
+              Outro GitHub Gist
             </button>
             <button
               type="button"
@@ -139,33 +152,33 @@ export const SourceConfigModal: React.FC<SourceConfigModalProps> = ({
                   : 'bg-neutral-50 border-neutral-200 text-neutral-700 hover:bg-neutral-100'
               }`}
             >
-              URL Raw
+              URL Raw do GitHub
             </button>
           </div>
         </div>
 
-        {/* Input condicional */}
-        {sourceType !== 'default' && (
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-neutral-700">
-              {sourceType === 'gist' ? 'ID ou Link do Gist:' : 'URL Raw do GitHub:'}
-            </label>
-            <input
-              type="text"
-              value={inputVal}
-              onChange={(e) => setInputVal(e.target.value)}
-              placeholder={
-                sourceType === 'gist'
-                  ? 'Ex: https://gist.github.com/usuario/12345abcde'
-                  : 'Ex: https://raw.githubusercontent.com/user/repo/main/template.json'
-              }
-              className="w-full text-xs font-mono bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-2.5 text-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900"
-            />
-            <p className="text-[11px] text-neutral-400">
-              O arquivo no Gist ou URL deve ser um JSON válido no formato do PromptCraft.
-            </p>
-          </div>
-        )}
+        {/* Campo de Entrada */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-semibold text-neutral-700">
+            {sourceType === 'gist' ? 'ID ou Link do Gist da Comunidade:' : 'URL Raw do GitHub:'}
+          </label>
+          <input
+            type="text"
+            value={inputVal}
+            onChange={(e) => setInputVal(e.target.value)}
+            placeholder={
+              sourceType === 'gist'
+                ? 'Ex: https://gist.github.com/usuario/12345abcde'
+                : 'Ex: https://raw.githubusercontent.com/user/repo/main/template.json'
+            }
+            className="w-full text-xs font-mono bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-2.5 text-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900"
+          />
+          <p className="text-[11px] text-neutral-400">
+            {sourceType === 'gist'
+              ? 'Cole o link de qualquer Gist público com um arquivo template.json.'
+              : 'Cole o link direto raw do arquivo JSON.'}
+          </p>
+        </div>
 
         {/* Feedback de Erro */}
         {errorMsg && (
@@ -179,11 +192,11 @@ export const SourceConfigModal: React.FC<SourceConfigModalProps> = ({
         <div className="flex items-center justify-between pt-3 border-t border-neutral-100">
           <button
             type="button"
-            onClick={handleResetToDefault}
+            onClick={handleLoadOfficialGist}
             className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-900"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Usar Padrão</span>
+            <span>Restaurar Oficial</span>
           </button>
 
           <div className="flex items-center gap-2">
@@ -208,7 +221,7 @@ export const SourceConfigModal: React.FC<SourceConfigModalProps> = ({
               ) : (
                 <>
                   <Check className="w-3.5 h-3.5" />
-                  <span>Conectar e Carregar</span>
+                  <span>Conectar Gist</span>
                 </>
               )}
             </button>

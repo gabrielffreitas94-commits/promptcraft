@@ -1,14 +1,15 @@
 import { TemplatePackage } from '../types/template';
 import { storageService } from './storageService';
 
+export const OFFICIAL_GIST_ID = '7ee8786c7a503f114a223bdf7d66dae1';
+export const OFFICIAL_GIST_URL = 'https://gist.github.com/gabrielffreitas94-commits/7ee8786c7a503f114a223bdf7d66dae1';
+
 /**
  * Normaliza qualquer link do GitHub para a URL Raw correspondente
  */
 export function normalizeGitHubRawUrl(url: string): string {
   let cleanUrl = url.trim();
 
-  // Se for um link de blob do GitHub: https://github.com/user/repo/blob/main/templates.json
-  // Converte para: https://raw.githubusercontent.com/user/repo/main/templates.json
   if (cleanUrl.includes('github.com') && cleanUrl.includes('/blob/')) {
     cleanUrl = cleanUrl
       .replace('github.com', 'raw.githubusercontent.com')
@@ -65,31 +66,12 @@ export function validateTemplatePackage(data: unknown): data is TemplatePackage 
 
 export const templateService = {
   /**
-   * Carrega os templates padrão embutidos
-   */
-  async loadDefaultTemplates(): Promise<TemplatePackage> {
-    const cached = storageService.getCachedPackage('default');
-    if (cached && cached.data) {
-      return cached.data as TemplatePackage;
-    }
-
-    // Busca o arquivo estático da pasta public
-    const res = await fetch('./default-templates.json');
-    if (!res.ok) {
-      throw new Error(`Falha ao carregar templates padrão (Status: ${res.status})`);
-    }
-
-    const json = await res.json();
-    validateTemplatePackage(json);
-    storageService.setCachedPackage('default', json);
-    return json;
-  },
-
-  /**
    * Carrega templates de um GitHub Gist
    */
   async loadFromGist(gistInput: string): Promise<TemplatePackage> {
-    const gistId = extractGistId(gistInput);
+    const rawId = gistInput === 'default' || !gistInput ? OFFICIAL_GIST_ID : gistInput;
+    const gistId = extractGistId(rawId);
+    
     if (!gistId) {
       throw new Error('ID ou URL do GitHub Gist inválida.');
     }
@@ -121,7 +103,7 @@ export const templateService = {
     }
 
     if (!targetFile || !targetFile.content) {
-      throw new Error('Nenhum conteúdo válido encontrado nos arquivos do Gist informado.');
+      throw new Error('Nenhum arquivo válido encontrado no Gist informado.');
     }
 
     let parsedContent: unknown;
@@ -165,28 +147,26 @@ export const templateService = {
    * Resolve a fonte especificada com suporte a SWR (Stale-While-Revalidate)
    */
   async resolveSource(
-    sourceType: 'default' | 'gist' | 'github_raw',
+    sourceType: 'gist' | 'github_raw',
     urlOrId: string,
     onBackgroundUpdate?: (updated: TemplatePackage) => void
   ): Promise<{ data: TemplatePackage; fromCache: boolean }> {
-    const cacheKey = sourceType === 'default' ? 'default' : `${sourceType}_${urlOrId}`;
+    const effectiveId = !urlOrId || urlOrId === 'default' ? OFFICIAL_GIST_ID : urlOrId;
+    const cacheKey = `${sourceType}_${effectiveId}`;
     const cached = storageService.getCachedPackage(cacheKey);
 
-    // Se temos dados em cache, inicia revalidação assíncrona em background
+    // Se temos dados em cache, entrega imediatamente e faz revalidação em background
     if (cached && cached.data) {
       const cachedPkg = cached.data as TemplatePackage;
       
-      // Background revalidation
+      // Revalidação assíncrona em background
       setTimeout(async () => {
         try {
           let fresh: TemplatePackage | null = null;
-          if (sourceType === 'default') {
-            const res = await fetch('./default-templates.json?t=' + Date.now());
-            if (res.ok) fresh = await res.json();
-          } else if (sourceType === 'gist') {
-            fresh = await templateService.loadFromGist(urlOrId);
+          if (sourceType === 'gist') {
+            fresh = await templateService.loadFromGist(effectiveId);
           } else if (sourceType === 'github_raw') {
-            fresh = await templateService.loadFromRawUrl(urlOrId);
+            fresh = await templateService.loadFromRawUrl(effectiveId);
           }
 
           if (fresh && JSON.stringify(fresh) !== JSON.stringify(cachedPkg)) {
@@ -196,21 +176,19 @@ export const templateService = {
             }
           }
         } catch {
-          // Revalidação silenciosa em background; ignora falhas temporárias
+          // Revalidação silenciosa em background
         }
       }, 500);
 
       return { data: cachedPkg, fromCache: true };
     }
 
-    // Sem cache, busca direto
+    // Sem cache prévio, busca diretamente
     let data: TemplatePackage;
     if (sourceType === 'gist') {
-      data = await this.loadFromGist(urlOrId);
-    } else if (sourceType === 'github_raw') {
-      data = await this.loadFromRawUrl(urlOrId);
+      data = await this.loadFromGist(effectiveId);
     } else {
-      data = await this.loadDefaultTemplates();
+      data = await this.loadFromRawUrl(effectiveId);
     }
 
     return { data, fromCache: false };

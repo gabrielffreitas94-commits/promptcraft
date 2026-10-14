@@ -74,19 +74,23 @@ export const storageService = {
     }
   },
 
-  /**
-   * Fonte atualmente ativa
-   */
-  getActiveSource(): { type: 'default' | 'gist' | 'github_raw'; urlOrId: string } {
+  getActiveSource(): { type: 'gist' | 'github_raw'; urlOrId: string } {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.ACTIVE_SOURCE);
-      return data ? JSON.parse(data) : { type: 'default', urlOrId: 'default' };
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (parsed.type === 'default' || !parsed.urlOrId || parsed.urlOrId === 'default') {
+          return { type: 'gist', urlOrId: '7ee8786c7a503f114a223bdf7d66dae1' };
+        }
+        return parsed;
+      }
+      return { type: 'gist', urlOrId: '7ee8786c7a503f114a223bdf7d66dae1' };
     } catch {
-      return { type: 'default', urlOrId: 'default' };
+      return { type: 'gist', urlOrId: '7ee8786c7a503f114a223bdf7d66dae1' };
     }
   },
 
-  setActiveSource(source: { type: 'default' | 'gist' | 'github_raw'; urlOrId: string }): void {
+  setActiveSource(source: { type: 'gist' | 'github_raw'; urlOrId: string }): void {
     try {
       localStorage.setItem(STORAGE_KEYS.ACTIVE_SOURCE, JSON.stringify(source));
     } catch {

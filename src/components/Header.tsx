@@ -5,9 +5,10 @@ import {
   BookmarkCheck, 
   PlusCircle, 
   Check, 
-  Database 
+  ExternalLink 
 } from 'lucide-react';
 import { TemplatePackage } from '../types/template';
+import { OFFICIAL_GIST_URL } from '../services/templateService';
 
 interface HeaderProps {
   currentPackage: TemplatePackage | null;
@@ -32,6 +33,8 @@ export const Header: React.FC<HeaderProps> = ({
     setTimeout(() => setCopiedShare(false), 2000);
   };
 
+  const currentGistUrl = currentPackage?.sourceUrl || OFFICIAL_GIST_URL;
+
   return (
     <header className="border-b border-neutral-200 bg-white/80 backdrop-blur-md sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
@@ -46,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
                 PromptCraft
               </span>
               <span className="text-[10px] uppercase font-mono font-medium px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-600 border border-neutral-200">
-                100% Client-Side
+                100% Gist Powered
               </span>
             </div>
             <p className="text-xs text-neutral-500 hidden sm:block">
@@ -55,19 +58,32 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Indicador da Fonte Atual */}
+        {/* Indicador do GIST Atual */}
         <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-100 border border-neutral-200 text-xs">
-          <Database className="w-3.5 h-3.5 text-neutral-600" />
-          <span className="text-neutral-500 font-medium">Catálogo:</span>
-          <span className="text-neutral-900 font-semibold truncate max-w-[180px]">
+          <GitFork className="w-3.5 h-3.5 text-neutral-600" />
+          <span className="text-neutral-500 font-medium">Gist:</span>
+          <span className="text-neutral-900 font-semibold truncate max-w-[160px]">
             {currentPackage?.name || 'Carregando...'}
           </span>
+
+          {/* Link para editar o Gist direto no GitHub */}
+          <a
+            href={currentGistUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-1 text-[11px] text-blue-600 hover:text-blue-800 font-medium flex items-center gap-0.5 transition-colors"
+            title="Abrir e editar este Gist no GitHub"
+          >
+            <span>Editar Gist</span>
+            <ExternalLink className="w-3 h-3" />
+          </a>
+
           <button
             onClick={onOpenSourceModal}
-            className="ml-1 text-[11px] text-neutral-900 underline hover:text-black font-medium transition-colors"
-            title="Alterar fonte ou conectar Gist"
+            className="ml-1 text-[11px] text-neutral-600 underline hover:text-black font-medium transition-colors"
+            title="Conectar outro Gist"
           >
-            Alterar
+            Trocar
           </button>
         </div>
 
@@ -123,7 +139,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Link GitHub */}
           <a
-            href="https://github.com"
+            href="https://github.com/gabrielffreitas94-commits/promptcraft"
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 text-neutral-600 hover:text-neutral-950 hover:bg-neutral-100 rounded-lg transition-colors border border-transparent hover:border-neutral-200"
