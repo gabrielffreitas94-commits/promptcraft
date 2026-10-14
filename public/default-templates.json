@@ -1,0 +1,305 @@
+{
+  "id": "engineering-core",
+  "name": "Engenharia de Software Core",
+  "description": "Templates essenciais para o ciclo completo de desenvolvimento com IA: do setup ao code review.",
+  "author": "Comunidade PromptCraft",
+  "version": "1.0.0",
+  "scenarios": [
+    {
+      "id": "greenfield",
+      "title": "Novo Projeto do Zero (Greenfield)",
+      "description": "Setup inicial, escolha de stack, arquitetura de pastas e primeiras diretrizes para começar um projeto do jeito certo.",
+      "category": "Criação",
+      "icon": "Sparkles",
+      "fields": [
+        {
+          "id": "project_name",
+          "label": "Nome do Projeto",
+          "type": "text",
+          "placeholder": "Ex: task-flow-api, e-commerce-dashboard",
+          "defaultValue": "meu-novo-projeto",
+          "required": true
+        },
+        {
+          "id": "project_type",
+          "label": "Tipo de Aplicação",
+          "type": "select",
+          "defaultValue": "Fullstack Web",
+          "options": [
+            { "label": "Fullstack Web (App completa)", "value": "Fullstack Web" },
+            { "label": "Single Page Application (SPA / Frontend)", "value": "SPA Web" },
+            { "label": "API REST / GraphQL (Backend)", "value": "API Backend" },
+            { "label": "CLI / Ferramenta de Linha de Comando", "value": "CLI / Utilitário" },
+            { "label": "Microserviço / Worker", "value": "Microserviço" }
+          ]
+        },
+        {
+          "id": "tech_stack",
+          "label": "Tecnologias & Frameworks",
+          "type": "multiselect",
+          "defaultValue": ["React", "TypeScript", "Tailwind CSS", "Vite"],
+          "options": [
+            { "label": "React", "value": "React" },
+            { "label": "TypeScript", "value": "TypeScript" },
+            { "label": "Next.js", "value": "Next.js" },
+            { "label": "Vue / Nuxt", "value": "Vue / Nuxt" },
+            { "label": "Node.js (Express/Fastify)", "value": "Node.js" },
+            { "label": "NestJS", "value": "NestJS" },
+            { "label": "Python (FastAPI)", "value": "Python (FastAPI)" },
+            { "label": "Go (Golang)", "value": "Go" },
+            { "label": "PostgreSQL", "value": "PostgreSQL" },
+            { "label": "Tailwind CSS", "value": "Tailwind CSS" },
+            { "label": "Docker", "value": "Docker" }
+          ]
+        },
+        {
+          "id": "architecture",
+          "label": "Padrão de Arquitetura",
+          "type": "select",
+          "defaultValue": "Modular Monolith",
+          "options": [
+            { "label": "Modular Monolith (Pastas por funcionalidade/domínio)", "value": "Modular Monolith" },
+            { "label": "Clean Architecture / Hexagonal (Portas e adaptadores)", "value": "Clean Architecture" },
+            { "label": "MVC Clássico (Model-View-Controller)", "value": "MVC" },
+            { "label": "Feature-Sliced Design (FSD)", "value": "Feature-Sliced Design" },
+            { "label": "Arquitetura Simples e Direta (Ideal para MVP)", "value": "KISS / MVP Simples" }
+          ]
+        },
+        {
+          "id": "strictness",
+          "label": "Diretrizes e Regras de Qualidade",
+          "type": "multiselect",
+          "defaultValue": [
+            "Tipagem estrita (sem 'any')",
+            "Tratamento robusto de erros e exceções",
+            "Princípios SOLID, DRY e KISS",
+            "Não adicione bibliotecas pesadas desnecessárias"
+          ],
+          "options": [
+            { "label": "Tipagem estrita (sem 'any')", "value": "Tipagem estrita (sem 'any')" },
+            { "label": "Tratamento robusto de erros e exceções", "value": "Tratamento robusto de erros e exceções" },
+            { "label": "Princípios SOLID, DRY e KISS", "value": "Princípios SOLID, DRY e KISS" },
+            { "label": "Não adicione bibliotecas pesadas desnecessárias", "value": "Não adicione bibliotecas pesadas desnecessárias" },
+            { "label": "Testes unitários automatizados obrigatórios", "value": "Testes unitários automatizados obrigatórios" },
+            { "label": "Segurança por padrão (sanitização, validação de inputs)", "value": "Segurança por padrão (sanitização e validação)" }
+          ]
+        },
+        {
+          "id": "initial_goal",
+          "label": "Objetivo do Primeiro Marco / O que construir primeiro?",
+          "type": "textarea",
+          "placeholder": "Descreva o que deve ser feito na primeira iteração (ex: criar a estrutura de pastas base, configurar o banco de dados e implementar o endpoint de autenticação)...",
+          "defaultValue": "Criar a estrutura base de pastas, configurações essenciais de ambiente e o primeiro fluxo funcional de ponta a ponta.",
+          "required": true
+        }
+      ],
+      "template": "Você é um Engenheiro de Software Principal (Staff Engineer) e Arquiteto de Soluções experiente.\n\n### CONTEXTO DO PROJETO\n- **Nome do Projeto:** {{project_name}}\n- **Tipo de Aplicação:** {{project_type}}\n- **Stack Tecnológica:** {{tech_stack}}\n- **Padrão de Arquitetura:** {{architecture}}\n\n### REGRAS E DIRETRIZES DE QUALIDADE\n{{strictness}}\n\n### OBJETIVO IMEDIATO\n{{initial_goal}}\n\n### INSTRUÇÕES DE EXECUÇÃO\n1. Analise os requisitos e apresente a estrutura de diretórios recomendada com base no padrão arquitetural definido.\n2. Liste as dependências essenciais e justifique brevemente sua escolha.\n3. Implemente os arquivos base de configuração e o código fundamental do objetivo imediato.\n4. Mantenha o código limpo, autoexplicativo, com foco em manutenção futura e aderência estrita às regras definidas."
+    },
+    {
+      "id": "brownfield",
+      "title": "Nova Funcionalidade (Brownfield)",
+      "description": "Adicione um novo recurso a uma base de código existente respeitando as convenções e sem quebrar nada.",
+      "category": "Funcionalidade",
+      "icon": "Layers",
+      "fields": [
+        {
+          "id": "feature_name",
+          "label": "Nome da Funcionalidade",
+          "type": "text",
+          "placeholder": "Ex: Exportação de relatórios em CSV, Sistema de notificações",
+          "defaultValue": "Exportação de Relatórios",
+          "required": true
+        },
+        {
+          "id": "existing_stack",
+          "label": "Stack Atual do Projeto",
+          "type": "text",
+          "placeholder": "Ex: Node.js, Prisma, PostgreSQL, React",
+          "defaultValue": "TypeScript, Node.js, PostgreSQL",
+          "required": true
+        },
+        {
+          "id": "feature_description",
+          "label": "O que a funcionalidade deve fazer?",
+          "type": "textarea",
+          "placeholder": "Explique a regra de negócio e o comportamento desejado...",
+          "defaultValue": "Permitir que o usuário solicite a exportação de dados em lote com filtros por data, gerando um link seguro de download.",
+          "required": true
+        },
+        {
+          "id": "constraints",
+          "label": "Restrições de Integração",
+          "type": "multiselect",
+          "defaultValue": [
+            "Não modifique a API de serviços existentes sem necessidade",
+            "Siga rigorosamente as convenções de nomenclatura e estilo já presentes",
+            "Adicione testes para o novo código"
+          ],
+          "options": [
+            { "label": "Não modifique a API de serviços existentes sem necessidade", "value": "Não modifique a API de serviços existentes sem necessidade" },
+            { "label": "Siga rigorosamente as convenções de nomenclatura e estilo já presentes", "value": "Siga rigorosamente as convenções de nomenclatura e estilo já presentes" },
+            { "label": "Adicione testes para o novo código", "value": "Adicione testes para o novo código" },
+            { "label": "Evite acoplamento direto com camadas de UI ou banco", "value": "Evite acoplamento direto com camadas de UI ou banco" },
+            { "label": "Trate casos de falha sem interromper outros fluxos", "value": "Trate casos de falha sem interromper outros fluxos" }
+          ]
+        }
+      ],
+      "template": "Você é um Engenheiro de Software Senior atuando na evolução de uma base de código em produção.\n\n### CONTEXTO DA ATIVIDADE\n- **Funcionalidade a Implementar:** {{feature_name}}\n- **Stack do Projeto:** {{existing_stack}}\n\n### DESCRIÇÃO DA REGRA DE NEGÓCIO\n{{feature_description}}\n\n### RESTRIÇÕES E DIRETRIZES DE INTEGRAÇÃO\n{{constraints}}\n\n### INSTRUÇÕES DE EXECUÇÃO\n1. Descreva brevemente o plano de implementação antes de escrever o código.\n2. Mostre onde o novo código deve ser inserido (novos arquivos ou pontos de extensão).\n3. Forneça a implementação completa com validação de dados e tratamento de erros.\n4. Inclua um exemplo de teste automatizado para validar o funcionamento correto da feature."
+    },
+    {
+      "id": "refactoring",
+      "title": "Refatoração & Clean Code",
+      "description": "Melhore a qualidade, desacople módulos e elimine débito técnico sem alterar o comportamento externo.",
+      "category": "Qualidade",
+      "icon": "Repeat",
+      "fields": [
+        {
+          "id": "problem_to_solve",
+          "label": "Problema Identificado",
+          "type": "multiselect",
+          "defaultValue": [
+            "Alta complexidade ciclomática / muitos if/else aninhados",
+            "Violação de DRY (código duplicado)",
+            "Nomes ruins e funções com muitas responsabilidades"
+          ],
+          "options": [
+            { "label": "Alta complexidade ciclomática / muitos if/else aninhados", "value": "Alta complexidade ciclomática / muitos if/else aninhados" },
+            { "label": "Violação de DRY (código duplicado)", "value": "Violação de DRY (código duplicado)" },
+            { "label": "Nomes ruins e funções com muitas responsabilidades", "value": "Nomes ruins e funções com muitas responsabilidades" },
+            { "label": "Falta de tipagem ou uso abusivo de tipos genéricos", "value": "Falta de tipagem ou tipos fracos" },
+            { "label": "Gargalo de performance / operações síncronas bloqueantes", "value": "Gargalo de performance / operações bloqueantes" }
+          ]
+        },
+        {
+          "id": "safety_rules",
+          "label": "Regras de Segurança da Refatoração",
+          "type": "multiselect",
+          "defaultValue": [
+            "NÃO altere o contrato público da função/classe (interface externa idêntica)",
+            "Garantir que a mesma entrada gere rigorosamente a mesma saída",
+            "Explicar cada técnica aplicada (ex: Early Return, Extract Function)"
+          ],
+          "options": [
+            { "label": "NÃO altere o contrato público da função/classe (interface externa idêntica)", "value": "NÃO altere o contrato público da função/classe (interface externa idêntica)" },
+            { "label": "Garantir que a mesma entrada gere rigorosamente a mesma saída", "value": "Garantir que a mesma entrada gere rigorosamente a mesma saída" },
+            { "label": "Explicar cada técnica aplicada (ex: Early Return, Extract Function)", "value": "Explicar cada técnica aplicada (ex: Early Return, Extract Function)" },
+            { "label": "Manter ou melhorar a cobertura de testes existente", "value": "Manter ou melhorar a cobertura de testes existente" }
+          ]
+        },
+        {
+          "id": "target_code",
+          "label": "Código a ser Refatorado",
+          "type": "textarea",
+          "placeholder": "Cole aqui a função, classe ou trecho de código que precisa ser melhorado...",
+          "defaultValue": "// Cole aqui o código que deseja refatorar",
+          "required": true
+        }
+      ],
+      "template": "Você é um especialista em Clean Code, Padrões de Projeto (Design Patterns) e Refatoração Segura.\n\n### PROBLEMAS DETECTADOS NO CÓDIGO ATUAL\n{{problem_to_solve}}\n\n### REGRAS E SALVAGUARDAS DE REFATORAÇÃO\n{{safety_rules}}\n\n### CÓDIGO ORIGINAL\n```\n{{target_code}}\n```\n\n### INSTRUÇÕES DE EXECUÇÃO\n1. Diagnóstico: Aponte com precisão os code smells e problemas de design do código original.\n2. Estratégia: Explique quais padrões ou técnicas de refatoração você aplicará.\n3. Código Refatorado: Apresente a nova versão limpa, legível, desacoplada e tipada.\n4. Justificativa: Explique como a nova versão resolve os problemas mantendo 100% da compatibilidade externa."
+    },
+    {
+      "id": "bugfix",
+      "title": "Bugfix & Root Cause Analysis (RCA)",
+      "description": "Diagnostique a causa raiz de um erro e produza uma correção cirúrgica com testes de regressão.",
+      "category": "Diagnóstico",
+      "icon": "Bug",
+      "fields": [
+        {
+          "id": "error_message",
+          "label": "Mensagem de Erro / Stacktrace",
+          "type": "textarea",
+          "placeholder": "Cole o erro ou log completo aqui...",
+          "defaultValue": "TypeError: Cannot read properties of undefined (reading 'items')",
+          "required": true
+        },
+        {
+          "id": "expected_vs_current",
+          "label": "Comportamento Esperado vs Atual",
+          "type": "textarea",
+          "placeholder": "O que deveria acontecer e o que de fato aconteceu?",
+          "defaultValue": "Esperado: Retornar array vazio se não houver registros.\nAtual: Quebra a execução lançando exceção não tratada.",
+          "required": true
+        },
+        {
+          "id": "code_context",
+          "label": "Código Relevante Envolvido",
+          "type": "textarea",
+          "placeholder": "Cole a função ou arquivo onde o erro ocorre...",
+          "defaultValue": "// Cole aqui o código onde o erro é disparado",
+          "required": false
+        },
+        {
+          "id": "fix_approach",
+          "label": "Critério para a Solução",
+          "type": "select",
+          "defaultValue": "Causa raiz profunda com teste de regressão",
+          "options": [
+            { "label": "Causa raiz profunda com teste de regressão (Recomendado)", "value": "Causa raiz profunda com teste de regressão" },
+            { "label": "Correção cirúrgica mínima (Menor risco de impacto colateral)", "value": "Correção cirúrgica mínima" },
+            { "label": "Defensiva completa (Validações em múltiplas camadas)", "value": "Defensiva completa com guard clauses" }
+          ]
+        }
+      ],
+      "template": "Você é um Engenheiro de Diagnóstico e Resolução de Incidentes Críticos.\n\n### LOG / ERRO OBSERVADO\n```\n{{error_message}}\n```\n\n### DISCREPÂNCIA DE COMPORTAMENTO\n{{expected_vs_current}}\n\n### CÓDIGO ENVOLVIDO\n```\n{{code_context}}\n```\n\n### CRITÉRIO DE SOLUÇÃO\n{{fix_approach}}\n\n### INSTRUÇÕES DE EXECUÇÃO\n1. Análise de Causa Raiz (RCA): Explique detalhadamente POR QUE o erro acontece (qual fluxo ou premissa falhou).\n2. Correção: Forneça o patch/código corrigido com foco em precisão e sem efeitos colaterais.\n3. Teste de Regressão: Escreva um teste automatizado que reproduzia a falha anteriormente e agora passa com a sua correção."
+    },
+    {
+      "id": "testing",
+      "title": "Criação de Testes Automatizados",
+      "description": "Gere testes unitários, de integração ou E2E com cobertura de edge cases e mocks realistas.",
+      "category": "Qualidade",
+      "icon": "CheckCircle2",
+      "fields": [
+        {
+          "id": "test_type",
+          "label": "Tipo de Teste",
+          "type": "select",
+          "defaultValue": "Testes Unitários",
+          "options": [
+            { "label": "Testes Unitários (Foco em funções e regras de negócio)", "value": "Testes Unitários" },
+            { "label": "Testes de Integração (API com banco de dados / serviços)", "value": "Testes de Integração" },
+            { "label": "Testes End-to-End (E2E / Fluxos completos de usuário)", "value": "Testes E2E" },
+            { "label": "Testes de Regressão", "value": "Testes de Regressão" }
+          ]
+        },
+        {
+          "id": "framework",
+          "label": "Framework de Testes",
+          "type": "select",
+          "defaultValue": "Vitest / Jest",
+          "options": [
+            { "label": "Vitest / Jest (JavaScript / TypeScript)", "value": "Vitest / Jest" },
+            { "label": "Pytest (Python)", "value": "Pytest" },
+            { "label": "Go testing standard library", "value": "Go testing" },
+            { "label": "Playwright (E2E Web)", "value": "Playwright" },
+            { "label": "JUnit / Mockito (Java/Kotlin)", "value": "JUnit / Mockito" }
+          ]
+        },
+        {
+          "id": "coverage_goals",
+          "label": "Foco da Cobertura",
+          "type": "multiselect",
+          "defaultValue": [
+            "Caminho feliz (Happy Path)",
+            "Casos de borda (Valores nulos, vazios, limites numéricos)",
+            "Tratamento de exceções e erros esperados"
+          ],
+          "options": [
+            { "label": "Caminho feliz (Happy Path)", "value": "Caminho feliz (Happy Path)" },
+            { "label": "Casos de borda (Valores nulos, vazios, limites numéricos)", "value": "Casos de borda (Valores nulos, vazios, limites numéricos)" },
+            { "label": "Tratamento de exceções e erros esperados", "value": "Tratamento de exceções e erros esperados" },
+            { "label": "Mocks para chamadas externas (APIs, banco)", "value": "Mocks para chamadas externas (APIs, banco)" }
+          ]
+        },
+        {
+          "id": "source_code",
+          "label": "Código a ser Testado",
+          "type": "textarea",
+          "placeholder": "Cole aqui a função, classe ou endpoint que deve ser coberto por testes...",
+          "defaultValue": "// Cole aqui o código que você deseja testar",
+          "required": true
+        }
+      ],
+      "template": "Você é um Especialista em Garantia de Qualidade de Software (QA / Software Engineer in Test).\n\n### ESPECIFICAÇÃO DE TESTES\n- **Nível do Teste:** {{test_type}}\n- **Framework Escolhido:** {{framework}}\n\n### OBJETIVOS DE COBERTURA\n{{coverage_goals}}\n\n### CÓDIGO ALVO\n```\n{{source_code}}\n```\n\n### INSTRUÇÕES DE EXECUÇÃO\n1. Identifique os cenários essenciais a serem validados (happy path, edge cases e falhas).\n2. Escreva a suíte de testes completa, limpa e bem documentada usando a sintaxe padrão do framework escolhido.\n3. Utilize o padrão AAA (Arrange, Act, Assert) em cada teste para máxima clareza.\n4. Configure mocks ou fixtures necessários para garantir que os testes sejam determinísticos e rápidos."
+    }
+  ]
+}
