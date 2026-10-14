@@ -18,9 +18,15 @@
 - **Biblioteca Pessoal & Histórico:** Lembra os últimos templates acessados e permite restaurar prompts antigos com 1 clique.
 - **Compartilhamento por Link Direto:** Compartilhe configurações exatas via querystring na URL (ex: `?gist=ID&s=greenfield`).
 
+## 🔗 Links Oficiais
+
+- **Site no ar (GitHub Pages):** [https://gabrielffreitas94-commits.github.io/promptcraft/](https://gabrielffreitas94-commits.github.io/promptcraft/)
+- **Gist Oficial (JSON de Templates):** [https://gist.github.com/gabrielffreitas94-commits/7ee8786c7a503f114a223bdf7d66dae1](https://gist.github.com/gabrielffreitas94-commits/7ee8786c7a503f114a223bdf7d66dae1)
+- **ID do Gist Oficial:** `7ee8786c7a503f114a223bdf7d66dae1`
+
 ---
 
-## 📦 Cenários Inclusos por Padrão
+## 📦 Cenários Inclusos no Gist Oficial
 
 1. **Novo Projeto do Zero (Greenfield):** Setup inicial, stack, padrões de pastas e regras de arquitetura.
 2. **Nova Funcionalidade (Brownfield):** Adicionar recursos a projetos existentes sem quebrar compatibilidade.
