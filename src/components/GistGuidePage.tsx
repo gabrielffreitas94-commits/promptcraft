@@ -193,45 +193,45 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
       {/* Passo a Passo em 3 Etapas */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
-          <Layers className="w-4 h-4 text-neutral-700 dark:text-neutral-300" />
-          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 tracking-tight">
+          <Layers className="w-4 h-4 text-neutral-700 dark:text-neutral-400" />
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-200 tracking-tight">
             Passo a Passo em 3 Minutos
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Card 1 */}
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-2.5">
-            <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 flex items-center justify-center font-bold text-xs font-mono">
+          <div className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-2.5">
+            <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-neutral-200 flex items-center justify-center font-bold text-xs font-mono">
               1
             </div>
-            <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-100">
+            <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-200">
               Acesse o GitHub Gist
             </h3>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
-              Vá para <a href="https://gist.github.com" target="_blank" rel="noopener noreferrer" className="text-neutral-900 dark:text-neutral-200 underline font-medium hover:text-black dark:hover:text-white">gist.github.com</a> com sua conta do GitHub logada.
+              Vá para <a href="https://gist.github.com" target="_blank" rel="noopener noreferrer" className="text-neutral-900 dark:text-neutral-300 underline font-medium hover:text-black dark:hover:text-white">gist.github.com</a> com sua conta do GitHub logada.
             </p>
           </div>
 
           {/* Card 2 */}
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-2.5">
-            <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 flex items-center justify-center font-bold text-xs font-mono">
+          <div className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-2.5">
+            <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-neutral-200 flex items-center justify-center font-bold text-xs font-mono">
               2
             </div>
-            <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-100">
-              Nomeie como <code className="bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 px-1 py-0.5 rounded text-[11px]">promptcraft.md</code>
+            <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-200">
+              Nomeie como <code className="bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-300 px-1 py-0.5 rounded text-[11px]">promptcraft.md</code>
             </h3>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
-              No campo de nome do arquivo, digite <strong className="text-neutral-800 dark:text-neutral-200">promptcraft.md</strong> e escreva seus templates usando títulos <code className="font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 px-1 rounded text-[11px]">#</code> e campos <code className="font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 px-1 rounded text-[11px]">{'{{campo:tipo}}'}</code>.
+              No campo de nome do arquivo, digite <strong className="text-neutral-800 dark:text-neutral-200">promptcraft.md</strong> e escreva seus templates usando títulos <code className="font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-300 px-1 rounded text-[11px]">#</code> e campos <code className="font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-300 px-1 rounded text-[11px]">{'{{campo:tipo}}'}</code>.
             </p>
           </div>
 
           {/* Card 3 */}
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-2.5">
-            <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100 flex items-center justify-center font-bold text-xs font-mono">
+          <div className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-2.5">
+            <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-neutral-200 flex items-center justify-center font-bold text-xs font-mono">
               3
             </div>
-            <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-100">
+            <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-200">
               Salve como Public Gist &amp; Conecte
             </h3>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
@@ -245,8 +245,8 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <SlidersHorizontal className="w-4 h-4 text-neutral-700 dark:text-neutral-300" />
-            <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 tracking-tight">
+            <SlidersHorizontal className="w-4 h-4 text-neutral-700 dark:text-neutral-400" />
+            <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-200 tracking-tight">
               Tipos de Campos Suportados
             </h2>
           </div>
@@ -263,7 +263,7 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
             return (
               <div 
                 key={ft.id} 
-                className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between space-y-4 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
+                className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between space-y-4 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
               >
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -271,7 +271,7 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
                       <div className="p-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200">
                         <Icon className="w-4 h-4" />
                       </div>
-                      <h3 className="font-semibold text-xs sm:text-sm text-neutral-900 dark:text-neutral-100">
+                      <h3 className="font-semibold text-xs sm:text-sm text-neutral-900 dark:text-neutral-200">
                         {ft.title}
                       </h3>
                     </div>
@@ -292,7 +292,7 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
                     <button
                       type="button"
                       onClick={() => handleCopy(ft.syntax, ft.id)}
-                      className="inline-flex items-center gap-1 text-[11px] font-mono text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+                      className="inline-flex items-center gap-1 text-[11px] font-mono text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
                       title="Copiar sintaxe"
                     >
                       {isCopied ? (
@@ -309,7 +309,7 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
                     </button>
                   </div>
 
-                  <div className="bg-neutral-950 text-neutral-200 font-mono text-xs px-3 py-2 rounded-xl border border-neutral-800 flex items-center justify-between overflow-x-auto select-all">
+                  <div className="bg-neutral-950 dark:bg-[#111113] text-neutral-200 dark:text-neutral-300 font-mono text-xs px-3 py-2 rounded-xl border border-neutral-800 flex items-center justify-between overflow-x-auto select-all">
                     <code>{ft.syntax}</code>
                   </div>
                 </div>
@@ -323,20 +323,20 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
       <section className="space-y-4">
         <div className="flex items-center gap-2">
           <Lightbulb className="w-4 h-4 text-amber-500" />
-          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 tracking-tight">
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-200 tracking-tight">
             Condicionais &amp; Omissão Inteligente
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-3">
+          <div className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">Blocos com <code>{'{{#if}}'}</code></span>
+              <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-200">Blocos com <code>{'{{#if}}'}</code></span>
             </div>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
-              Envolva qualquer seção ou texto com <code className="font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 px-1 py-0.5 rounded text-[11px]">{'{{#if variavel}}...{{/if}}'}</code>. O bloco só aparecerá se o campo estiver preenchido (ou ligado se for <code className="font-mono text-[11px]">boolean</code>).
+              Envolva qualquer seção ou texto com <code className="font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-300 px-1 py-0.5 rounded text-[11px]">{'{{#if variavel}}...{{/if}}'}</code>. O bloco só aparecerá se o campo estiver preenchido (ou ligado se for <code className="font-mono text-[11px]">boolean</code>).
             </p>
-            <div className="bg-neutral-950 text-neutral-200 font-mono text-[11px] p-3 rounded-xl border border-neutral-800 leading-relaxed">
+            <div className="bg-neutral-950 dark:bg-[#111113] text-neutral-200 dark:text-neutral-300 font-mono text-[11px] p-3 rounded-xl border border-neutral-800 leading-relaxed">
               <pre className="whitespace-pre-wrap">
 {`{{#if testes}}
 ### TESTES UNITÁRIOS
@@ -346,14 +346,14 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
             </div>
           </div>
 
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-3">
+          <div className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">Listas &amp; Renumeração</span>
+              <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-200">Listas &amp; Renumeração</span>
             </div>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
-              Use direto em itens: <code className="font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 px-1 py-0.5 rounded text-[11px]">{'- {{#if}}'}</code> ou <code className="font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 px-1 py-0.5 rounded text-[11px]">{'1. {{#if}}'}</code>. Se falso, o marcador é removido e a lista é <strong>automaticamente renumerada</strong> em sequência!
+              Use direto em itens: <code className="font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-300 px-1 py-0.5 rounded text-[11px]">{'- {{#if}}'}</code> ou <code className="font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-300 px-1 py-0.5 rounded text-[11px]">{'1. {{#if}}'}</code>. Se falso, o marcador é removido e a lista é <strong>automaticamente renumerada</strong> em sequência!
             </p>
-            <div className="bg-neutral-950 text-neutral-200 font-mono text-[11px] p-3 rounded-xl border border-neutral-800 leading-relaxed">
+            <div className="bg-neutral-950 dark:bg-[#111113] text-neutral-200 dark:text-neutral-300 font-mono text-[11px] p-3 rounded-xl border border-neutral-800 leading-relaxed">
               <pre className="whitespace-pre-wrap">
 {`### INSTRUÇÕES
 1. {{#if testes}}Rodar testes{{/if}}
@@ -362,14 +362,14 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
             </div>
           </div>
 
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-3">
+          <div className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">Omissão de Vazios</span>
+              <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-200">Omissão de Vazios</span>
             </div>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
               Com <strong>"Omitir vazios"</strong> ativo, qualquer seção (<code className="font-mono text-[11px]">### Título</code>) sem valor é omitida silenciosamente do prompt, sem gerar linhas em branco órfãs.
             </p>
-            <div className="bg-neutral-50 dark:bg-neutral-800/60 border border-neutral-200 dark:border-neutral-700 rounded-xl p-3 text-xs text-neutral-600 dark:text-neutral-300 space-y-1">
+            <div className="bg-neutral-50 dark:bg-[#111113]/60 border border-neutral-200 dark:border-neutral-700/80 rounded-xl p-3 text-xs text-neutral-600 dark:text-neutral-300 space-y-1">
               <p className="font-medium text-neutral-800 dark:text-neutral-200">💡 Dica de Ouro:</p>
               <p className="text-[11px] leading-relaxed">
                 Se colocar <code className="font-mono text-[11px]">### NOTAS{'\n'}{'{{obs:textarea}}'}</code>, a seção inteira some automaticamente se estiver vazia.
@@ -383,8 +383,8 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-neutral-700 dark:text-neutral-300" />
-            <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 tracking-tight">
+            <FileText className="w-4 h-4 text-neutral-700 dark:text-neutral-400" />
+            <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-200 tracking-tight">
               Modelo Completo para Iniciar seu Gist
             </h2>
           </div>
@@ -395,7 +395,7 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-xs ${
               copiedKey === 'full_template'
                 ? 'bg-emerald-600 text-white'
-                : 'bg-neutral-900 hover:bg-black dark:bg-neutral-100 dark:hover:bg-white text-white dark:text-neutral-900'
+                : 'bg-neutral-900 hover:bg-black dark:bg-neutral-200 dark:hover:bg-white text-white dark:text-neutral-950'
             }`}
           >
             {copiedKey === 'full_template' ? (
@@ -412,7 +412,7 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
           </button>
         </div>
 
-        <div className="bg-neutral-950 text-neutral-200 font-mono text-xs rounded-2xl p-5 border border-neutral-800 shadow-xs max-h-[460px] overflow-y-auto leading-relaxed select-all">
+        <div className="bg-neutral-950 dark:bg-[#111113] text-neutral-200 dark:text-neutral-300 font-mono text-xs rounded-2xl p-5 border border-neutral-800 shadow-xs max-h-[460px] overflow-y-auto leading-relaxed select-all">
           <pre className="whitespace-pre-wrap">{starterTemplate}</pre>
         </div>
 
@@ -425,7 +425,7 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
             <button
               type="button"
               onClick={onGoToGenerator}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-900 dark:text-neutral-100 hover:text-black dark:hover:text-white hover:underline transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-900 dark:text-neutral-200 hover:text-black dark:hover:text-white hover:underline transition-colors"
             >
               <span>Ir para o Gerador e Testar</span>
               <ArrowRight className="w-3.5 h-3.5" />

@@ -48,7 +48,7 @@ function TextFieldInput({ label, variableKey, value, onChange }: TextFieldInputP
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-1.5">
+        <label className="text-xs font-semibold text-neutral-800 dark:text-neutral-300 flex items-center gap-1.5">
           <Type className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
           <span>{label}</span>
           <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
@@ -64,7 +64,7 @@ function TextFieldInput({ label, variableKey, value, onChange }: TextFieldInputP
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={`Digite ${label.toLowerCase()}...`}
-        className="w-full text-xs font-sans bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl px-3 py-2 text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-100 transition-all"
+        className="w-full text-xs font-sans bg-neutral-50 dark:bg-[#111113] border border-neutral-200 dark:border-neutral-800 rounded-xl px-3 py-2 text-neutral-900 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-500 transition-all"
       />
     </div>
   );
@@ -81,7 +81,7 @@ function TextareaFieldInput({ label, variableKey, value, onChange }: TextareaFie
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-1.5">
+        <label className="text-xs font-semibold text-neutral-800 dark:text-neutral-300 flex items-center gap-1.5">
           <AlignLeft className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
           <span>{label}</span>
           <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
@@ -97,7 +97,7 @@ function TextareaFieldInput({ label, variableKey, value, onChange }: TextareaFie
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={`Digite o conteúdo de ${label.toLowerCase()}...`}
-        className="w-full text-xs font-sans bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl p-3 text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-100 transition-all resize-y"
+        className="w-full text-xs font-sans bg-neutral-50 dark:bg-[#111113] border border-neutral-200 dark:border-neutral-800 rounded-xl p-3 text-neutral-900 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-500 transition-all resize-y"
       />
     </div>
   );
@@ -147,7 +147,7 @@ function ListFieldInput({ label, variableKey, items, onChange, numbered = false 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-1.5">
+        <label className="text-xs font-semibold text-neutral-800 dark:text-neutral-300 flex items-center gap-1.5">
           <Icon className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
           <span>{label}</span>
           <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
@@ -160,11 +160,11 @@ function ListFieldInput({ label, variableKey, items, onChange, numbered = false 
       </div>
 
       {items.length > 0 && (
-        <div className="space-y-1.5 bg-neutral-50/80 dark:bg-neutral-950/80 border border-neutral-200 dark:border-neutral-800 rounded-xl p-2.5 max-h-48 overflow-y-auto">
+        <div className="space-y-1.5 bg-neutral-50/80 dark:bg-[#111113]/80 border border-neutral-200 dark:border-neutral-800 rounded-xl p-2.5 max-h-48 overflow-y-auto">
           {items.map((item, idx) => (
             <div 
               key={idx} 
-              className="flex items-center justify-between gap-2 text-xs bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 px-2.5 py-1.5 rounded-lg shadow-2xs group"
+              className="flex items-center justify-between gap-2 text-xs bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 px-2.5 py-1.5 rounded-lg shadow-2xs group"
             >
               <div className="flex items-center gap-2 min-w-0">
                 {numbered ? (
@@ -174,7 +174,7 @@ function ListFieldInput({ label, variableKey, items, onChange, numbered = false 
                 ) : (
                   <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 dark:bg-neutral-500 shrink-0" />
                 )}
-                <span className="truncate text-neutral-800 dark:text-neutral-200">{item}</span>
+                <span className="truncate text-neutral-800 dark:text-neutral-300">{item}</span>
               </div>
               <button
                 type="button"
@@ -197,12 +197,12 @@ function ListFieldInput({ label, variableKey, items, onChange, numbered = false 
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={numbered ? `Adicionar item numerado (pressione Enter)...` : `Adicionar item à lista (pressione Enter)...`}
-          className="w-full text-xs font-sans bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl px-3 py-2 text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-100 transition-all"
+          className="w-full text-xs font-sans bg-neutral-50 dark:bg-[#111113] border border-neutral-200 dark:border-neutral-800 rounded-xl px-3 py-2 text-neutral-900 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-500 transition-all"
         />
         <button
           type="button"
           onClick={handleAddItem}
-          className="px-3 py-2 bg-neutral-900 hover:bg-black dark:bg-neutral-100 dark:hover:bg-white text-white dark:text-neutral-900 text-xs font-medium rounded-xl transition-all shrink-0 flex items-center gap-1 shadow-xs cursor-pointer"
+          className="px-3 py-2 bg-neutral-900 hover:bg-black dark:bg-neutral-200 dark:hover:bg-white text-white dark:text-neutral-950 text-xs font-medium rounded-xl transition-all shrink-0 flex items-center gap-1 shadow-xs cursor-pointer"
           title={numbered ? "Adicionar à lista numerada" : "Adicionar à lista"}
         >
           <Plus className="w-3.5 h-3.5" />
@@ -224,7 +224,7 @@ function BooleanFieldInput({ label, variableKey, value, onChange }: BooleanField
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-1.5">
+        <label className="text-xs font-semibold text-neutral-800 dark:text-neutral-300 flex items-center gap-1.5">
           <ToggleRight className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
           <span>{label}</span>
           <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
@@ -237,11 +237,11 @@ function BooleanFieldInput({ label, variableKey, value, onChange }: BooleanField
       </div>
       <div 
         onClick={() => onChange(!value)}
-        className="flex items-center justify-between bg-neutral-50 dark:bg-neutral-950 hover:bg-neutral-100/80 dark:hover:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-3.5 py-2.5 cursor-pointer select-none transition-colors"
+        className="flex items-center justify-between bg-neutral-50 dark:bg-[#111113] hover:bg-neutral-100/80 dark:hover:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-xl px-3.5 py-2.5 cursor-pointer select-none transition-colors"
       >
         <div className="flex items-center gap-2">
           <span className={`w-2 h-2 rounded-full ${value ? 'bg-emerald-500' : 'bg-neutral-300 dark:bg-neutral-700'}`} />
-          <span className="text-xs font-medium text-neutral-800 dark:text-neutral-200">
+          <span className="text-xs font-medium text-neutral-800 dark:text-neutral-300">
             {value ? 'Ativado (incluído no prompt)' : 'Desativado (omitido do prompt)'}
           </span>
         </div>
@@ -250,11 +250,11 @@ function BooleanFieldInput({ label, variableKey, value, onChange }: BooleanField
           role="switch"
           aria-checked={value}
           className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-            value ? 'bg-neutral-900 dark:bg-neutral-100' : 'bg-neutral-300 dark:bg-neutral-700'
+            value ? 'bg-neutral-900 dark:bg-neutral-200' : 'bg-neutral-300 dark:bg-neutral-700'
           }`}
         >
           <span
-            className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white dark:bg-neutral-900 shadow-md ring-0 transition duration-200 ease-in-out ${
+            className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white dark:bg-[#111113] shadow-md ring-0 transition duration-200 ease-in-out ${
               value ? 'translate-x-4' : 'translate-x-0'
             }`}
           />
@@ -277,7 +277,7 @@ function SelectFieldInput({ label, variableKey, options, rawType, value, onChang
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-1.5">
+        <label className="text-xs font-semibold text-neutral-800 dark:text-neutral-300 flex items-center gap-1.5">
           <CheckCircle2 className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
           <span>{label}</span>
           <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
@@ -298,8 +298,8 @@ function SelectFieldInput({ label, variableKey, options, rawType, value, onChang
               onClick={() => onChange(isSelected ? '' : opt)}
               className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-all flex items-center gap-1.5 ${
                 isSelected
-                  ? 'bg-neutral-900 dark:bg-neutral-100 border-neutral-900 dark:border-neutral-100 text-white dark:text-neutral-900 shadow-xs'
-                  : 'bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-900 hover:border-neutral-300 dark:hover:border-neutral-700'
+                  ? 'bg-neutral-900 dark:bg-neutral-200 border-neutral-900 dark:border-neutral-200 text-white dark:text-neutral-950 shadow-xs'
+                  : 'bg-white dark:bg-[#111113] border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-[#161618] hover:border-neutral-300 dark:hover:border-neutral-700 dark:hover:text-neutral-200'
               }`}
             >
               {isSelected && <Check className="w-3 h-3" />}
@@ -333,7 +333,7 @@ function MultiSelectFieldInput({ label, variableKey, options, rawType, selected,
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-1.5">
+        <label className="text-xs font-semibold text-neutral-800 dark:text-neutral-300 flex items-center gap-1.5">
           <SlidersHorizontal className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
           <span>{label}</span>
           <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
@@ -370,8 +370,8 @@ function MultiSelectFieldInput({ label, variableKey, options, rawType, selected,
               onClick={() => toggleOption(opt)}
               className={`text-xs px-2.5 py-1.5 rounded-lg border font-medium transition-all flex items-center gap-1.5 ${
                 isSelected
-                  ? 'bg-neutral-900 dark:bg-neutral-100 border-neutral-900 dark:border-neutral-100 text-white dark:text-neutral-900 shadow-xs'
-                  : 'bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-900 hover:border-neutral-300 dark:hover:border-neutral-700'
+                  ? 'bg-neutral-900 dark:bg-neutral-200 border-neutral-900 dark:border-neutral-200 text-white dark:text-neutral-950 shadow-xs'
+                  : 'bg-white dark:bg-[#111113] border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-[#161618] hover:border-neutral-300 dark:hover:border-neutral-700 dark:hover:text-neutral-200'
               }`}
             >
               {isSelected ? (
@@ -429,7 +429,7 @@ function CodeFieldInput({
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-1.5">
+        <label className="text-xs font-semibold text-neutral-800 dark:text-neutral-300 flex items-center gap-1.5">
           <Code2 className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
           <span>{label}</span>
           <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
@@ -461,8 +461,8 @@ function CodeFieldInput({
         </span>
       </div>
 
-      <div className="border border-neutral-800 rounded-xl bg-neutral-950 overflow-hidden shadow-xs">
-        <div className="bg-neutral-900/90 px-3 py-1.5 border-b border-neutral-800 flex items-center justify-between text-[11px] text-neutral-400 font-mono">
+      <div className="border border-neutral-800 rounded-xl bg-neutral-950 dark:bg-[#111113] overflow-hidden shadow-xs">
+        <div className="bg-neutral-900/90 dark:bg-[#161618] px-3 py-1.5 border-b border-neutral-800 flex items-center justify-between text-[11px] text-neutral-400 font-mono">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-neutral-600 inline-block" />
             <span>{resolvedLanguage || 'texto / sem linguagem'}</span>
@@ -472,7 +472,7 @@ function CodeFieldInput({
             <button
               type="button"
               onClick={handlePaste}
-              className="flex items-center gap-1 px-2 py-0.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 transition-colors text-[10px]"
+              className="flex items-center gap-1 px-2 py-0.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors text-[10px]"
               title="Colar da área de transferência"
             >
               {pasted ? (
@@ -505,7 +505,7 @@ function CodeFieldInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={`// Cole ou digite seu código aqui...`}
-          className="w-full text-xs font-mono bg-neutral-950 p-3 text-neutral-100 placeholder:text-neutral-600 focus:outline-none focus:ring-0 resize-y leading-relaxed border-0 selection:bg-white selection:text-neutral-950"
+          className="w-full text-xs font-mono bg-neutral-950 dark:bg-[#111113] p-3 text-neutral-200 dark:text-neutral-300 placeholder:text-neutral-500 dark:placeholder:text-neutral-600 focus:outline-none focus:ring-0 resize-y leading-relaxed border-0 selection:bg-white selection:text-neutral-950"
           spellCheck={false}
         />
       </div>
@@ -702,9 +702,9 @@ export function App() {
   const currentGistUrl = `https://gist.github.com/${activeGistId}`;
 
   return (
-    <div className="min-h-screen bg-[#fafafa] dark:bg-[#0c0c0c] flex flex-col text-neutral-900 dark:text-neutral-100 font-sans transition-colors duration-150">
+    <div className="min-h-screen bg-[#fafafa] dark:bg-[#0f0f11] flex flex-col text-neutral-900 dark:text-neutral-300 font-sans transition-colors duration-150">
       {/* Barra de Topo Minimalista */}
-      <header className="border-b border-neutral-200 dark:border-neutral-800 bg-white/90 dark:bg-neutral-950/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
+      <header className="border-b border-neutral-200 dark:border-neutral-800/80 bg-white/90 dark:bg-[#141416]/90 backdrop-blur-md sticky top-0 z-30 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           {/* Logo e Navegação */}
           <div className="flex items-center gap-3 sm:gap-6">
@@ -713,20 +713,20 @@ export function App() {
               className="flex items-center cursor-pointer select-none group"
               title="PromptCraft"
             >
-              <div className="w-8 h-8 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 flex items-center justify-center font-mono font-bold text-xs shadow-xs group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 rounded-lg bg-neutral-900 dark:bg-neutral-200 text-white dark:text-neutral-950 flex items-center justify-center font-mono font-bold text-xs shadow-xs group-hover:scale-105 transition-transform">
                 PC
               </div>
             </div>
 
             {/* Navegação entre Páginas */}
-            <nav className="flex items-center gap-1 bg-neutral-100 dark:bg-neutral-900 p-1 rounded-xl border border-neutral-200 dark:border-neutral-800">
+            <nav className="flex items-center gap-1 bg-neutral-100 dark:bg-[#111113] p-1 rounded-xl border border-neutral-200 dark:border-neutral-800">
               <button
                 type="button"
                 onClick={() => handleTabChange('generator')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   activeTab === 'generator'
-                    ? 'bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white shadow-xs'
-                    : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
+                    ? 'bg-white dark:bg-[#222226] text-neutral-900 dark:text-neutral-200 shadow-xs'
+                    : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200'
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-neutral-700 dark:text-neutral-300" />
@@ -737,8 +737,8 @@ export function App() {
                 onClick={() => handleTabChange('guide')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   activeTab === 'guide'
-                    ? 'bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white shadow-xs'
-                    : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
+                    ? 'bg-white dark:bg-[#222226] text-neutral-900 dark:text-neutral-200 shadow-xs'
+                    : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200'
                 }`}
               >
                 <BookOpen className="w-3.5 h-3.5 text-neutral-700 dark:text-neutral-300" />
@@ -761,7 +761,7 @@ export function App() {
                 value={gistInput}
                 onChange={(e) => setGistInput(e.target.value)}
                 placeholder="Cole o ID ou URL do Gist..."
-                className="w-full text-xs font-mono bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-100 transition-all text-neutral-800 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
+                className="w-full text-xs font-mono bg-neutral-50 dark:bg-[#111113] border border-neutral-200 dark:border-neutral-800 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-500 transition-all text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
               />
               <button
                 type="submit"
@@ -769,7 +769,7 @@ export function App() {
                 className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shrink-0 shadow-xs ${
                   reloaded
                     ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-                    : 'bg-neutral-900 hover:bg-black dark:bg-neutral-100 dark:hover:bg-white text-white dark:text-neutral-900'
+                    : 'bg-neutral-900 hover:bg-black dark:bg-neutral-200 dark:hover:bg-white text-white dark:text-neutral-950'
                 } disabled:opacity-50`}
                 title="Carregar e recarregar os dados mais recentes do Gist (ignora cache)"
               >
@@ -830,17 +830,17 @@ export function App() {
           />
         ) : loading && templates.length === 0 ? (
           <div className="min-h-[50vh] flex flex-col items-center justify-center text-neutral-500 dark:text-neutral-400 gap-3">
-            <Loader2 className="w-7 h-7 animate-spin text-neutral-900 dark:text-neutral-100" />
+            <Loader2 className="w-7 h-7 animate-spin text-neutral-900 dark:text-neutral-300" />
             <p className="text-xs font-medium">Carregando templates do Gist...</p>
           </div>
         ) : errorMsg && templates.length === 0 ? (
-          <div className="min-h-[50vh] flex flex-col items-center justify-center max-w-md mx-auto text-center gap-3 bg-white dark:bg-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs">
+          <div className="min-h-[50vh] flex flex-col items-center justify-center max-w-md mx-auto text-center gap-3 bg-white dark:bg-[#161618] p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs">
             <AlertCircle className="w-8 h-8 text-red-500" />
-            <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-100">Não foi possível carregar o Gist</h3>
+            <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-200">Não foi possível carregar o Gist</h3>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">{errorMsg}</p>
             <button
               onClick={() => fetchTemplates(OFFICIAL_GIST_ID)}
-              className="mt-2 text-xs font-semibold px-4 py-2 bg-neutral-900 hover:bg-black dark:bg-neutral-100 dark:hover:bg-white text-white dark:text-neutral-900 rounded-xl transition-all"
+              className="mt-2 text-xs font-semibold px-4 py-2 bg-neutral-900 hover:bg-black dark:bg-neutral-200 dark:hover:bg-white text-white dark:text-neutral-950 rounded-xl transition-all"
             >
               Carregar Gist Base
             </button>
@@ -876,8 +876,8 @@ export function App() {
                       onClick={() => setActiveTemplateId(t.id)}
                       className={`text-xs px-3.5 py-1.5 rounded-lg border font-medium whitespace-nowrap transition-all ${
                         t.id === activeTemplate.id
-                          ? 'bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-100 dark:border-neutral-100 dark:text-neutral-900 shadow-xs'
-                          : 'bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800'
+                          ? 'bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-950 shadow-xs'
+                          : 'bg-white dark:bg-[#161618] border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/80 dark:hover:text-neutral-200'
                       }`}
                     >
                       {t.titulo}
@@ -889,11 +889,11 @@ export function App() {
               {/* Layout em Tela Dividida (Split Screen) */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 {/* Lado Esquerdo: Campos Automáticos */}
-                <div className="lg:col-span-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-5">
-                  <div className="flex items-center justify-between border-b border-neutral-100 dark:border-neutral-800 pb-3">
+                <div className="lg:col-span-6 bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-5">
+                  <div className="flex items-center justify-between border-b border-neutral-100 dark:border-neutral-800/80 pb-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h2 className="font-semibold text-neutral-900 dark:text-neutral-100 text-sm">
+                        <h2 className="font-semibold text-neutral-900 dark:text-neutral-200 text-sm">
                           {activeTemplate.titulo}
                         </h2>
                         {variables.some(v => Boolean(v.error)) && (
@@ -910,7 +910,7 @@ export function App() {
 
                     <button
                       onClick={handleClearFields}
-                      className="flex items-center gap-1 text-[11px] text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 px-2 py-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                      className="flex items-center gap-1 text-[11px] text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 px-2 py-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
                       title="Limpar todos os campos"
                     >
                       <RotateCcw className="w-3 h-3" />
@@ -1077,16 +1077,16 @@ export function App() {
                 </div>
 
                 {/* Lado Direito: Live Preview do Prompt */}
-                <div className="lg:col-span-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs flex flex-col sticky top-20">
-                  <div className="flex items-center justify-between border-b border-neutral-100 dark:border-neutral-800 pb-3 mb-4">
-                    <span className="font-semibold text-neutral-900 dark:text-neutral-100 text-sm flex items-center gap-1.5">
-                      <Sparkles className="w-4 h-4 text-neutral-800 dark:text-neutral-200" />
+                <div className="lg:col-span-6 bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs flex flex-col sticky top-20">
+                  <div className="flex items-center justify-between border-b border-neutral-100 dark:border-neutral-800/80 pb-3 mb-4">
+                    <span className="font-semibold text-neutral-900 dark:text-neutral-200 text-sm flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-neutral-800 dark:text-neutral-300" />
                       Prompt Gerado
                     </span>
 
                     <div className="flex items-center gap-3">
                       <label 
-                        className="flex items-center gap-1.5 text-xs text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white cursor-pointer select-none bg-neutral-50 dark:bg-neutral-800 px-2 py-1 rounded-md border border-neutral-200 dark:border-neutral-700 transition-colors"
+                        className="flex items-center gap-1.5 text-xs text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 cursor-pointer select-none bg-neutral-50 dark:bg-[#111113] px-2 py-1 rounded-md border border-neutral-200 dark:border-neutral-800 transition-colors"
                         title="Quando ativado, seções e campos deixados em branco não aparecem no prompt final"
                       >
                         <input
@@ -1101,7 +1101,7 @@ export function App() {
                               // ignore
                             }
                           }}
-                          className="w-3.5 h-3.5 rounded text-neutral-900 dark:text-neutral-100 border-neutral-300 dark:border-neutral-600 focus:ring-0 cursor-pointer accent-neutral-900 dark:accent-neutral-100"
+                          className="w-3.5 h-3.5 rounded text-neutral-900 dark:text-neutral-200 border-neutral-300 dark:border-neutral-600 focus:ring-0 cursor-pointer accent-neutral-900 dark:accent-neutral-200"
                         />
                         <span className="text-[11px] font-medium">Omitir vazios</span>
                       </label>
@@ -1113,21 +1113,21 @@ export function App() {
                   </div>
 
                   {/* Caixa de Texto do Prompt */}
-                  <div className="min-h-[340px] max-h-[520px] overflow-y-auto bg-neutral-950 text-neutral-100 font-mono text-xs rounded-xl p-4 leading-relaxed border border-neutral-800 select-text selection:bg-white selection:text-neutral-950">
+                  <div className="min-h-[340px] max-h-[520px] overflow-y-auto bg-neutral-950 dark:bg-[#111113] text-neutral-200 dark:text-neutral-300 font-mono text-xs rounded-xl p-4 leading-relaxed border border-neutral-800 select-text selection:bg-white selection:text-neutral-950">
                     <pre className="whitespace-pre-wrap break-words font-mono selection:bg-white selection:text-neutral-950">
                       {assembledPrompt || '// Preencha os campos ao lado para visualizar o prompt...'}
                     </pre>
                   </div>
 
                   {/* Botão Copiar */}
-                  <div className="pt-4 mt-3 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-end">
+                  <div className="pt-4 mt-3 border-t border-neutral-100 dark:border-neutral-800/80 flex items-center justify-end">
                     <button
                       type="button"
                       onClick={handleCopy}
                       className={`flex items-center gap-2 px-5 py-2.5 text-xs font-semibold rounded-xl transition-all shadow-xs ${
                         copied
                           ? 'bg-green-600 text-white hover:bg-green-700'
-                          : 'bg-neutral-900 hover:bg-black dark:bg-neutral-100 dark:hover:bg-white text-white dark:text-neutral-900'
+                          : 'bg-neutral-900 hover:bg-black dark:bg-neutral-200 dark:hover:bg-white text-white dark:text-neutral-950'
                       }`}
                     >
                       {copied ? (
@@ -1151,14 +1151,14 @@ export function App() {
       </main>
 
       {/* Rodapé Simples */}
-      <footer className="border-t border-neutral-200 dark:border-neutral-800 py-4 text-center text-xs text-neutral-400 dark:text-neutral-500 bg-white dark:bg-neutral-950 transition-colors">
+      <footer className="border-t border-neutral-200 dark:border-neutral-800/80 py-4 text-center text-xs text-neutral-400 dark:text-neutral-500 bg-white dark:bg-[#141416] transition-colors">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p>© {new Date().getFullYear()} PromptCraft — Simples, Direto &amp; 100% Gist.</p>
           <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={() => handleTabChange(activeTab === 'guide' ? 'generator' : 'guide')}
-              className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 underline flex items-center gap-1 transition-colors"
+              className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 underline flex items-center gap-1 transition-colors"
             >
               <BookOpen className="w-3 h-3" />
               <span>{activeTab === 'guide' ? 'Ir para o Gerador' : 'Guia de Sintaxe do Gist'}</span>
@@ -1167,7 +1167,7 @@ export function App() {
               href={currentGistUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 underline flex items-center gap-1 transition-colors"
+              className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 underline flex items-center gap-1 transition-colors"
             >
               <span>Ver Gist no GitHub</span>
               <ExternalLink className="w-3 h-3" />
