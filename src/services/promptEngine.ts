@@ -24,13 +24,48 @@ export function cleanupEmptySections(text: string): string {
   // 2. Remove linhas de lista com labels vazios (ex: "- **Filtro:** " ou "- Label: ")
   current = current.replace(/(?:^|\n)\s*[-*•]\s*(?:\*\*[^*]+\*\*:?|[^\n:]+:)\s*(?=(?:\n|$))/g, '');
 
-  // 3. Remove marcadores de lista solitários (ex: "- " ou "* ")
-  current = current.replace(/(?:^|\n)\s*[-*•]\s*(?=(?:\n|$))/g, '');
+  // 3. Remove marcadores de lista solitários (ex: "- ", "* " ou "1. ")
+  current = current.replace(/(?:^|\n)\s*(?:\d+[.)]|[-*•])\s*(?=(?:\n|$))/g, '');
 
   // 4. Normaliza quebras de linha acumuladas (3 ou mais viram 2)
   current = current.replace(/\n{3,}/g, '\n\n').trim();
 
   return current;
+}
+
+/**
+ * Normaliza e renumera sequencialmente listas numeradas (1., 2., 3.) em markdown,
+ * garantindo que mesmo após a exclusão de itens por condicionais, a lista comece em 1
+ * e não tenha saltos na contagem.
+ */
+export function normalizeOrderedLists(text: string): string {
+  const lines = text.split('\n');
+  let inList = false;
+  let currentIndent = -1;
+  let currentNum = 1;
+  const result: string[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const match = line.match(/^([ \t]*)(\d+)([.)]\s+.*)$/);
+    if (match) {
+      const indent = match[1].length;
+      if (!inList || indent !== currentIndent) {
+        inList = true;
+        currentIndent = indent;
+        currentNum = 1;
+      }
+      result.push(match[1] + currentNum + match[3]);
+      currentNum++;
+    } else {
+      inList = false;
+      currentIndent = -1;
+      currentNum = 1;
+      result.push(line);
+    }
+  }
+
+  return result.join('\n');
 }
 
 export function isValueFilled(val: unknown): boolean {
@@ -170,11 +205,11 @@ export function interpolatePrompt(
   let result = templatePrompt;
 
   // 1. Processa blocos condicionais explícitos {{#if var}}...{{/if}}
-  // Captura quebra de linha, espaços e marcador de lista (- * •) antes do if:
+  // Captura quebra de linha, espaços e marcadores de lista (- * + • ou 1. 2. 1) etc.) antes do if:
   // se o if for ignorado, remove o marcador e a quebra de linha anterior
   result = result.replace(
-    /((?:^|\r?\n)[ \t]*(?:[-*•][ \t]*)?)\{\{#if\s+([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/if\}\}/gi,
-    (_, prefix, key, content) => {
+    /((?:^|\r?\n)[ \t]*(?:(?:\d+[.)]|[-*+•])[ \t]*)?)?\{\{#if\s+([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/if\}\}/gi,
+    (_, prefix = '', key, content) => {
       const val = values[key];
       if (isValueFilled(val)) {
         return prefix + content;
@@ -185,8 +220,8 @@ export function interpolatePrompt(
 
   // 2. Processa blocos condicionais simplificados {{#var}}...{{/var}}
   result = result.replace(
-    /((?:^|\r?\n)[ \t]*(?:[-*•][ \t]*)?)\{\{#([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/\2\}\}/gi,
-    (_, prefix, key, content) => {
+    /((?:^|\r?\n)[ \t]*(?:(?:\d+[.)]|[-*+•])[ \t]*)?)?\{\{#([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/\2\}\}/gi,
+    (_, prefix = '', key, content) => {
       const val = values[key];
       if (isValueFilled(val)) {
         return prefix + content;
@@ -257,6 +292,9 @@ export function interpolatePrompt(
   } else {
     result = result.replace(/\n{3,}/g, '\n\n').trim();
   }
+
+  // 5. Renumera sequencialmente listas ordenadas (1., 2., 3.) caso itens tenham sido omitidos
+  result = normalizeOrderedLists(result);
 
   return result;
 }

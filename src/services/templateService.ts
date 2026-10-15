@@ -163,73 +163,37 @@ export const templateService = {
       throw new Error('Nenhum arquivo encontrado no Gist informado.');
     }
 
-    // 1. Ordem de prioridade para encontrar o arquivo de templates no Gist:
-    // a) promptcraft.md (nome explícito e oficial para o PromptCraft, evitando qualquer conflito)
-    // b) templates.md (nome padrão clássico)
-    // c) Qualquer outro arquivo .md que não seja readme.md
-    // d) Qualquer arquivo .md
+    // 1. Procura exclusivamente pelo arquivo oficial promptcraft.md no Gist
     const promptcraftMd = fileList.find(f => f.filename?.toLowerCase() === 'promptcraft.md');
-    const templatesMd = fileList.find(f => f.filename?.toLowerCase() === 'templates.md');
-    const cleanMd = fileList.find(f => f.filename?.endsWith('.md') && f.filename?.toLowerCase() !== 'readme.md');
-    const anyMd = fileList.find(f => f.filename?.endsWith('.md'));
-
-    const mdFile = promptcraftMd || templatesMd || cleanMd || anyMd;
-    if (mdFile) {
-      let content = mdFile.content;
-      if (!content && mdFile.raw_url) {
-        try {
-          const rawRes = await fetch(`${mdFile.raw_url}${mdFile.raw_url.includes('?') ? '&' : '?'}_t=${Date.now()}`);
-          if (rawRes.ok) {
-            content = await rawRes.text();
-          }
-        } catch {
-          // ignore
-        }
-      }
-
-      if (content) {
-        const parsedMd = parseMarkdownTemplates(content);
-        if (parsedMd.length > 0) {
-          try {
-            localStorage.setItem(`promptcraft_gist_${gistId}`, JSON.stringify(parsedMd));
-          } catch {
-            // ignore
-          }
-          return parsedMd;
-        }
-      }
+    if (!promptcraftMd) {
+      throw new Error('Arquivo "promptcraft.md" não encontrado no Gist informado. Certifique-se de que o arquivo no seu Gist se chama exatamente "promptcraft.md".');
     }
 
-    // 2. Se for arquivo JSON (.json)
-    const jsonFile = fileList.find(f => f.filename?.endsWith('.json'));
-    if (jsonFile && jsonFile.content) {
+    let content = promptcraftMd.content;
+    if (!content && promptcraftMd.raw_url) {
       try {
-        const parsedJson = JSON.parse(jsonFile.content);
-        const templates = normalizeTemplates(parsedJson);
-        try {
-          localStorage.setItem(`promptcraft_gist_${gistId}`, JSON.stringify(templates));
-        } catch {
-          // ignore
+        const rawRes = await fetch(`${promptcraftMd.raw_url}${promptcraftMd.raw_url.includes('?') ? '&' : '?'}_t=${Date.now()}`);
+        if (rawRes.ok) {
+          content = await rawRes.text();
         }
-        return templates;
-      } catch (err: any) {
-        throw new Error(`Erro de sintaxe no JSON: ${err.message}`);
-      }
-    }
-
-    // 3. Fallback: tenta ler o primeiro arquivo como Markdown
-    const fallbackFile = fileList[0];
-    if (fallbackFile && fallbackFile.content) {
-      const templates = parseMarkdownTemplates(fallbackFile.content);
-      try {
-        localStorage.setItem(`promptcraft_gist_${gistId}`, JSON.stringify(templates));
       } catch {
         // ignore
       }
-      return templates;
     }
 
-    throw new Error('Nenhum conteúdo legível encontrado no Gist informado.');
+    if (content) {
+      const parsedMd = parseMarkdownTemplates(content);
+      if (parsedMd.length > 0) {
+        try {
+          localStorage.setItem(`promptcraft_gist_${gistId}`, JSON.stringify(parsedMd));
+        } catch {
+          // ignore
+        }
+        return parsedMd;
+      }
+    }
+
+    throw new Error('O arquivo "promptcraft.md" está vazio ou não contém templates válidos.');
   },
 
   /**

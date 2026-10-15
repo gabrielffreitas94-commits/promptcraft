@@ -221,7 +221,7 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
               Nomeie como <code className="bg-neutral-100 px-1 py-0.5 rounded text-[11px]">promptcraft.md</code>
             </h3>
             <p className="text-xs text-neutral-500 leading-relaxed">
-              No campo de nome do arquivo, coloque <strong className="text-neutral-800">promptcraft.md</strong> (ou <strong className="text-neutral-800">templates.md</strong>) e escreva seus templates usando títulos <code className="font-mono bg-neutral-100 px-1 rounded text-[11px]">#</code> e campos <code className="font-mono bg-neutral-100 px-1 rounded text-[11px]">{'{{campo:tipo}}'}</code>.
+              No campo de nome do arquivo, digite obrigatoriamente <strong className="text-neutral-800">promptcraft.md</strong> e escreva seus templates usando títulos <code className="font-mono bg-neutral-100 px-1 rounded text-[11px]">#</code> e campos <code className="font-mono bg-neutral-100 px-1 rounded text-[11px]">{'{{campo:tipo}}'}</code>.
             </p>
           </div>
 
@@ -401,7 +401,7 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
 
         <div className="flex items-center justify-between pt-2">
           <p className="text-xs text-neutral-400">
-            Copie o código acima, cole no seu <code className="font-mono text-neutral-700 bg-neutral-100 px-1 py-0.5 rounded">promptcraft.md</code> (ou <code className="font-mono text-neutral-700 bg-neutral-100 px-1 py-0.5 rounded">templates.md</code>) no GitHub Gist e clique em publicar!
+            Copie o código acima, cole no seu <code className="font-mono text-neutral-700 bg-neutral-100 px-1 py-0.5 rounded">promptcraft.md</code> no GitHub Gist e clique em publicar!
           </p>
 
           {onGoToGenerator && (

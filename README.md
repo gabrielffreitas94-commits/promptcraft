@@ -8,7 +8,7 @@
 ## 🌐 Links Rápidos
 
 * 🚀 **Site no Ar:** [https://gabrielffreitas94-commits.github.io/promptcraft/](https://gabrielffreitas94-commits.github.io/promptcraft/)
-* 📝 **Gist de Templates Oficial:** [templates.md no GitHub Gist](https://gist.github.com/gabrielffreitas94-commits/e8c42b6d9f15a24dd7326af3152902c0)
+* 📝 **Gist de Templates Oficial:** [promptcraft.md no GitHub Gist](https://gist.github.com/gabrielffreitas94-commits/e8c42b6d9f15a24dd7326af3152902c0)
 * 📂 **Repositório do Projeto:** [github.com/gabrielffreitas94-commits/promptcraft](https://github.com/gabrielffreitas94-commits/promptcraft)
 
 ---
@@ -18,10 +18,10 @@
 No PromptCraft, **não existe nenhum template chumbado no código-fonte**.  
 O site funciona como uma **engine executora minimalista**:
 
-1. **Templates em Markdown Puro:** Toda a lógica dos seus templates vive em um GitHub Gist público nomeado preferencialmente como `promptcraft.md` (ou o clássico `templates.md`).
+1. **Templates em Markdown Puro:** Toda a lógica dos seus templates vive em um GitHub Gist público nomeado obrigatoriamente como `promptcraft.md`.
 2. **Zero Deploy:** Para criar novos templates, renomear campos ou mudar o texto do prompt, **você não precisa fazer commit, build ou deploy**. Basta editar o Gist no GitHub e clicar em **Carregar** no site.
 3. **Detecção Automática:** Qualquer `{{palavra:tipo}}` no Markdown vira automaticamente um campo de digitação na interface.
-4. **Omissão Inteligente de Vazios e Marcadores:** Seções e marcadores cujos campos você não preencheu somem sozinhos do prompt final. Blocos condicionais `{{#if}}` precedidos por marcadores de lista (`- `, `* `) removem o marcador automaticamente caso a condição seja falsa.
+4. **Omissão Inteligente de Vazios e Marcadores:** Seções e marcadores cujos campos você não preencheu somem sozinhos do prompt final. Blocos condicionais `{{#if}}` precedidos por marcadores de lista (`- `, `1. `) removem o marcador e a quebra de linha automaticamente caso a condição seja falsa.
 5. **Recarregamento Anti-Cache:** Ao clicar em **Carregar**, o sistema força a busca da versão mais recente na API do GitHub, ignorando o cache do navegador.
 6. **Persistência Local (LocalStorage):** Seus rascunhos digitados, o último Gist conectado e suas preferências ficam salvos no seu próprio navegador.
 
@@ -31,7 +31,7 @@ O site funciona como uma **engine executora minimalista**:
 
 ### 1. Criando o Gist no GitHub
 1. Acesse [https://gist.github.com](https://gist.github.com).
-2. No nome do arquivo, digite `promptcraft.md` (ou `templates.md`). O PromptCraft prioriza `promptcraft.md` para evitar qualquer conflito com outros arquivos Markdown.
+2. No nome do arquivo, digite obrigatoriamente `promptcraft.md`. O PromptCraft utiliza esse arquivo exclusivo para evitar qualquer conflito com outros arquivos Markdown.
 3. Escreva seus templates em Markdown puro seguindo as regras abaixo.
 4. Selecione obrigatoriamente **Create public gist**.
 5. Copie o ID ou a URL do Gist e cole no campo de busca do PromptCraft.
