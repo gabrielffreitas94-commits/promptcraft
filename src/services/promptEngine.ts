@@ -48,20 +48,27 @@ export function interpolatePrompt(
   let result = templatePrompt;
 
   // 1. Processa blocos condicionais explícitos {{#if var}}...{{/if}}
+  // Captura quebra de linha e espaços antes do if: se o if for ignorado, remove a quebra de linha anterior
   result = result.replace(
-    /\{\{#if\s+([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/if\}\}/gi,
-    (_, key, content) => {
+    /((?:\r?\n)?[ \t]*)\{\{#if\s+([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/if\}\}/gi,
+    (_, prefix, key, content) => {
       const val = values[key]?.trim();
-      return val ? content : '';
+      if (val) {
+        return prefix + content;
+      }
+      return '';
     }
   );
 
   // 2. Processa blocos condicionais simplificados {{#var}}...{{/var}}
   result = result.replace(
-    /\{\{#([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/\1\}\}/gi,
-    (_, key, content) => {
+    /((?:\r?\n)?[ \t]*)\{\{#([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/\2\}\}/gi,
+    (_, prefix, key, content) => {
       const val = values[key]?.trim();
-      return val ? content : '';
+      if (val) {
+        return prefix + content;
+      }
+      return '';
     }
   );
 
