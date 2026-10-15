@@ -414,11 +414,19 @@ export function App() {
                 <div className="lg:col-span-6 bg-white border border-neutral-200 rounded-2xl p-5 shadow-xs space-y-5">
                   <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
                     <div>
-                      <h2 className="font-semibold text-neutral-900 text-sm">
-                        {activeTemplate.titulo}
-                      </h2>
+                      <div className="flex items-center gap-2">
+                        <h2 className="font-semibold text-neutral-900 text-sm">
+                          {activeTemplate.titulo}
+                        </h2>
+                        {variables.some(v => Boolean(v.error)) && (
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200 flex items-center gap-1 shrink-0">
+                            <AlertCircle className="w-3 h-3 text-red-600" />
+                            <span>Corrigir tipos no Gist</span>
+                          </span>
+                        )}
+                      </div>
                       <p className="text-[11px] text-neutral-400 mt-0.5">
-                        {variables.length} variáveis detectadas automaticamente
+                        {variables.length} variáveis detectadas
                       </p>
                     </div>
 
@@ -434,21 +442,58 @@ export function App() {
 
                   {/* Campos gerados dinamicamente para cada {{variavel}} */}
                   <div className="space-y-4">
-                    {variables.map(v => (
-                      v.type === 'list' ? (
-                        <ListFieldInput
-                          key={v.key}
-                          label={v.label}
-                          variableKey={v.key}
-                          items={Array.isArray(fieldValues[v.key]) ? fieldValues[v.key] : []}
-                          onChange={(newItems) => handleValueChange(v.key, newItems)}
-                        />
-                      ) : (
+                    {variables.map(v => {
+                      if (v.error) {
+                        return (
+                          <div 
+                            key={v.key} 
+                            className="p-3.5 bg-red-50/80 border border-red-200 rounded-xl space-y-2 shadow-2xs"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5 text-xs font-semibold text-red-900">
+                                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                                <span>{v.label}</span>
+                                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-100 text-red-800 border border-red-200">
+                                  tipo inválido
+                                </span>
+                              </div>
+                              <span className="font-mono text-[10px] text-red-500 font-semibold">
+                                {v.rawType ? `{{${v.key}:${v.rawType}}}` : `{{${v.key}}}`}
+                              </span>
+                            </div>
+                            <p className="text-xs text-red-700 leading-relaxed font-sans">
+                              {v.error}
+                            </p>
+                            <div className="text-[11px] text-red-700 font-mono bg-white/80 px-2.5 py-1.5 rounded-lg border border-red-200">
+                              💡 Corrija no Gist para: <strong>{`{{${v.key}:textarea}}`}</strong> ou <strong>{`{{${v.key}:list}}`}</strong>
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      if (v.type === 'list') {
+                        return (
+                          <ListFieldInput
+                            key={v.key}
+                            label={v.label}
+                            variableKey={v.key}
+                            items={Array.isArray(fieldValues[v.key]) ? fieldValues[v.key] : []}
+                            onChange={(newItems) => handleValueChange(v.key, newItems)}
+                          />
+                        );
+                      }
+
+                      return (
                         <div key={v.key} className="space-y-1.5">
                           <label className="text-xs font-semibold text-neutral-800 flex items-center justify-between">
-                            <span>{v.label}</span>
+                            <div className="flex items-center gap-1.5">
+                              <span>{v.label}</span>
+                              <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 text-neutral-600 border border-neutral-200">
+                                texto
+                              </span>
+                            </div>
                             <span className="font-mono text-[10px] text-neutral-400 font-normal">
-                              {`{{${v.key}}}`}
+                              {`{{${v.key}:textarea}}`}
                             </span>
                           </label>
                           <textarea
@@ -459,12 +504,12 @@ export function App() {
                             className="w-full text-xs font-sans bg-neutral-50 border border-neutral-200 rounded-xl p-3 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-neutral-900 transition-all resize-y"
                           />
                         </div>
-                      )
-                    ))}
+                      );
+                    })}
 
                     {variables.length === 0 && (
                       <p className="text-xs text-neutral-400 text-center py-6">
-                        Nenhuma variável identificada no template (use <code className="font-mono bg-neutral-100 px-1 py-0.5 rounded">{'{{variavel}}'}</code> no texto do Gist).
+                        Nenhuma variável identificada no template (use <code className="font-mono bg-neutral-100 px-1 py-0.5 rounded">{'{{variavel:tipo}}'}</code> no texto do Gist).
                       </p>
                     )}
                   </div>

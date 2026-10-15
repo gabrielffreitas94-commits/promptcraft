@@ -43,8 +43,9 @@ O site funciona como uma **engine executora minimalista**:
 | Recurso | Como Escrever no Markdown | O que o Site Faz |
 | :--- | :--- | :--- |
 | **Criar Novo Template** | `# Título do Template` | Cria automaticamente uma nova aba/botão no topo do site. |
-| **Campo de Texto Multilinha** | `{{campo}}` ou `{{campo:textarea}}` | Cria uma caixa de texto (*textarea*) expansível. Este é o tipo padrão. |
-| **Campo de Lista** | `{{regras:list}}` | Cria um gerenciador de lista interativo (adicionar com Enter, badges e botão de remover). No prompt, é interpolado como `- item 1\n- item 2`. |
+| **Campo de Texto (Obrigatório)** | `{{campo:textarea}}` | Cria uma caixa de texto (*textarea*) multilinha expansível. |
+| **Campo de Lista (Obrigatório)** | `{{regras:list}}` | Cria um gerenciador de lista interativo (adicionar com Enter, badges e botão de remover). No prompt, é interpolado como `- item 1\n- item 2`. |
+| **Erro de Tipo Obrigatório** | `{{campo}}` ou `{{campo:invalido}}` | Se o tipo for omitido ou não suportado, o site **exibe um card de erro explícito no campo** e no preview indicando a correção necessária. |
 | **Omitir Campo Vazio** | *(automático)* | Se o campo ou a lista estiver vazia, o título da seção (`### Título`) e o campo desaparecem do prompt final. |
 | **Bloco Condicional Manual** | `{{#if campo}}...{{/if}}` | *(Opcional)* Exibe o bloco apenas se o campo (ou lista) for preenchido. Se ignorado, não gera quebra de linha extra. |
 | **Separador Visual** | `---` | Linha divisória opcional entre múltiplos templates para organizar o arquivo. |

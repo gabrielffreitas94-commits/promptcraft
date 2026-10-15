@@ -93,12 +93,19 @@ export function interpolatePrompt(
     }
   );
 
-  // 3. Substitui {{variavel}} ou {{variavel:tipo}} pelo valor correspondente
+  // 3. Substitui {{variavel:tipo}} pelo valor correspondente ou erro explícito se inválido
   result = result.replace(
     /(^[ \t]*[-*•][ \t]*)?\{\{([a-zA-Z0-9_-]+)(?::([a-zA-Z0-9_-]+))?\}\}/gm,
     (_, bulletPrefix, key, type) => {
+      if (!type) {
+        return `[ERRO: Campo {{${key}}} requer tipo explícito (ex: {{${key}:textarea}} ou {{${key}:list}})]`;
+      }
+      const lowerType = type.toLowerCase();
+      if (lowerType !== 'textarea' && lowerType !== 'list') {
+        return `[ERRO: Tipo ':${type}' em {{${key}}} não suportado. Use 'textarea' ou 'list']`;
+      }
       const val = values[key];
-      const isList = type === 'list' || Array.isArray(val);
+      const isList = lowerType === 'list' || Array.isArray(val);
       if (isList) {
         return formatFieldValue(val);
       }

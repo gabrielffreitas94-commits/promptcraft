@@ -4,20 +4,25 @@ export interface SimpleTemplate {
   prompt: string;
 }
 
-export type FieldType = 'textarea' | 'list';
+export const SUPPORTED_FIELD_TYPES = ['textarea', 'list'] as const;
+export type FieldType = typeof SUPPORTED_FIELD_TYPES[number];
 
 export interface ExtractedVariable {
   key: string;
   label: string;
-  type: FieldType;
+  type?: FieldType;
+  rawType?: string;
+  error?: string;
 }
 
 /**
- * Extrai todas as variáveis {{nome_da_variavel}} ou {{nome_da_variavel:tipo}} de um prompt
+ * Extrai e valida todas as variáveis {{nome_da_variavel:tipo}} de um prompt.
+ * O tipo explícito é OBRIGATÓRIO (ex: :textarea ou :list).
  */
 export function extractVariables(promptText: string): ExtractedVariable[] {
   if (!promptText) return [];
-  // Captura {{#if var}}, {{#var}}, {{var}} e {{var:tipo}}
+
+  // Captura {{#if var}}, {{#var}}, e {{var:tipo}} ou {{var}}
   const matches = promptText.matchAll(
     /\{\{(?:#(?:if\s+)?([a-zA-Z0-9_-]+)|([a-zA-Z0-9_-]+)(?::([a-zA-Z0-9_-]+))?)\}\}/g
   );
@@ -28,19 +33,53 @@ export function extractVariables(promptText: string): ExtractedVariable[] {
     const key = match[1] || match[2];
     if (!key) continue;
 
-    const rawType = (match[3] || '').toLowerCase();
-    const type: FieldType = rawType === 'list' ? 'list' : 'textarea';
+    // Se for apenas tag condicional {{#if var}}, registra aviso se ainda não foi registrada
+    if (isConditional) {
+      if (!varsMap.has(key)) {
+        varsMap.set(key, {
+          key,
+          label: humanizeLabel(key),
+          error: `Tipo obrigatório ausente. Especifique {{${key}:textarea}} ou {{${key}:list}} no template.`,
+        });
+      }
+      continue;
+    }
+
+    const rawType = match[3];
+
+    let type: FieldType | undefined;
+    let error: string | undefined;
+
+    if (!rawType) {
+      error = `Tipo obrigatório ausente. Use {{${key}:textarea}} ou {{${key}:list}}.`;
+    } else {
+      const lower = rawType.toLowerCase();
+      if (lower === 'textarea' || lower === 'list') {
+        type = lower as FieldType;
+      } else {
+        error = `Tipo ':${rawType}' não suportado. Tipos válidos: 'textarea', 'list'.`;
+      }
+    }
 
     if (!varsMap.has(key)) {
       varsMap.set(key, {
         key,
         label: humanizeLabel(key),
         type,
+        rawType,
+        error,
       });
-    } else if (!isConditional && rawType) {
-      // Se apareceu antes sem tipo ou como condicional e agora apareceu com tipo explícito
+    } else {
       const existing = varsMap.get(key)!;
-      existing.type = type;
+      // Se esta ocorrência tem um tipo válido, atualiza
+      if (type) {
+        existing.type = type;
+        existing.rawType = rawType;
+        existing.error = undefined;
+      } else if (!existing.type && error) {
+        existing.rawType = rawType;
+        existing.error = error;
+      }
     }
   }
 
