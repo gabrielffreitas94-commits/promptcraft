@@ -62,29 +62,42 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-100 border border-neutral-200 text-xs">
           <GitFork className="w-3.5 h-3.5 text-neutral-600" />
           <span className="text-neutral-500 font-medium">Gist:</span>
-          <span className="text-neutral-900 font-semibold truncate max-w-[160px]">
-            {currentPackage?.name || 'Carregando...'}
-          </span>
-
-          {/* Link para editar o Gist direto no GitHub */}
-          <a
-            href={currentGistUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-1 text-[11px] text-blue-600 hover:text-blue-800 font-medium flex items-center gap-0.5 transition-colors"
-            title="Abrir e editar este Gist no GitHub"
-          >
-            <span>Editar Gist</span>
-            <ExternalLink className="w-3 h-3" />
-          </a>
-
-          <button
-            onClick={onOpenSourceModal}
-            className="ml-1 text-[11px] text-neutral-600 underline hover:text-black font-medium transition-colors"
-            title="Conectar outro Gist"
-          >
-            Trocar
-          </button>
+          {currentPackage ? (
+            <>
+              <span className="text-neutral-900 font-semibold truncate max-w-[160px]">
+                {currentPackage.name}
+              </span>
+              {currentGistUrl && (
+                <a
+                  href={currentGistUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-1 text-[11px] text-blue-600 hover:text-blue-800 font-medium flex items-center gap-0.5 transition-colors"
+                  title="Abrir e editar este Gist no GitHub"
+                >
+                  <span>Editar Gist</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+              <button
+                onClick={onOpenSourceModal}
+                className="ml-1 text-[11px] text-neutral-600 underline hover:text-black font-medium transition-colors"
+                title="Conectar outro Gist"
+              >
+                Trocar
+              </button>
+            </>
+          ) : (
+            <>
+              <span className="text-neutral-500 italic">Nenhum Gist conectado</span>
+              <button
+                onClick={onOpenSourceModal}
+                className="ml-1 text-[11px] font-semibold text-neutral-900 underline hover:text-black transition-colors"
+              >
+                Conectar
+              </button>
+            </>
+          )}
         </div>
 
         {/* Ações principais */}

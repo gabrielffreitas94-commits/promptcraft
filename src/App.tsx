@@ -10,7 +10,7 @@ import { templateService, OFFICIAL_GIST_ID } from './services/templateService';
 import { storageService } from './services/storageService';
 import { interpolateTemplate, formatPromptForAI } from './services/promptEngine';
 import { AIFlavor, GeneratedHistoryItem, Scenario, TemplatePackage } from './types/template';
-import { Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { Loader2, RefreshCw } from 'lucide-react';
 
 export function App() {
   const [currentPackage, setCurrentPackage] = useState<TemplatePackage | null>(null);
@@ -324,17 +324,41 @@ export function App() {
             <Loader2 className="w-8 h-8 animate-spin text-neutral-800" />
             <p className="text-sm font-medium">Carregando templates do GitHub Gist...</p>
           </div>
-        ) : errorMsg && !currentPackage ? (
-          <div className="min-h-[50vh] flex flex-col items-center justify-center max-w-md mx-auto text-center gap-3">
-            <AlertCircle className="w-10 h-10 text-red-500" />
-            <h3 className="font-semibold text-neutral-900 text-base">Falha ao carregar Gist</h3>
-            <p className="text-xs text-neutral-500">{errorMsg}</p>
-            <button
-              onClick={() => initTemplates()}
-              className="mt-2 text-xs font-semibold px-4 py-2 bg-neutral-900 text-white rounded-xl hover:bg-black"
-            >
-              Tentar Novamente
-            </button>
+        ) : !currentPackage ? (
+          <div className="min-h-[55vh] flex flex-col items-center justify-center max-w-lg mx-auto text-center p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-4 animate-fade-in my-8">
+            <div className="w-12 h-12 rounded-2xl bg-neutral-900 text-white flex items-center justify-center mx-auto shadow-md">
+              <RefreshCw className="w-6 h-6 text-neutral-200" />
+            </div>
+            
+            <div className="space-y-1.5">
+              <h3 className="font-semibold text-neutral-900 text-base">
+                Nenhum Gist Conectado no Momento
+              </h3>
+              <p className="text-xs text-neutral-500 leading-relaxed max-w-sm mx-auto">
+                O PromptCraft funciona 100% via GitHub Gist. Conecte um Gist público da comunidade ou use o criador visual integrado para criar o seu.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+              <button
+                onClick={() => setIsSourceModalOpen(true)}
+                className="text-xs font-semibold px-4 py-2.5 bg-neutral-900 hover:bg-black text-white rounded-xl transition-all shadow-xs"
+              >
+                Conectar GitHub Gist
+              </button>
+              <button
+                onClick={() => setIsBuilderModalOpen(true)}
+                className="text-xs font-semibold px-4 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 border border-neutral-200 rounded-xl transition-all"
+              >
+                Criar Template Visualmente
+              </button>
+            </div>
+
+            {errorMsg && errorMsg !== 'NO_GIST_CONFIGURED' && (
+              <p className="text-[11px] text-red-500 bg-red-50 px-3 py-1.5 rounded-lg border border-red-200">
+                {errorMsg}
+              </p>
+            )}
           </div>
         ) : (
           currentPackage &&
@@ -382,14 +406,7 @@ export function App() {
           <div className="flex items-center gap-3 text-[11px] font-mono">
             <span>Hospedado no GitHub Pages</span>
             <span>•</span>
-            <a
-              href="https://gist.github.com/gabrielffreitas94-commits/7ee8786c7a503f114a223bdf7d66dae1"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neutral-600 hover:text-black underline"
-            >
-              Gist Oficial no GitHub
-            </a>
+            <span>Templates 100% via GitHub Gist</span>
           </div>
         </div>
       </footer>

@@ -1,8 +1,8 @@
 import { TemplatePackage } from '../types/template';
 import { storageService } from './storageService';
 
-export const OFFICIAL_GIST_ID = '7ee8786c7a503f114a223bdf7d66dae1';
-export const OFFICIAL_GIST_URL = 'https://gist.github.com/gabrielffreitas94-commits/7ee8786c7a503f114a223bdf7d66dae1';
+export const OFFICIAL_GIST_ID = '';
+export const OFFICIAL_GIST_URL = '';
 
 /**
  * Normaliza qualquer link do GitHub para a URL Raw correspondente
@@ -70,6 +70,9 @@ export const templateService = {
    */
   async loadFromGist(gistInput: string): Promise<TemplatePackage> {
     const rawId = gistInput === 'default' || !gistInput ? OFFICIAL_GIST_ID : gistInput;
+    if (!rawId) {
+      throw new Error('NO_GIST_CONFIGURED');
+    }
     const gistId = extractGistId(rawId);
     
     if (!gistId) {
@@ -152,6 +155,9 @@ export const templateService = {
     onBackgroundUpdate?: (updated: TemplatePackage) => void
   ): Promise<{ data: TemplatePackage; fromCache: boolean }> {
     const effectiveId = !urlOrId || urlOrId === 'default' ? OFFICIAL_GIST_ID : urlOrId;
+    if (!effectiveId) {
+      throw new Error('NO_GIST_CONFIGURED');
+    }
     const cacheKey = `${sourceType}_${effectiveId}`;
     const cached = storageService.getCachedPackage(cacheKey);
 

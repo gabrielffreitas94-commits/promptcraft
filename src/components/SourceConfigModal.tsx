@@ -102,31 +102,35 @@ export const SourceConfigModal: React.FC<SourceConfigModalProps> = ({
           </button>
         </div>
 
-        {/* Gist Oficial em Destaque */}
-        <div className="bg-neutral-50 border border-neutral-200 p-3.5 rounded-xl space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-neutral-900">Gist Oficial Ativo</span>
-            <a
-              href={OFFICIAL_GIST_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[11px] text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium"
+        {/* Gist Oficial em Destaque (se configurado) */}
+        {OFFICIAL_GIST_ID && (
+          <div className="bg-neutral-50 border border-neutral-200 p-3.5 rounded-xl space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-neutral-900">Gist Oficial Ativo</span>
+              {OFFICIAL_GIST_URL && (
+                <a
+                  href={OFFICIAL_GIST_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[11px] text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium"
+                >
+                  <span>Ver no GitHub</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+            </div>
+            <p className="text-[11px] font-mono text-neutral-500 truncate">
+              {OFFICIAL_GIST_ID}
+            </p>
+            <button
+              type="button"
+              onClick={handleLoadOfficialGist}
+              className="text-xs text-neutral-800 hover:text-black font-semibold underline"
             >
-              <span>Ver no GitHub</span>
-              <ExternalLink className="w-3 h-3" />
-            </a>
+              Carregar Gist Oficial
+            </button>
           </div>
-          <p className="text-[11px] font-mono text-neutral-500 truncate">
-            {OFFICIAL_GIST_ID}
-          </p>
-          <button
-            type="button"
-            onClick={handleLoadOfficialGist}
-            className="text-xs text-neutral-800 hover:text-black font-semibold underline"
-          >
-            Carregar Gist Oficial
-          </button>
-        </div>
+        )}
 
         {/* Opções de Fonte */}
         <div className="space-y-3">
@@ -190,14 +194,18 @@ export const SourceConfigModal: React.FC<SourceConfigModalProps> = ({
 
         {/* Rodapé */}
         <div className="flex items-center justify-between pt-3 border-t border-neutral-100">
-          <button
-            type="button"
-            onClick={handleLoadOfficialGist}
-            className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-900"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Restaurar Oficial</span>
-          </button>
+          {OFFICIAL_GIST_ID ? (
+            <button
+              type="button"
+              onClick={handleLoadOfficialGist}
+              className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-900"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Restaurar Oficial</span>
+            </button>
+          ) : (
+            <div />
+          )}
 
           <div className="flex items-center gap-2">
             <button
