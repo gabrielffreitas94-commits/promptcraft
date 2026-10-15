@@ -1,72 +1,58 @@
 # PromptCraft — AI Coding Template Generator ⚡
 
-> **Gerador de prompts estruturados para IA de programação (ChatGPT, Claude, Gemini).**  
-> Arquitetura **100% Client-Side**, hospedagem gratuita no **GitHub Pages** e catálogo de templates **100% descentralizado via GitHub Gist**.
+> **Gerador de prompts estruturados para IA de programação (Claude, ChatGPT, Gemini, DeepSeek).**  
+> Arquitetura **100% Client-Side**, hospedagem no **GitHub Pages** e catálogo de templates **100% descentralizado e editável via GitHub Gist em Markdown puro**.
 
 ---
 
-## 🌐 Site Online
+## 🌐 Links Rápidos
 
-* 🚀 **Acesse o site:** [https://gabrielffreitas94-commits.github.io/promptcraft/](https://gabrielffreitas94-commits.github.io/promptcraft/)
-* 📂 **Código fonte:** [https://github.com/gabrielffreitas94-commits/promptcraft](https://github.com/gabrielffreitas94-commits/promptcraft)
-
----
-
-## 🧠 Como Funciona a Arquitetura 100% Gist (Zero Deploy)
-
-No PromptCraft, **não existe nenhum template embutido ou chumbado no código do site**.  
-O site é apenas uma **engine executora pura**:
-
-1. Toda a lógica de templates, perguntas, campos e textos vive em um **GitHub Gist público**.
-2. O site busca o Gist via API oficial do GitHub em tempo real.
-3. Para criar novos cenários, editar perguntas ou ajustar prompts, **você nunca precisa fazer deploy nem build**. Basta editar o Gist direto no GitHub e o site atualiza instantaneamente para todos os usuários!
-4. Possui cache inteligente **Stale-While-Revalidate (SWR)**: o site abre na hora usando o cache local e busca atualizações silenciosas no Gist em segundo plano.
+* 🚀 **Site no Ar:** [https://gabrielffreitas94-commits.github.io/promptcraft/](https://gabrielffreitas94-commits.github.io/promptcraft/)
+* 📝 **Gist de Templates Oficial:** [templates.md no GitHub Gist](https://gist.github.com/gabrielffreitas94-commits/e8c42b6d9f15a24dd7326af3152902c0)
+* 📂 **Repositório do Projeto:** [github.com/gabrielffreitas94-commits/promptcraft](https://github.com/gabrielffreitas94-commits/promptcraft)
 
 ---
 
-## 📖 Guia: Regras e Estrutura dos Templates em Markdown (`templates.md`)
+## 🧠 Arquitetura Zero-Deploy (100% Gist Driven)
 
-O catálogo de templates usa **Markdown puro (`.md`)**. Nada de JSONs difíceis de ler ou com problemas de quebra de linha.
+No PromptCraft, **não existe nenhum template chumbado no código-fonte**.  
+O site funciona como uma **engine executora minimalista**:
 
-### 1. Como Criar ou Editar no GitHub Gist
-1. Acesse seu Gist no GitHub: [https://gist.github.com](https://gist.github.com)
-2. No nome do arquivo, coloque `templates.md` (ou qualquer `.md`).
-3. Escreva seus templates de forma natural usando `# Título` e `{{variavel}}`.
-4. Salve como **Public Gist**.
-5. Conecte o Gist no site e pronto!
-
----
-
-### 2. Regras de Formatação
-
-1. **Cada Template começa com `# Título`:**
-   O site detecta automaticamente cada `# Nome do Template` como uma aba ou template independente.
-   
-2. **Variáveis Dinâmicas com `{{nome_da_variavel}}`:**
-   Qualquer palavra entre chaves duplas vira automaticamente um campo de preenchimento na interface do site.
-   - Exemplo: `{{filtro_heuristica}}`, `{{escopo}}`, `{{constraints}}`, `{{codigo}}`.
-   
-3. **Pular Linhas e Formatacão Livre:**
-   Como é Markdown puro, você pode pular linhas, usar listas, negrito (`**`), seções (`###`), blocos de código (```` ``` ````) sem se preocupar em quebrar formato nenhum!
-
-4. **Omissão Automática de Campos Vazios (Zero Configuração):**
-   Se você deixar um campo em branco na tela, o site **remove automaticamente o título da seção e o campo**, mantendo o prompt final limpo e sem cabeçalhos vazios. Você pode ligar/desligar essa opção direto pelo botão *"Omitir vazios"* na interface.
-
-5. **Tags Condicionais Opcionais (`{{#if variavel}} ... {{/if}}`):**
-   Se quiser controle exato sobre trechos específicos de texto ou parágrafos condicionais, você pode envolver o texto com:
-   ```markdown
-   {{#if constraints}}
-   ### CONSTRAINTS
-   {{constraints}}
-   {{/if}}
-   ```
-
-6. **Separador Opcional (`---`):**
-   Você pode colocar uma linha divisória `---` entre os templates se desejar para organizar visualmente.
+1. **Templates em Markdown Puro:** Toda a lógica dos seus templates vive em um GitHub Gist público (`templates.md`).
+2. **Zero Deploy:** Para criar novos templates, renomear campos ou mudar o texto do prompt, **você não precisa fazer commit, build ou deploy**. Basta editar o Gist no GitHub e clicar em **Carregar** no site.
+3. **Detecção Automática:** Qualquer `{{palavra}}` no Markdown vira automaticamente um campo de digitação na interface.
+4. **Omissão Inteligente de Vazios:** Seções e marcadores cujos campos você não preencheu somem sozinhos do prompt final, mantendo a saída 100% limpa.
+5. **Recarregamento Anti-Cache:** Ao clicar em **Carregar**, o sistema força a busca da versão mais recente na API do GitHub, ignorando o cache do navegador.
+6. **Persistência Local (LocalStorage):** Seus rascunhos digitados, o último Gist conectado e suas preferências ficam salvos no seu próprio navegador.
 
 ---
 
-### 3. Exemplo Real de `templates.md` (com Múltiplos Templates)
+## 📖 Como Criar e Editar Seus Templates no Gist
+
+### 1. Criando o Gist no GitHub
+1. Acesse [https://gist.github.com](https://gist.github.com).
+2. No nome do arquivo, digite `templates.md`.
+3. Escreva seus templates em Markdown puro seguindo as regras abaixo.
+4. Selecione obrigatoriamente **Create public gist**.
+5. Copie o ID ou a URL do Gist e cole no campo de busca do PromptCraft.
+
+---
+
+### 2. Regras de Sintaxe dos Templates
+
+| Recurso | Como Escrever no Markdown | O que o Site Faz |
+| :--- | :--- | :--- |
+| **Criar Novo Template** | `# Título do Template` | Cria automaticamente uma nova aba/botão no topo do site. |
+| **Criar Novo Campo** | `{{nome_do_campo}}` | Detecta a variável e cria uma caixa de texto (*textarea*) com rótulo formatado. |
+| **Omitir Campo Vazio** | *(automático)* | Se você deixar o campo em branco na tela, o título da seção (`### Título`) e o campo desaparecem do prompt final. |
+| **Bloco Condicional Manual** | `{{#if campo}}...{{/if}}` | *(Opcional)* Exibe o bloco de texto interno apenas se o campo for preenchido. |
+| **Separador Visual** | `---` | Linha divisória opcional entre múltiplos templates para organizar o arquivo. |
+
+---
+
+### 3. Exemplo Real de `templates.md`
+
+Este é o formato exato que alimenta o PromptCraft atualmente:
 
 ```markdown
 # Desenvolvimento com IA
@@ -108,32 +94,50 @@ Você é um Especialista em Clean Code e Arquitetura de Software.
 
 ---
 
-## 🛠️ Como Conectar o Gist ao PromptCraft
+## ⚙️ Funcionalidades da Interface
 
-Assim que criarmos o Gist:
-
-1. **Pela Interface do Site:**  
-   Clique no botão **"Conectar GitHub Gist"** no topo, cole o ID ou a URL do seu Gist e clique em **"Conectar Gist"**. O site salvará a conexão na sua biblioteca local.
-2. **Por Link Direto Compartilhável:**  
-   Basta acessar a URL com o parâmetro:  
-   `https://gabrielffreitas94-commits.github.io/promptcraft/?gist=ID_DO_SEU_GIST`
+* **Abas de Templates:** Alterne entre diferentes templates com apenas um clique.
+* **Preenchimento em Tempo Real:** Conforme você digita nos campos da esquerda, o preview do prompt à direita é atualizado instantaneamente.
+* **Toggle "Omitir vazios":** Permite ligar ou desligar a remoção automática de seções não preenchidas.
+* **Botão "Limpar":** Reseta os campos do template ativo rapidamente.
+* **Botão "Copiar Prompt":** Copia o prompt formatado para a área de transferência com feedback visual.
+* **Compartilhamento por Link Direto:** Adicione `?gist=SEU_GIST_ID` à URL para abrir o site já apontando para um Gist customizado:
+  ```
+  https://gabrielffreitas94-commits.github.io/promptcraft/?gist=e8c42b6d9f15a24dd7326af3152902c0
+  ```
 
 ---
 
 ## 💻 Desenvolvimento Local
 
 ```bash
-# Instalar dependências
+# 1. Clonar o repositório
+git clone https://github.com/gabrielffreitas94-commits/promptcraft.git
+
+# 2. Entrar na pasta
+cd promptcraft
+
+# 3. Instalar dependências
 npm install
 
-# Rodar servidor local
+# 4. Iniciar servidor local
 npm run dev
 
-# Compilar para produção
+# 5. Compilar para produção
 npm run build
 ```
 
 ---
 
+## 🛠️ Stack Tecnológica
+
+* **Framework:** React 18 + TypeScript + Vite
+* **Estilização:** Tailwind CSS (tema limpo, minimalista e responsivo)
+* **Ícones:** Lucide React
+* **CI/CD:** GitHub Actions (Deploy automático no GitHub Pages no push para a branch `main`)
+* **Armazenamento:** GitHub Gist API v3 + LocalStorage (Cache SWR e rascunhos)
+
+---
+
 ## 📄 Licença
-Distribuído sob a licença MIT. Criado para ser compartilhado com a comunidade open source!
+Distribuído sob a licença **MIT**. Sinta-se livre para usar, customizar e compartilhar com a comunidade!
