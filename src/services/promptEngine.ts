@@ -98,11 +98,11 @@ export function interpolatePrompt(
     /(^[ \t]*[-*•][ \t]*)?\{\{([a-zA-Z0-9_-]+)(?::([a-zA-Z0-9_-]+))?\}\}/gm,
     (_, bulletPrefix, key, type) => {
       if (!type) {
-        return `[ERRO: Campo {{${key}}} requer tipo explícito (ex: {{${key}:textarea}} ou {{${key}:list}})]`;
+        return `[ERRO: Campo {{${key}}} requer tipo explícito (formato: {{${key}:tipo}})]`;
       }
       const lowerType = type.toLowerCase();
       if (lowerType !== 'textarea' && lowerType !== 'list') {
-        return `[ERRO: Tipo ':${type}' em {{${key}}} não suportado. Use 'textarea' ou 'list']`;
+        return `[ERRO: Tipo ':${type}' em {{${key}}} não suportado pelo sistema]`;
       }
       const val = values[key];
       const isList = lowerType === 'list' || Array.isArray(val);

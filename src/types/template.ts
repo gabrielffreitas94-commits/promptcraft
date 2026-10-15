@@ -39,7 +39,7 @@ export function extractVariables(promptText: string): ExtractedVariable[] {
         varsMap.set(key, {
           key,
           label: humanizeLabel(key),
-          error: `Tipo obrigatório ausente. Especifique {{${key}:textarea}} ou {{${key}:list}} no template.`,
+          error: `Tipo obrigatório ausente. Especifique o tipo no formato {{${key}:tipo}} no template.`,
         });
       }
       continue;
@@ -51,13 +51,13 @@ export function extractVariables(promptText: string): ExtractedVariable[] {
     let error: string | undefined;
 
     if (!rawType) {
-      error = `Tipo obrigatório ausente. Use {{${key}:textarea}} ou {{${key}:list}}.`;
+      error = `Tipo obrigatório ausente. A variável deve ser declarada como {{${key}:tipo}}.`;
     } else {
       const lower = rawType.toLowerCase();
-      if (lower === 'textarea' || lower === 'list') {
+      if ((SUPPORTED_FIELD_TYPES as readonly string[]).includes(lower)) {
         type = lower as FieldType;
       } else {
-        error = `Tipo ':${rawType}' não suportado. Tipos válidos: 'textarea', 'list'.`;
+        error = `Tipo ':${rawType}' não suportado pelo sistema.`;
       }
     }
 

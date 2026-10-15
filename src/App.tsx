@@ -465,7 +465,7 @@ export function App() {
                               {v.error}
                             </p>
                             <div className="text-[11px] text-red-700 font-mono bg-white/80 px-2.5 py-1.5 rounded-lg border border-red-200">
-                              💡 Corrija no Gist para: <strong>{`{{${v.key}:textarea}}`}</strong> ou <strong>{`{{${v.key}:list}}`}</strong>
+                              💡 Formato obrigatório no Gist: <strong>{`{{${v.key}:tipo}}`}</strong>
                             </div>
                           </div>
                         );
