@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { 
   templateService, 
   OFFICIAL_GIST_ID, 
@@ -113,10 +113,14 @@ interface ListFieldInputProps {
 
 function ListFieldInput({ label, variableKey, items, onChange, numbered = false }: ListFieldInputProps) {
   const [inputValue, setInputValue] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleAddItem = () => {
     const trimmed = inputValue.trim();
-    if (!trimmed) return;
+    if (!trimmed) {
+      inputRef.current?.focus();
+      return;
+    }
     const newItems = trimmed
       .split('\n')
       .map(s => s.trim().replace(/^(?:\d+[.)]|[-*•])\s*/, ''))
@@ -124,6 +128,7 @@ function ListFieldInput({ label, variableKey, items, onChange, numbered = false 
 
     onChange([...items, ...newItems]);
     setInputValue('');
+    inputRef.current?.focus();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -186,6 +191,7 @@ function ListFieldInput({ label, variableKey, items, onChange, numbered = false 
 
       <div className="flex items-center gap-1.5">
         <input
+          ref={inputRef}
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
@@ -196,8 +202,7 @@ function ListFieldInput({ label, variableKey, items, onChange, numbered = false 
         <button
           type="button"
           onClick={handleAddItem}
-          disabled={!inputValue.trim()}
-          className="px-3 py-2 bg-neutral-900 hover:bg-black dark:bg-neutral-100 dark:hover:bg-white text-white dark:text-neutral-900 text-xs font-medium rounded-xl transition-all disabled:opacity-40 shrink-0 flex items-center gap-1 shadow-xs"
+          className="px-3 py-2 bg-neutral-900 hover:bg-black dark:bg-neutral-100 dark:hover:bg-white text-white dark:text-neutral-900 text-xs font-medium rounded-xl transition-all shrink-0 flex items-center gap-1 shadow-xs cursor-pointer"
           title={numbered ? "Adicionar à lista numerada" : "Adicionar à lista"}
         >
           <Plus className="w-3.5 h-3.5" />
