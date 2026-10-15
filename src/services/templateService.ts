@@ -12,6 +12,56 @@ export function extractGistId(gistInput: string): string {
   return match ? match[1] : clean;
 }
 
+/**
+ * Converte um arquivo Markdown puro em SimpleTemplate[]
+ * Cada template começa com '# Título do Template'
+ */
+export function parseMarkdownTemplates(content: string): SimpleTemplate[] {
+  const trimmed = content.trim();
+  if (!trimmed) return [];
+
+  // Divide pelas seções que começam com '# '
+  if (trimmed.startsWith('#') || trimmed.includes('\n# ')) {
+    const rawSections = trimmed
+      .split(/(?:^|\n)(?=#\s+[^\n]+)/g)
+      .map(s => s.trim())
+      .filter(s => s.length > 0);
+
+    return rawSections.map((sec, idx) => {
+      const lines = sec.split('\n');
+      const titleLine = lines[0] || '';
+      const title = titleLine.replace(/^#+\s*/, '').trim();
+      
+      // O restante do texto é o prompt
+      let promptBody = lines.slice(1).join('\n').trim();
+      // Remove separadores horizontais '---' no final da seção se houver
+      promptBody = promptBody.replace(/\n\s*---\s*$/g, '').trim();
+
+      const slugId = title
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9_-]+/g, '-')
+        .replace(/^-+|-+$/g, '') || `template-${idx + 1}`;
+
+      return {
+        id: slugId,
+        titulo: title || `Template #${idx + 1}`,
+        prompt: promptBody,
+      };
+    });
+  }
+
+  // Se não tiver nenhum '# Título', o arquivo inteiro é um único template
+  return [
+    {
+      id: 'template-principal',
+      titulo: 'Template Principal',
+      prompt: trimmed,
+    }
+  ];
+}
+
 function resolvePrompt(val: unknown): string {
   if (Array.isArray(val)) {
     return val.join('\n');
@@ -20,14 +70,13 @@ function resolvePrompt(val: unknown): string {
 }
 
 /**
- * Converte qualquer JSON (array de templates ou objeto antigo) em SimpleTemplate[]
+ * Converte JSON (array ou objeto) em SimpleTemplate[]
  */
 export function normalizeTemplates(data: unknown): SimpleTemplate[] {
   if (!data) {
     throw new Error('O Gist está vazio.');
   }
 
-  // Formato novo simples: Array direto de templates
   if (Array.isArray(data)) {
     if (data.length === 0) {
       throw new Error('O array de templates está vazio.');
@@ -40,7 +89,6 @@ export function normalizeTemplates(data: unknown): SimpleTemplate[] {
     }));
   }
 
-  // Se for um único template em objeto
   if (typeof data === 'object') {
     const obj = data as any;
     if (Array.isArray(obj.scenarios)) {
@@ -62,12 +110,12 @@ export function normalizeTemplates(data: unknown): SimpleTemplate[] {
     }
   }
 
-  throw new Error('Formato de template não reconhecido. Use um array com { id, titulo, prompt }.');
+  throw new Error('Formato de template não reconhecido.');
 }
 
 export const templateService = {
   /**
-   * Carrega os templates de um GitHub Gist
+   * Carrega os templates de um GitHub Gist (suporta .md e .json)
    */
   async loadFromGist(gistInput: string): Promise<SimpleTemplate[]> {
     const rawId = !gistInput || gistInput === 'default' ? OFFICIAL_GIST_ID : gistInput;
@@ -93,36 +141,56 @@ export const templateService = {
 
     const gistData = await res.json();
     const files = gistData.files || {};
+    const fileList = Object.values(files) as any[];
 
-    let targetFile = Object.values(files).find((f: any) =>
-      f.filename?.endsWith('.json') || f.type?.includes('json')
-    ) as any;
-
-    if (!targetFile && Object.values(files).length > 0) {
-      targetFile = Object.values(files)[0];
+    if (fileList.length === 0) {
+      throw new Error('Nenhum arquivo encontrado no Gist informado.');
     }
 
-    if (!targetFile || !targetFile.content) {
-      throw new Error('Nenhum arquivo válido encontrado no Gist informado.');
+    // 1. Prioriza arquivo Markdown (.md)
+    const mdFile = fileList.find(f => f.filename?.endsWith('.md'));
+    if (mdFile && mdFile.content) {
+      const parsedMd = parseMarkdownTemplates(mdFile.content);
+      if (parsedMd.length > 0) {
+        try {
+          localStorage.setItem(`promptcraft_gist_${gistId}`, JSON.stringify(parsedMd));
+        } catch {
+          // ignore
+        }
+        return parsedMd;
+      }
     }
 
-    let parsedContent: unknown;
-    try {
-      parsedContent = JSON.parse(targetFile.content);
-    } catch {
-      throw new Error('O arquivo no Gist não contém um JSON válido.');
+    // 2. Se for arquivo JSON (.json)
+    const jsonFile = fileList.find(f => f.filename?.endsWith('.json'));
+    if (jsonFile && jsonFile.content) {
+      try {
+        const parsedJson = JSON.parse(jsonFile.content);
+        const templates = normalizeTemplates(parsedJson);
+        try {
+          localStorage.setItem(`promptcraft_gist_${gistId}`, JSON.stringify(templates));
+        } catch {
+          // ignore
+        }
+        return templates;
+      } catch (err: any) {
+        throw new Error(`Erro de sintaxe no JSON: ${err.message}`);
+      }
     }
 
-    const templates = normalizeTemplates(parsedContent);
-
-    // Salva no localStorage como cache rápido
-    try {
-      localStorage.setItem(`promptcraft_gist_${gistId}`, JSON.stringify(templates));
-    } catch {
-      // ignore
+    // 3. Fallback: tenta ler o primeiro arquivo como Markdown
+    const fallbackFile = fileList[0];
+    if (fallbackFile && fallbackFile.content) {
+      const templates = parseMarkdownTemplates(fallbackFile.content);
+      try {
+        localStorage.setItem(`promptcraft_gist_${gistId}`, JSON.stringify(templates));
+      } catch {
+        // ignore
+      }
+      return templates;
     }
 
-    return templates;
+    throw new Error('Nenhum conteúdo legível encontrado no Gist informado.');
   },
 
   /**

@@ -24,188 +24,74 @@ O site é apenas uma **engine executora pura**:
 
 ---
 
-## 📖 Guia Definitivo: Regras e Estrutura para Criar o Gist
+## 📖 Guia: Regras e Estrutura dos Templates em Markdown (`templates.md`)
 
-Quando formos criar o novo Gist juntos, ele deverá conter um arquivo chamado `template.json` (ou qualquer arquivo `.json`) seguindo a especificação abaixo.
+O catálogo de templates usa **Markdown puro (`.md`)**. Nada de JSONs difíceis de ler ou com problemas de quebra de linha.
 
-### 1. Criando o Gist no GitHub
-1. Acesse: [https://gist.github.com](https://gist.github.com)
-2. No campo **Filename including extension...**, digite: `template.json`.
-3. No campo de conteúdo, cole a estrutura JSON (especificada abaixo).
-4. No botão verde inferior, selecione obrigatoriamente **Create public gist** (Gists secretos não são acessíveis pela API pública sem autenticação).
-5. Copie a URL do seu Gist (ex: `https://gist.github.com/seu-usuario/abc123def456`). O código no final da URL (`abc123def456`) é o seu **Gist ID**.
-
----
-
-### 2. Especificação do Esquema JSON (`template.json`)
-
-#### Estrutura Raiz (`TemplatePackage`)
-| Campo | Tipo | Obrigatório | Descrição |
-| :--- | :--- | :---: | :--- |
-| `id` | `string` | **Sim** | Identificador único do pacote (ex: `"meu-kit-dev"`, `"engineering-core"`). |
-| `name` | `string` | **Sim** | Nome de exibição do catálogo que aparece no cabeçalho do site. |
-| `description` | `string` | **Sim** | Descrição resumida do objetivo do catálogo. |
-| `author` | `string` | Não | Nome ou usuário do GitHub do criador. |
-| `version` | `string` | **Sim** | Versão do pacote (ex: `"1.0.0"`). |
-| `scenarios` | `Scenario[]` | **Sim** | Lista com pelo menos um cenário de template. |
+### 1. Como Criar ou Editar no GitHub Gist
+1. Acesse seu Gist no GitHub: [https://gist.github.com](https://gist.github.com)
+2. No nome do arquivo, coloque `templates.md` (ou qualquer `.md`).
+3. Escreva seus templates de forma natural usando `# Título` e `{{variavel}}`.
+4. Salve como **Public Gist**.
+5. Conecte o Gist no site e pronto!
 
 ---
 
-#### Estrutura de Cada Cenário (`Scenario`)
-| Campo | Tipo | Obrigatório | Descrição |
-| :--- | :--- | :---: | :--- |
-| `id` | `string` | **Sim** | Identificador do cenário em minúsculas (usado em links diretos: `?s=id`). |
-| `title` | `string` | **Sim** | Título do cenário exibido no card de seleção. |
-| `description` | `string` | **Sim** | Explicação curta de quando o usuário deve escolher este cenário. |
-| `category` | `string` | Não | Tag/Badge de categoria (ex: `"Criação"`, `"Qualidade"`, `"Backend"`, `"DevOps"`). |
-| `icon` | `string` | Não | Nome do ícone visual: `"Sparkles"`, `"Layers"`, `"Repeat"`, `"Bug"`, `"CheckCircle2"`, `"FileCode2"`. |
-| `fields` | `TemplateField[]` | **Sim** | Lista de campos/perguntas que o formulário exibirá dinamicamente. |
-| `template` | `string` | **Sim** | O texto do prompt com os marcadores de variáveis `{{id_do_campo}}`. |
+### 2. Regras de Formatação
+
+1. **Cada Template começa com `# Título`:**
+   O site detecta automaticamente cada `# Nome do Template` como uma aba ou template independente.
+   
+2. **Variáveis Dinâmicas com `{{nome_da_variavel}}`:**
+   Qualquer palavra entre chaves duplas vira automaticamente um campo de preenchimento na interface do site.
+   - Exemplo: `{{filtro_heuristica}}`, `{{escopo}}`, `{{constraints}}`, `{{codigo}}`.
+   
+3. **Pular Linhas e Formatacão Livre:**
+   Como é Markdown puro, você pode pular linhas, usar listas, negrito (`**`), seções (`###`), blocos de código (```` ``` ````) sem se preocupar em quebrar formato nenhum!
+
+4. **Separador Opcional (`---`):**
+   Você pode colocar uma linha divisória `---` entre os templates se desejar para organizar visualmente.
 
 ---
 
-#### Estrutura dos Campos (`TemplateField`)
-Cada item no array `fields` se transforma automaticamente em um input na tela:
+### 3. Exemplo Real de `templates.md` (com Múltiplos Templates)
 
-| Campo | Tipo | Obrigatório | Descrição |
-| :--- | :--- | :---: | :--- |
-| `id` | `string` | **Sim** | Nome da variável usada no template (ex: `"tech_stack"`, `"project_name"`). Use letras minúsculas e underscores. |
-| `label` | `string` | **Sim** | O texto da pergunta que o usuário verá no formulário. |
-| `type` | `string` | **Sim** | O tipo de controle de entrada (veja a tabela de tipos abaixo). |
-| `defaultValue` | `string \| array \| boolean` | Não | Valor inicial pré-preenchido no formulário. |
-| `placeholder` | `string` | Não | Texto fantasma de exemplo dentro do input. |
-| `helpText` | `string` | Não | Dica de ajuda exibida ao lado do campo. |
-| `required` | `boolean` | Não | Se `true`, exibe asterisco vermelho de obrigatório. |
-| `options` | `FieldOption[]` | Condicional | Obrigatório para os tipos `select` e `multiselect` (`[{ label: "...", value: "..." }]`). |
+```markdown
+# Desenvolvimento com IA
+Você é um Engenheiro de Software Sênior e Especialista em Arquitetura.
 
----
+### FILTRO E HEURÍSTICAS DE DECISÃO
+{{filtro_heuristica}}
 
-### 3. Tipos de Campos Suportados (`type`)
+### ESCOPO DA TAREFA
+{{escopo}}
 
-| Tipo | Como aparece na tela | Valor gerado | Exemplo de uso |
-| :--- | :--- | :--- | :--- |
-| `"text"` | Input de linha única | Texto simples (`string`) | Nome do projeto, nome da função, autor. |
-| `"textarea"` | Caixa de texto multilinha em fonte monoespaçada | Texto longo (`string`) | Código existente, logs de erro, regras de negócio. |
-| `"select"` | Menu suspenso (dropdown) | Apenas um valor selecionado | Padrão arquitetural, framework, nível de criticidade. |
-| `"multiselect"` | Botões em chips clicáveis (pills) | Lista de itens (`string[]`) | Tecnologias envolvidas, regras de qualidade, flags. |
-| `"checkbox"` | Caixa de seleção clássica | Booleano (`true` / `false`) | "Gerar testes?", "Modo estrito?". |
+### CONSTRAINTS (RESTRIÇÕES RÍGIDAS)
+{{constraints}}
+
+### INSTRUÇÕES DE EXECUÇÃO
+1. Respeite integralmente as heurísticas e os limites de escopo descritos acima.
+2. Não viole nenhuma das constraints sob nenhuma circunstância.
+3. Apresente uma solução enxuta, clara e pronta para produção.
 
 ---
 
-### 4. Regras do Motor de Interpolação de Texto (`template`)
+# Refatoração e Clean Code
+Você é um Especialista em Clean Code e Arquitetura de Software.
 
-No campo `template`, você escreve o prompt base usando a sintaxe de variáveis:
+### CÓDIGO ORIGINAL
+{{codigo}}
 
-1. **Variáveis Simples:**  
-   Escreva `{{id_do_campo}}`. O site substituirá pelo valor digitado pelo usuário.
-   ```markdown
-   Meu projeto se chama {{project_name}} e utiliza {{main_tech}}.
-   ```
+### PROBLEMA A RESOLVER
+{{problema}}
 
-2. **Listas Automáticas (Multiselect):**  
-   Quando o campo for do tipo `multiselect`, os itens selecionados são automaticamente convertidos em uma lista com marcadores:
-   ```markdown
-   ### DIRETRIZES
-   {{rules}}
-   ```
-   *Resultado gerado:*
-   ```markdown
-   ### DIRETRIZES
-   - Tipagem estrita
-   - Princípios SOLID
-   - Não adicionar libs pesadas
-   ```
+### REGRAS DA REFATORAÇÃO
+{{regras}}
 
-3. **Checkboxes Booleanos:**  
-   Campos do tipo `checkbox` retornam automaticamente `"Sim"` ou `"Não"`.
-
-4. **Blocos Condicionais (`{{#if campo}}...{{/if}}`):**  
-   Permite que um trecho do prompt só apareça se o usuário tiver preenchido aquele campo:
-   ```markdown
-   {{#if extra_notes}}
-   ### OBSERVAÇÕES ADICIONAIS
-   {{extra_notes}}
-   {{/if}}
-   ```
-
-5. **Suporte Automático a Multi-IA (Markdown vs Claude XML):**  
-   Você pode escrever o template em formato Markdown comum. O próprio site converte automaticamente para **Tags XML do Claude** (`<context>`, `<guidelines>`, `<task>`) se o usuário alternar o formato na interface!
-
----
-
-## 📋 Modelo JSON Completo de Referência
-
-Aqui está um exemplo pronto, válido e testado que podemos usar como base quando formos criar o novo Gist:
-
-```json
-{
-  "id": "dev-starter-kit",
-  "name": "Dev Starter Kit Oficial",
-  "description": "Templates para criação de projetos, novas features e refatoração com IA.",
-  "author": "gabrielffreitas94-commits",
-  "version": "1.0.0",
-  "scenarios": [
-    {
-      "id": "novo-projeto",
-      "title": "Novo Projeto do Zero",
-      "description": "Setup inicial, arquitetura de pastas e primeiras diretrizes para começar um projeto do jeito certo.",
-      "category": "Criação",
-      "icon": "Sparkles",
-      "fields": [
-        {
-          "id": "project_name",
-          "label": "Nome do Projeto",
-          "type": "text",
-          "placeholder": "ex: my-saas-api",
-          "defaultValue": "meu-novo-projeto",
-          "required": true
-        },
-        {
-          "id": "project_type",
-          "label": "Tipo de Aplicação",
-          "type": "select",
-          "defaultValue": "Fullstack Web",
-          "options": [
-            { "label": "Fullstack Web (App completa)", "value": "Fullstack Web" },
-            { "label": "Single Page Application (SPA / Frontend)", "value": "SPA Web" },
-            { "label": "API REST / GraphQL (Backend)", "value": "API Backend" },
-            { "label": "CLI / Ferramenta de Terminal", "value": "CLI" }
-          ]
-        },
-        {
-          "id": "tech_stack",
-          "label": "Tecnologias & Frameworks",
-          "type": "multiselect",
-          "defaultValue": ["React", "TypeScript", "Tailwind CSS"],
-          "options": [
-            { "label": "React", "value": "React" },
-            { "label": "TypeScript", "value": "TypeScript" },
-            { "label": "Tailwind CSS", "value": "Tailwind CSS" },
-            { "label": "Node.js", "value": "Node.js" },
-            { "label": "Python (FastAPI)", "value": "Python (FastAPI)" },
-            { "label": "Go", "value": "Go" },
-            { "label": "PostgreSQL", "value": "PostgreSQL" }
-          ]
-        },
-        {
-          "id": "strict_mode",
-          "label": "Ativar regras rigorosas de tipagem e Clean Code?",
-          "type": "checkbox",
-          "defaultValue": true
-        },
-        {
-          "id": "initial_goal",
-          "label": "Objetivo do Primeiro Marco",
-          "type": "textarea",
-          "placeholder": "O que a IA deve implementar primeiro?",
-          "defaultValue": "Criar a estrutura base de pastas e o primeiro fluxo funcional de ponta a ponta.",
-          "required": true
-        }
-      ],
-      "template": "Você é um Engenheiro de Software Principal (Staff Engineer).\n\n### CONTEXTO DO PROJETO\n- **Nome:** {{project_name}}\n- **Tipo:** {{project_type}}\n- **Stack:** {{tech_stack}}\n- **Modo Estrito:** {{strict_mode}}\n\n### OBJETIVO IMEDIATO\n{{initial_goal}}\n\n### INSTRUÇÕES\n1. Apresente a arquitetura de pastas recomendada.\n2. Liste as dependências essenciais justificando cada escolha.\n3. Forneça o código inicial completo, limpo e pronto para rodar."
-    }
-  ]
-}
+### INSTRUÇÕES DE EXECUÇÃO
+1. Analise os pontos críticos do código fornecido.
+2. Aplique refatoração mantendo 100% de compatibilidade com o contrato original.
+3. Explique os ganhos de legibilidade, acoplamento e performance obtidos.
 ```
 
 ---
