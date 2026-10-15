@@ -500,7 +500,7 @@ function CodeFieldInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={`// Cole ou digite seu código aqui...`}
-          className="w-full text-xs font-mono bg-neutral-950 p-3 text-neutral-100 placeholder:text-neutral-600 focus:outline-none focus:ring-0 resize-y leading-relaxed border-0 selection:bg-blue-600 selection:text-white"
+          className="w-full text-xs font-mono bg-neutral-950 p-3 text-neutral-100 placeholder:text-neutral-600 focus:outline-none focus:ring-0 resize-y leading-relaxed border-0 selection:bg-white selection:text-neutral-950"
           spellCheck={false}
         />
       </div>
@@ -1108,8 +1108,8 @@ export function App() {
                   </div>
 
                   {/* Caixa de Texto do Prompt */}
-                  <div className="min-h-[340px] max-h-[520px] overflow-y-auto bg-neutral-950 text-neutral-100 font-mono text-xs rounded-xl p-4 leading-relaxed border border-neutral-800 select-text selection:bg-blue-600 selection:text-white">
-                    <pre className="whitespace-pre-wrap break-words font-mono selection:bg-blue-600 selection:text-white">
+                  <div className="min-h-[340px] max-h-[520px] overflow-y-auto bg-neutral-950 text-neutral-100 font-mono text-xs rounded-xl p-4 leading-relaxed border border-neutral-800 select-text selection:bg-white selection:text-neutral-950">
+                    <pre className="whitespace-pre-wrap break-words font-mono selection:bg-white selection:text-neutral-950">
                       {assembledPrompt || '// Preencha os campos ao lado para visualizar o prompt...'}
                     </pre>
                   </div>

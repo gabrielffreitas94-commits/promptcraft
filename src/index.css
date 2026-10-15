@@ -24,7 +24,19 @@
     background: #a3a3a3;
   }
 
-  /* Seleção com alto contraste em blocos escuros/pre/code em qualquer tema */
+  /* Seleção de texto: fundo claro -> seleção escura; fundo escuro -> seleção clara */
+  ::selection {
+    background-color: #171717;
+    color: #ffffff;
+  }
+
+  .dark ::selection,
+  .dark::selection {
+    background-color: #ffffff;
+    color: #0a0a0a;
+  }
+
+  /* Elementos com fundo escuro (como o prompt e caixas de código em qualquer tema) -> seleção clara */
   .bg-neutral-950 ::selection,
   .bg-neutral-950::selection,
   .bg-neutral-900 ::selection,
@@ -35,7 +47,16 @@
   code ::selection,
   textarea.bg-neutral-950::selection,
   textarea.bg-neutral-950 ::selection {
-    background-color: #2563eb !important;
+    background-color: #ffffff !important;
+    color: #0a0a0a !important;
+  }
+
+  /* Elementos com fundo claro dentro do tema escuro -> seleção escura */
+  .dark .bg-white ::selection,
+  .dark .bg-white::selection,
+  .dark .bg-neutral-100 ::selection,
+  .dark .bg-neutral-100::selection {
+    background-color: #171717 !important;
     color: #ffffff !important;
   }
 }
