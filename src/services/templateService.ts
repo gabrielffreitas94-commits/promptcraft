@@ -12,6 +12,13 @@ export function extractGistId(gistInput: string): string {
   return match ? match[1] : clean;
 }
 
+function resolvePrompt(val: unknown): string {
+  if (Array.isArray(val)) {
+    return val.join('\n');
+  }
+  return typeof val === 'string' ? val : '';
+}
+
 /**
  * Converte qualquer JSON (array de templates ou objeto antigo) em SimpleTemplate[]
  */
@@ -29,7 +36,7 @@ export function normalizeTemplates(data: unknown): SimpleTemplate[] {
     return data.map((item: any, idx) => ({
       id: item.id || `template-${idx + 1}`,
       titulo: item.titulo || item.title || item.nome || `Template #${idx + 1}`,
-      prompt: item.prompt || item.template || '',
+      prompt: resolvePrompt(item.prompt || item.template),
     }));
   }
 
@@ -40,7 +47,7 @@ export function normalizeTemplates(data: unknown): SimpleTemplate[] {
       return obj.scenarios.map((sc: any, idx: number) => ({
         id: sc.id || `template-${idx + 1}`,
         titulo: sc.title || sc.titulo || `Template #${idx + 1}`,
-        prompt: sc.template || sc.prompt || '',
+        prompt: resolvePrompt(sc.template || sc.prompt),
       }));
     }
 
@@ -49,7 +56,7 @@ export function normalizeTemplates(data: unknown): SimpleTemplate[] {
         {
           id: obj.id || 'template-1',
           titulo: obj.titulo || obj.title || 'Template Principal',
-          prompt: obj.prompt || obj.template || '',
+          prompt: resolvePrompt(obj.prompt || obj.template),
         }
       ];
     }
