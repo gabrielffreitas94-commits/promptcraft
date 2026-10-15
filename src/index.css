@@ -23,6 +23,21 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #a3a3a3;
   }
+
+  /* Seleção com alto contraste em blocos escuros/pre/code em qualquer tema */
+  .bg-neutral-950 ::selection,
+  .bg-neutral-950::selection,
+  .bg-neutral-900 ::selection,
+  .bg-neutral-900::selection,
+  pre::selection,
+  pre ::selection,
+  code::selection,
+  code ::selection,
+  textarea.bg-neutral-950::selection,
+  textarea.bg-neutral-950 ::selection {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+  }
 }
 
 /* Animações sutis e limpas */
