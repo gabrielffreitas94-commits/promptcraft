@@ -1,59 +1,42 @@
-export type FieldType = 'text' | 'textarea' | 'select' | 'multiselect' | 'checkbox';
-
-export interface FieldOption {
-  label: string;
-  value: string;
-  description?: string;
-}
-
-export interface TemplateField {
+export interface SimpleTemplate {
   id: string;
-  label: string;
-  type: FieldType;
-  placeholder?: string;
-  defaultValue?: string | string[] | boolean;
-  options?: FieldOption[];
-  helpText?: string;
-  required?: boolean;
-}
-
-export interface Scenario {
-  id: string;
-  title: string;
-  description: string;
-  category?: string;
-  icon?: string;
-  fields: TemplateField[];
-  template: string;
-}
-
-export interface TemplatePackage {
-  id: string;
-  name: string;
-  description: string;
-  author?: string;
-  version: string;
-  sourceUrl?: string;
-  scenarios: Scenario[];
-}
-
-export type AIFlavor = 'markdown' | 'claude_xml';
-
-export interface SavedTemplateSource {
-  id: string;
-  name: string;
-  type: 'gist' | 'github_raw';
-  urlOrId: string;
-  author?: string;
-  savedAt: number;
-  isFavorite?: boolean;
-}
-
-export interface GeneratedHistoryItem {
-  id: string;
-  scenarioId: string;
-  scenarioTitle: string;
-  timestamp: number;
+  titulo: string;
   prompt: string;
-  formData: Record<string, unknown>;
+}
+
+export interface ExtractedVariable {
+  key: string;
+  label: string;
+}
+
+/**
+ * Extrai todas as variáveis {{nome_da_variavel}} de um prompt
+ */
+export function extractVariables(promptText: string): ExtractedVariable[] {
+  if (!promptText) return [];
+  const matches = promptText.matchAll(/\{\{([a-zA-Z0-9_-]+)\}\}/g);
+  const seen = new Set<string>();
+  const vars: ExtractedVariable[] = [];
+
+  for (const match of matches) {
+    const key = match[1];
+    if (!seen.has(key)) {
+      seen.add(key);
+      vars.push({
+        key,
+        label: humanizeLabel(key),
+      });
+    }
+  }
+
+  return vars;
+}
+
+/**
+ * Transforma 'filtro_heuristica' em 'Filtro Heurística'
+ */
+export function humanizeLabel(key: string): string {
+  return key
+    .replace(/[_-]+/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 }

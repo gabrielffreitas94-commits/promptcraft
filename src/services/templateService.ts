@@ -1,26 +1,10 @@
-import { TemplatePackage } from '../types/template';
-import { storageService } from './storageService';
+import { SimpleTemplate } from '../types/template';
 
-export const OFFICIAL_GIST_ID = '';
-export const OFFICIAL_GIST_URL = '';
-
-/**
- * Normaliza qualquer link do GitHub para a URL Raw correspondente
- */
-export function normalizeGitHubRawUrl(url: string): string {
-  let cleanUrl = url.trim();
-
-  if (cleanUrl.includes('github.com') && cleanUrl.includes('/blob/')) {
-    cleanUrl = cleanUrl
-      .replace('github.com', 'raw.githubusercontent.com')
-      .replace('/blob/', '/');
-  }
-
-  return cleanUrl;
-}
+export const OFFICIAL_GIST_ID = 'e8c42b6d9f15a24dd7326af3152902c0';
+export const OFFICIAL_GIST_URL = 'https://gist.github.com/gabrielffreitas94-commits/e8c42b6d9f15a24dd7326af3152902c0';
 
 /**
- * Extrai o ID do Gist se o usuário colou a URL completa do Gist
+ * Normaliza qualquer link ou ID de Gist
  */
 export function extractGistId(gistInput: string): string {
   const clean = gistInput.trim();
@@ -29,54 +13,61 @@ export function extractGistId(gistInput: string): string {
 }
 
 /**
- * Valida se um objeto JSON corresponde ao schema de TemplatePackage
+ * Converte qualquer JSON (array de templates ou objeto antigo) em SimpleTemplate[]
  */
-export function validateTemplatePackage(data: unknown): data is TemplatePackage {
-  if (!data || typeof data !== 'object') {
-    throw new Error('O arquivo de template deve ser um objeto JSON válido.');
+export function normalizeTemplates(data: unknown): SimpleTemplate[] {
+  if (!data) {
+    throw new Error('O Gist está vazio.');
   }
 
-  const pkg = data as Partial<TemplatePackage>;
-
-  if (!pkg.id || typeof pkg.id !== 'string') {
-    throw new Error("O template deve conter um identificador único ('id').");
-  }
-
-  if (!pkg.name || typeof pkg.name !== 'string') {
-    throw new Error("O template deve conter um nome ('name').");
-  }
-
-  if (!Array.isArray(pkg.scenarios) || pkg.scenarios.length === 0) {
-    throw new Error("O template deve conter pelo menos um cenário no array 'scenarios'.");
-  }
-
-  for (const [index, scenario] of pkg.scenarios.entries()) {
-    if (!scenario.id || !scenario.title || !scenario.template) {
-      throw new Error(
-        `O cenário na posição #${index + 1} precisa ter 'id', 'title' e 'template'.`
-      );
+  // Formato novo simples: Array direto de templates
+  if (Array.isArray(data)) {
+    if (data.length === 0) {
+      throw new Error('O array de templates está vazio.');
     }
-    if (!Array.isArray(scenario.fields)) {
-      scenario.fields = [];
+
+    return data.map((item: any, idx) => ({
+      id: item.id || `template-${idx + 1}`,
+      titulo: item.titulo || item.title || item.nome || `Template #${idx + 1}`,
+      prompt: item.prompt || item.template || '',
+    }));
+  }
+
+  // Se for um único template em objeto
+  if (typeof data === 'object') {
+    const obj = data as any;
+    if (Array.isArray(obj.scenarios)) {
+      return obj.scenarios.map((sc: any, idx: number) => ({
+        id: sc.id || `template-${idx + 1}`,
+        titulo: sc.title || sc.titulo || `Template #${idx + 1}`,
+        prompt: sc.template || sc.prompt || '',
+      }));
+    }
+
+    if (obj.prompt || obj.template) {
+      return [
+        {
+          id: obj.id || 'template-1',
+          titulo: obj.titulo || obj.title || 'Template Principal',
+          prompt: obj.prompt || obj.template || '',
+        }
+      ];
     }
   }
 
-  return true;
+  throw new Error('Formato de template não reconhecido. Use um array com { id, titulo, prompt }.');
 }
 
 export const templateService = {
   /**
-   * Carrega templates de um GitHub Gist
+   * Carrega os templates de um GitHub Gist
    */
-  async loadFromGist(gistInput: string): Promise<TemplatePackage> {
-    const rawId = gistInput === 'default' || !gistInput ? OFFICIAL_GIST_ID : gistInput;
-    if (!rawId) {
-      throw new Error('NO_GIST_CONFIGURED');
-    }
+  async loadFromGist(gistInput: string): Promise<SimpleTemplate[]> {
+    const rawId = !gistInput || gistInput === 'default' ? OFFICIAL_GIST_ID : gistInput;
     const gistId = extractGistId(rawId);
-    
+
     if (!gistId) {
-      throw new Error('ID ou URL do GitHub Gist inválida.');
+      throw new Error('Informe o ID ou URL do GitHub Gist.');
     }
 
     const apiUrl = `https://api.github.com/gists/${gistId}`;
@@ -90,14 +81,13 @@ export const templateService = {
       if (res.status === 404) {
         throw new Error('Gist não encontrado. Verifique se o ID está correto e se o Gist é público.');
       }
-      throw new Error(`Erro ao conectar ao GitHub Gist (Código: ${res.status}).`);
+      throw new Error(`Erro ao conectar ao GitHub Gist (Status: ${res.status}).`);
     }
 
     const gistData = await res.json();
     const files = gistData.files || {};
-    
-    // Procura por arquivo .json no Gist
-    let targetFile = Object.values(files).find((f: any) => 
+
+    let targetFile = Object.values(files).find((f: any) =>
       f.filename?.endsWith('.json') || f.type?.includes('json')
     ) as any;
 
@@ -116,87 +106,27 @@ export const templateService = {
       throw new Error('O arquivo no Gist não contém um JSON válido.');
     }
 
-    validateTemplatePackage(parsedContent);
-    const validPkg = parsedContent as TemplatePackage;
-    validPkg.sourceUrl = gistData.html_url || `https://gist.github.com/${gistId}`;
-    validPkg.author = gistData.owner?.login || validPkg.author;
+    const templates = normalizeTemplates(parsedContent);
 
-    // Salva em cache
-    storageService.setCachedPackage(`gist_${gistId}`, validPkg);
-    return validPkg;
+    // Salva no localStorage como cache rápido
+    try {
+      localStorage.setItem(`promptcraft_gist_${gistId}`, JSON.stringify(templates));
+    } catch {
+      // ignore
+    }
+
+    return templates;
   },
 
   /**
-   * Carrega templates de uma URL raw qualquer (ex: raw.githubusercontent.com)
+   * Tenta carregar do cache do localStorage primeiro para carregamento instantâneo
    */
-  async loadFromRawUrl(url: string): Promise<TemplatePackage> {
-    const rawUrl = normalizeGitHubRawUrl(url);
-    const res = await fetch(rawUrl);
-
-    if (!res.ok) {
-      throw new Error(`Falha ao acessar URL informada (Status: ${res.status}).`);
+  getCachedTemplates(gistId: string): SimpleTemplate[] | null {
+    try {
+      const data = localStorage.getItem(`promptcraft_gist_${gistId}`);
+      return data ? JSON.parse(data) : null;
+    } catch {
+      return null;
     }
-
-    const json = await res.json();
-    validateTemplatePackage(json);
-    const validPkg = json as TemplatePackage;
-    validPkg.sourceUrl = rawUrl;
-
-    storageService.setCachedPackage(`raw_${rawUrl}`, validPkg);
-    return validPkg;
-  },
-
-  /**
-   * Resolve a fonte especificada com suporte a SWR (Stale-While-Revalidate)
-   */
-  async resolveSource(
-    sourceType: 'gist' | 'github_raw',
-    urlOrId: string,
-    onBackgroundUpdate?: (updated: TemplatePackage) => void
-  ): Promise<{ data: TemplatePackage; fromCache: boolean }> {
-    const effectiveId = !urlOrId || urlOrId === 'default' ? OFFICIAL_GIST_ID : urlOrId;
-    if (!effectiveId) {
-      throw new Error('NO_GIST_CONFIGURED');
-    }
-    const cacheKey = `${sourceType}_${effectiveId}`;
-    const cached = storageService.getCachedPackage(cacheKey);
-
-    // Se temos dados em cache, entrega imediatamente e faz revalidação em background
-    if (cached && cached.data) {
-      const cachedPkg = cached.data as TemplatePackage;
-      
-      // Revalidação assíncrona em background
-      setTimeout(async () => {
-        try {
-          let fresh: TemplatePackage | null = null;
-          if (sourceType === 'gist') {
-            fresh = await templateService.loadFromGist(effectiveId);
-          } else if (sourceType === 'github_raw') {
-            fresh = await templateService.loadFromRawUrl(effectiveId);
-          }
-
-          if (fresh && JSON.stringify(fresh) !== JSON.stringify(cachedPkg)) {
-            storageService.setCachedPackage(cacheKey, fresh);
-            if (onBackgroundUpdate) {
-              onBackgroundUpdate(fresh);
-            }
-          }
-        } catch {
-          // Revalidação silenciosa em background
-        }
-      }, 500);
-
-      return { data: cachedPkg, fromCache: true };
-    }
-
-    // Sem cache prévio, busca diretamente
-    let data: TemplatePackage;
-    if (sourceType === 'gist') {
-      data = await this.loadFromGist(effectiveId);
-    } else {
-      data = await this.loadFromRawUrl(effectiveId);
-    }
-
-    return { data, fromCache: false };
   }
 };
