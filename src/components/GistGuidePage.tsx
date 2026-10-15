@@ -75,9 +75,10 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
 - Suporte Docker: {{docker:boolean}}
 
 ### INSTRUÇÕES FINAIS
-1. Respeite as boas práticas da linguagem {{linguagem}}.
-2. Mantenha os requisitos da lista atendidos de ponta a ponta.
-3. Produza código legível, fortemente tipado e pronto para produção.`;
+1. {{#if testes}}Execute todos os testes unitários garantindo cobertura mínima de 80%.{{/if}}
+2. Respeite as boas práticas da linguagem {{linguagem}}.
+3. Mantenha os requisitos da lista atendidos de ponta a ponta.
+4. Produza código legível, fortemente tipado e pronto para produção.`;
 
   const fieldTypes = [
     {
@@ -327,19 +328,19 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white border border-neutral-200 rounded-2xl p-5 shadow-xs space-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-neutral-900">Blocos Condicionais com <code>{'{{#if}}'}</code></span>
+              <span className="text-xs font-semibold text-neutral-900">Blocos com <code>{'{{#if}}'}</code></span>
             </div>
             <p className="text-xs text-neutral-500 leading-relaxed">
-              Envolva qualquer texto ou instrução com <code className="font-mono bg-neutral-100 px-1 py-0.5 rounded text-[11px]">{'{{#if variavel}}...{{/if}}'}</code>. O bloco só aparecerá se o campo estiver preenchido (ou marcado como ligado se for <code className="font-mono text-[11px]">boolean</code>).
+              Envolva qualquer seção ou texto com <code className="font-mono bg-neutral-100 px-1 py-0.5 rounded text-[11px]">{'{{#if variavel}}...{{/if}}'}</code>. O bloco só aparecerá se o campo estiver preenchido (ou ligado se for <code className="font-mono text-[11px]">boolean</code>).
             </p>
             <div className="bg-neutral-950 text-neutral-200 font-mono text-[11px] p-3 rounded-xl border border-neutral-800 leading-relaxed">
               <pre className="whitespace-pre-wrap">
 {`{{#if testes}}
 ### TESTES UNITÁRIOS
-- Garantir cobertura mínima de 80%
+- Cobertura mínima de 80%
 {{/if}}`}
               </pre>
             </div>
@@ -347,15 +348,31 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
 
           <div className="bg-white border border-neutral-200 rounded-2xl p-5 shadow-xs space-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-neutral-900">Omissão Automática de Vazios</span>
+              <span className="text-xs font-semibold text-neutral-900">Listas &amp; Renumeração</span>
             </div>
             <p className="text-xs text-neutral-500 leading-relaxed">
-              Quando a opção <strong>"Omitir vazios"</strong> está ativada no topo direito do PromptCraft, qualquer seção (<code className="font-mono text-[11px]">### Título</code>) cujo campo não foi preenchido é removida silenciosamente do prompt final, sem gerar quebras de linha acumuladas.
+              Use direto em itens: <code className="font-mono bg-neutral-100 px-1 py-0.5 rounded text-[11px]">{'- {{#if}}'}</code> ou <code className="font-mono bg-neutral-100 px-1 py-0.5 rounded text-[11px]">{'1. {{#if}}'}</code>. Se falso, o marcador é removido e a lista é <strong>automaticamente renumerada</strong> em sequência!
+            </p>
+            <div className="bg-neutral-950 text-neutral-200 font-mono text-[11px] p-3 rounded-xl border border-neutral-800 leading-relaxed">
+              <pre className="whitespace-pre-wrap">
+{`### INSTRUÇÕES
+1. {{#if testes}}Rodar testes{{/if}}
+2. Seguir Clean Code`}
+              </pre>
+            </div>
+          </div>
+
+          <div className="bg-white border border-neutral-200 rounded-2xl p-5 shadow-xs space-y-3">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-neutral-900">Omissão de Vazios</span>
+            </div>
+            <p className="text-xs text-neutral-500 leading-relaxed">
+              Com <strong>"Omitir vazios"</strong> ativo, qualquer seção (<code className="font-mono text-[11px]">### Título</code>) sem valor é omitida silenciosamente do prompt, sem gerar linhas em branco órfãs.
             </p>
             <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3 text-xs text-neutral-600 space-y-1">
               <p className="font-medium text-neutral-800">💡 Dica de Ouro:</p>
               <p className="text-[11px] leading-relaxed">
-                Você não precisa de <code className="font-mono text-[11px]">{'{{#if}}'}</code> para tudo! Se colocar <code className="font-mono text-[11px]">### OBSERVAÇÕES{'\n'}{'{{obs:textarea}}'}</code>, a seção inteira some automaticamente se estiver em branco.
+                Se colocar <code className="font-mono text-[11px]">### NOTAS{'\n'}{'{{obs:textarea}}'}</code>, a seção inteira some automaticamente se estiver vazia.
               </p>
             </div>
           </div>

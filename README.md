@@ -53,7 +53,7 @@ O PromptCraft exige declaração explícita de tipos no formato `{{variavel:tipo
 | **Múltipla Seleção** | `{{stack:multiselect[TypeScript, Docker, Redis]}}` | Chips interativos com botão de limpar. No prompt, interpola separado por vírgula ou em itens de lista. |
 | **Bloco de Código** | `{{codigo:code}}`<br>`{{codigo:code(python)}}`<br>`{{codigo:code(variavel_lang)}}` | Editor monoespaçado escuro com botão "Colar da área de transferência". Suporta **linguagem literal** (ex: `code(python)`) ou **linguagem dinâmica** herdada de outro campo (ex: `code(linguagem)`). |
 | **Validação de Tipos** | `{{campo}}` ou `{{campo:invalido}}` | Exibe card de erro explícito caso o tipo esteja ausente ou seja inválido. |
-| **Condicional** | `{{#if campo}}...{{/if}}`<br>`- {{#if campo}}...{{/if}}` | Exibe a seção apenas se a variável estiver preenchida/verdadeira. Limpa quebras de linha e marcadores de lista (`-`) se falso. |
+| **Condicional** | `{{#if campo}}...{{/if}}`<br>`- {{#if campo}}...{{/if}}`<br>`1. {{#if campo}}...{{/if}}` | Exibe a seção apenas se a variável estiver preenchida/verdadeira. Remove marcadores (`-`, `1.`) e quebras de linha se falso, com **renumeração automática** sequencial de listas ordenadas. |
 
 ---
 
@@ -102,9 +102,10 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
 - Suporte Docker: {{docker:boolean}}
 
 ### INSTRUÇÕES FINAIS
-1. Respeite as boas práticas da linguagem {{linguagem}}.
-2. Mantenha os requisitos da lista atendidos de ponta a ponta.
-3. Produza código legível, fortemente tipado e pronto para produção.
+1. {{#if testes}}Execute todos os testes unitários garantindo cobertura mínima de 80%.{{/if}}
+2. Respeite as boas práticas da linguagem {{linguagem}}.
+3. Mantenha os requisitos da lista atendidos de ponta a ponta.
+4. Produza código legível, fortemente tipado e pronto para produção.
 ```
 
 ---
