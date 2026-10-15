@@ -38,60 +38,69 @@ O site funciona como uma **engine executora minimalista**:
 
 ---
 
-### 2. Regras de Sintaxe dos Templates
+### 2. Regras de Sintaxe dos Tipos de Campos
 
-| Recurso | Como Escrever no Markdown | O que o Site Faz |
+O PromptCraft exige declaração explícita de tipos no formato `{{variavel:tipo}}`. Cada tipo gera uma interface sob medida:
+
+| Tipo | Como Escrever no Markdown | O que o Site Gera |
 | :--- | :--- | :--- |
-| **Criar Novo Template** | `# Título do Template` | Cria automaticamente uma nova aba/botão no topo do site. |
-| **Campo de Texto (Obrigatório)** | `{{campo:textarea}}` | Cria uma caixa de texto (*textarea*) multilinha expansível. |
-| **Campo de Lista (Obrigatório)** | `{{regras:list}}` | Cria um gerenciador de lista interativo (adicionar com Enter, badges e botão de remover). No prompt, é interpolado como `- item 1\n- item 2`. |
-| **Erro de Tipo Obrigatório** | `{{campo}}` ou `{{campo:invalido}}` | Se o tipo for omitido ou não suportado, o site **exibe um card de erro explícito no campo** e no preview indicando a correção necessária. |
-| **Omitir Campo Vazio** | *(automático)* | Se o campo ou a lista estiver vazia, o título da seção (`### Título`) e o campo desaparecem do prompt final. |
-| **Bloco Condicional Manual** | `{{#if campo}}...{{/if}}` | *(Opcional)* Exibe o bloco apenas se o campo (ou lista) for preenchido. Se ignorado, não gera quebra de linha extra. |
-| **Separador Visual** | `---` | Linha divisória opcional entre múltiplos templates para organizar o arquivo. |
+| **Texto Simples** | `{{nome_projeto:text}}` | Input de linha única para títulos, nomes ou termos curtos. |
+| **Área de Texto** | `{{descricao:textarea}}` | Caixa de texto multilinha expansível para descrições e instruções detalhadas. |
+| **Lista de Itens** | `{{requisitos:list}}` | Gerenciador de lista interativo (adiciona com Enter, remove por chip). No prompt final vira `- item 1\n- item 2`. |
+| **Booleano** | `{{incluir_testes:boolean}}` | Switch/Toggle ON/OFF elegante. Integra-se perfeitamente com blocos condicionais `{{#if incluir_testes}}...{{/if}}`. |
+| **Seleção Única** | `{{framework:select[React, Vue, Svelte]}}` | Botões de seleção em pílulas (1 clique). Permite desmarcar ao clicar novamente. |
+| **Múltipla Seleção** | `{{stack:multiselect[TypeScript, Docker, Redis]}}` | Chips interativos com botão de limpar. No prompt, interpola separado por vírgula ou em itens de lista. |
+| **Bloco de Código** | `{{codigo:code}}`<br>`{{codigo:code(python)}}`<br>`{{codigo:code(variavel_lang)}}` | Editor monoespaçado escuro com botão "Colar da área de transferência". Suporta **linguagem literal** (ex: `code(python)`) ou **linguagem dinâmica** herdada de outro campo (ex: `code(linguagem)`). |
+| **Validação de Tipos** | `{{campo}}` ou `{{campo:invalido}}` | Exibe card de erro explícito caso o tipo esteja ausente ou seja inválido. |
+| **Condicional** | `{{#if campo}}...{{/if}}` | Exibe a seção apenas se a variável estiver preenchida ou marcada como verdadeira. Não deixa quebras de linha acumuladas. |
 
 ---
 
 ### 3. Exemplo Real de `templates.md`
 
-Este é o formato exato que alimenta o PromptCraft atualmente:
+Este é um exemplo completo demonstrando todos os tipos em ação:
 
 ```markdown
-# Desenvolvimento com IA
-Você é um Engenheiro de Software Sênior e Especialista em Arquitetura.
+# Desenvolvimento Full Stack
+Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
 
-### FILTRO E HEURÍSTICAS DE DECISÃO
-{{filtro_heuristica}}
+### NOME DO PROJETO
+{{projeto:text}}
 
-### ESCOPO DA TAREFA
-{{escopo}}
+### LINGUAGEM PRINCIPAL
+{{linguagem:select[TypeScript, Python, Go, Rust]}}
 
-### CONSTRAINTS (RESTRIÇÕES RÍGIDAS)
-{{constraints}}
+### STACK E FERRAMENTAS
+{{stack:multiselect[Docker, PostgreSQL, Redis, TailwindCSS, GraphQL]}}
 
-### INSTRUÇÕES DE EXECUÇÃO
-1. Respeite integralmente as heurísticas e os limites de escopo descritos acima.
-2. Não viole nenhuma das constraints sob nenhuma circunstância.
-3. Apresente uma solução enxuta, clara e pronta para produção.
+### ESCOPO E OBJETIVO
+{{escopo:textarea}}
 
----
+### REQUISITOS E CRITÉRIOS DE ACEITE
+{{requisitos:list}}
 
-# Refatoração e Clean Code
-Você é um Especialista em Clean Code e Arquitetura de Software.
+### CÓDIGO DE REFERÊNCIA
+{{codigo_base:code(linguagem)}}
 
-### CÓDIGO ORIGINAL
-{{codigo}}
+{{#if testes}}
+### TESTES AUTOMATIZADOS
+- Escrever testes unitários e de integração com cobertura mínima de 80%.
+- Incluir mocks de serviços externos.
+{{/if}}
 
-### PROBLEMA A RESOLVER
-{{problema}}
+{{#if docker}}
+### CONTAINERIZAÇÃO
+- Fornecer Dockerfile multi-stage enxuto e docker-compose.yml pronto para execução local.
+{{/if}}
 
-### REGRAS DA REFATORAÇÃO
-{{regras}}
+### CONFIGURAÇÃO DE AMBIENTE
+- Testes Unitários: {{testes:boolean}}
+- Suporte Docker: {{docker:boolean}}
 
-### INSTRUÇÕES DE EXECUÇÃO
-1. Analise os pontos críticos do código fornecido.
-2. Aplique refatoração mantendo 100% de compatibilidade com o contrato original.
-3. Explique os ganhos de legibilidade, acoplamento e performance obtidos.
+### INSTRUÇÕES FINAIS
+1. Respeite as boas práticas da linguagem {{linguagem}}.
+2. Mantenha os requisitos da lista atendidos de ponta a ponta.
+3. Produza código legível, fortemente tipado e pronto para produção.
 ```
 
 ---

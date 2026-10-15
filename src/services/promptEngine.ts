@@ -1,3 +1,5 @@
+import { FieldType, parseRawType, extractVariables } from '../types/template';
+
 export interface InterpolateOptions {
   /**
    * Se true (padrão), remove títulos e seções que ficaram sem preenchimento
@@ -33,22 +35,107 @@ export function cleanupEmptySections(text: string): string {
 
 export function isValueFilled(val: unknown): boolean {
   if (val === undefined || val === null) return false;
+  if (typeof val === 'boolean') {
+    return val;
+  }
   if (Array.isArray(val)) {
     return val.some(item => typeof item === 'string' && item.trim().length > 0);
   }
   if (typeof val === 'string') {
     return val.trim().length > 0;
   }
+  if (typeof val === 'number') {
+    return true;
+  }
   return false;
 }
 
-export function formatFieldValue(val: unknown): string {
-  if (val === undefined || val === null) return '';
-  if (Array.isArray(val)) {
-    const cleanItems = val.map(i => String(i).trim()).filter(Boolean);
-    if (cleanItems.length === 0) return '';
-    return cleanItems.map(item => `- ${item}`).join('\n');
+/**
+ * Resolve a linguagem para o bloco de código.
+ * Se o parâmetro apontar para outra variável do template (ex: code(linguagem)),
+ * utiliza dinamicamente o valor preenchido pelo usuário.
+ * Caso contrário, trata o parâmetro como linguagem literal (ex: code(python) -> "python").
+ */
+export function resolveCodeLanguage(
+  langParam: string | undefined,
+  values: Record<string, any>,
+  templatePrompt?: string
+): string {
+  if (!langParam) return '';
+  const trimmed = langParam.trim();
+
+  // Verifica se o parâmetro corresponde a uma variável do template
+  const isVariable =
+    trimmed in values ||
+    (templatePrompt
+      ? new RegExp(`\\{\\{(?:#(?:if\\s+)?${trimmed}|${trimmed}(?::|\\}\\}))`).test(templatePrompt)
+      : false);
+
+  if (isVariable) {
+    const val = values[trimmed];
+    if (isValueFilled(val)) {
+      return String(val).trim().toLowerCase();
+    }
+    return '';
   }
+
+  // Se não é variável, trata como literal de linguagem (ex: "python", "typescript", "sql")
+  return trimmed.toLowerCase();
+}
+
+export interface FormatOptions {
+  codeLanguage?: string;
+  allValues?: Record<string, any>;
+  templatePrompt?: string;
+  hasBulletPrefix?: boolean;
+}
+
+export function formatFieldValue(
+  val: unknown,
+  fieldType?: FieldType,
+  options?: FormatOptions
+): string {
+  if (!isValueFilled(val)) return '';
+
+  if (fieldType === 'boolean' || typeof val === 'boolean') {
+    return val ? 'Sim' : '';
+  }
+
+  if (fieldType === 'code') {
+    const lang = resolveCodeLanguage(
+      options?.codeLanguage,
+      options?.allValues || {},
+      options?.templatePrompt
+    );
+    return `\`\`\`${lang}\n${String(val).trimEnd()}\n\`\`\``;
+  }
+
+  if (fieldType === 'multiselect') {
+    if (Array.isArray(val)) {
+      const cleanItems = val.map(i => String(i).trim()).filter(Boolean);
+      if (cleanItems.length === 0) return '';
+      if (options?.hasBulletPrefix) {
+        return cleanItems.map(item => `- ${item}`).join('\n');
+      }
+      return cleanItems.join(', ');
+    }
+    return String(val);
+  }
+
+  if (fieldType === 'list' || Array.isArray(val)) {
+    if (Array.isArray(val)) {
+      const cleanItems = val.map(i => String(i).trim()).filter(Boolean);
+      if (cleanItems.length === 0) return '';
+      return cleanItems.map(item => `- ${item}`).join('\n');
+    }
+    const cleanLines = String(val)
+      .split('\n')
+      .map(s => s.trim().replace(/^[-*•]\s*/, ''))
+      .filter(Boolean);
+    if (cleanLines.length === 0) return '';
+    return cleanLines.map(item => `- ${item}`).join('\n');
+  }
+
   return String(val);
 }
 
@@ -56,7 +143,7 @@ export function formatFieldValue(val: unknown): string {
  * Interpola os valores digitados no template de texto.
  * Suporta:
  * 1. Blocos condicionais explícitos: {{#if variavel}}...{{/if}} e {{#variavel}}...{{/variavel}}
- * 2. Variáveis com tipos: {{variavel:list}} e {{variavel:textarea}} ou {{variavel}}
+ * 2. Variáveis tipadas: text, textarea, list, boolean, select, multiselect, code
  * 3. Omissão inteligente de seções/linhas não preenchidas (omitEmpty = true por padrão)
  */
 export function interpolatePrompt(
@@ -93,23 +180,59 @@ export function interpolatePrompt(
     }
   );
 
-  // 3. Substitui {{variavel:tipo}} pelo valor correspondente ou erro explícito se inválido
+  // Mapeia variáveis declaradas no template com tipos válidos
+  const declaredVars = extractVariables(templatePrompt);
+  const varMap = new Map(declaredVars.filter(v => v.type).map(v => [v.key, v]));
+
+  // 3. Substitui {{variavel:tipo}} ou {{variavel}} pelo valor correspondente ou erro explícito se inválido
   result = result.replace(
-    /(^[ \t]*[-*•][ \t]*)?\{\{([a-zA-Z0-9_-]+)(?::([a-zA-Z0-9_-]+))?\}\}/gm,
-    (_, bulletPrefix, key, type) => {
-      if (!type) {
-        return `[ERRO: Campo {{${key}}} requer tipo explícito (formato: {{${key}:tipo}})]`;
+    /(^[ \t]*[-*•][ \t]*)?\{\{([a-zA-Z0-9_-]+)(?::([^}]+))?\}\}/gm,
+    (_, bulletPrefix, key, rawType) => {
+      let type: FieldType | undefined;
+      let codeLanguage: string | undefined;
+
+      if (rawType) {
+        const parsed = parseRawType(rawType);
+        if (parsed.error) {
+          return `[ERRO: ${parsed.error}]`;
+        }
+        type = parsed.type;
+        codeLanguage = parsed.codeLanguage;
+      } else {
+        const existing = varMap.get(key);
+        if (existing?.type) {
+          type = existing.type;
+          codeLanguage = existing.codeLanguage;
+        } else {
+          return `[ERRO: Campo {{${key}}} requer tipo explícito (formato: {{${key}:tipo}})]`;
+        }
       }
-      const lowerType = type.toLowerCase();
-      if (lowerType !== 'textarea' && lowerType !== 'list') {
-        return `[ERRO: Tipo ':${type}' em {{${key}}} não suportado pelo sistema]`;
-      }
+
       const val = values[key];
-      const isList = lowerType === 'list' || Array.isArray(val);
-      if (isList) {
-        return formatFieldValue(val);
+      const hasBullet = Boolean(bulletPrefix);
+      const formatted = formatFieldValue(val, type, {
+        codeLanguage,
+        allValues: values,
+        templatePrompt,
+        hasBulletPrefix: hasBullet,
+      });
+
+      if (!formatted) {
+        return '';
       }
-      return (bulletPrefix || '') + formatFieldValue(val);
+
+      if (type === 'list' || (type === 'multiselect' && hasBullet)) {
+        return formatted;
+      }
+
+      if (type === 'code') {
+        if (bulletPrefix) {
+          return `${bulletPrefix.trimEnd()}\n${formatted}`;
+        }
+        return formatted;
+      }
+
+      return (bulletPrefix || '') + formatted;
     }
   );
 

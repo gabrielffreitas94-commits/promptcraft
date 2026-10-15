@@ -4,27 +4,96 @@ export interface SimpleTemplate {
   prompt: string;
 }
 
-export const SUPPORTED_FIELD_TYPES = ['textarea', 'list'] as const;
-export type FieldType = typeof SUPPORTED_FIELD_TYPES[number];
+export const SUPPORTED_FIELD_TYPES = [
+  'text',
+  'textarea',
+  'list',
+  'boolean',
+  'select',
+  'multiselect',
+  'code',
+] as const;
+
+export type FieldType = (typeof SUPPORTED_FIELD_TYPES)[number];
 
 export interface ExtractedVariable {
   key: string;
   label: string;
   type?: FieldType;
   rawType?: string;
+  options?: string[];
+  codeLanguage?: string;
   error?: string;
 }
 
 /**
+ * Analisa a string de tipo e extrai tipo base, opções e parâmetros de linguagem.
+ * Exemplos:
+ * - text
+ * - textarea
+ * - list
+ * - boolean
+ * - select[Opção 1, Opção 2]
+ * - multiselect[Item A, Item B]
+ * - code
+ * - code(python) ou code(linguagem_var)
+ */
+export function parseRawType(rawType: string): {
+  type?: FieldType;
+  options?: string[];
+  codeLanguage?: string;
+  error?: string;
+} {
+  const trimmed = rawType.trim();
+  const match = trimmed.match(/^([a-zA-Z0-9_-]+)(?:\[(.*?)\]|\((.*?)\))?$/);
+  if (!match) {
+    return { error: `Tipo ':${trimmed}' não suportado pelo sistema.` };
+  }
+
+  const baseType = match[1].toLowerCase();
+  if (!(SUPPORTED_FIELD_TYPES as readonly string[]).includes(baseType)) {
+    return { error: `Tipo ':${trimmed}' não suportado pelo sistema.` };
+  }
+
+  const type = baseType as FieldType;
+  let options: string[] | undefined;
+  let codeLanguage: string | undefined;
+
+  if (type === 'select' || type === 'multiselect') {
+    if (match[2] === undefined) {
+      return {
+        error: `Tipo ':${type}' requer lista de opções no formato ${type}[Opção 1, Opção 2].`,
+      };
+    }
+    options = match[2]
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    if (options.length === 0) {
+      return {
+        error: `Tipo ':${type}' requer ao menos uma opção válida em [opções].`,
+      };
+    }
+  } else if (type === 'code') {
+    if (match[3] && match[3].trim()) {
+      codeLanguage = match[3].trim();
+    }
+  }
+
+  return { type, options, codeLanguage };
+}
+
+/**
  * Extrai e valida todas as variáveis {{nome_da_variavel:tipo}} de um prompt.
- * O tipo explícito é OBRIGATÓRIO (ex: :textarea ou :list).
+ * O tipo explícito é OBRIGATÓRIO (ex: :text, :textarea, :list, :boolean, :select[...], :multiselect[...], :code(...) ).
  */
 export function extractVariables(promptText: string): ExtractedVariable[] {
   if (!promptText) return [];
 
   // Captura {{#if var}}, {{#var}}, e {{var:tipo}} ou {{var}}
   const matches = promptText.matchAll(
-    /\{\{(?:#(?:if\s+)?([a-zA-Z0-9_-]+)|([a-zA-Z0-9_-]+)(?::([a-zA-Z0-9_-]+))?)\}\}/g
+    /\{\{(?:#(?:if\s+)?([a-zA-Z0-9_-]+)|([a-zA-Z0-9_-]+)(?::([^}]+))?)\}\}/g
   );
   const varsMap = new Map<string, ExtractedVariable>();
 
@@ -48,16 +117,20 @@ export function extractVariables(promptText: string): ExtractedVariable[] {
     const rawType = match[3];
 
     let type: FieldType | undefined;
+    let options: string[] | undefined;
+    let codeLanguage: string | undefined;
     let error: string | undefined;
 
     if (!rawType) {
       error = `Tipo obrigatório ausente. A variável deve ser declarada como {{${key}:tipo}}.`;
     } else {
-      const lower = rawType.toLowerCase();
-      if ((SUPPORTED_FIELD_TYPES as readonly string[]).includes(lower)) {
-        type = lower as FieldType;
+      const parsed = parseRawType(rawType);
+      if (parsed.error) {
+        error = parsed.error;
       } else {
-        error = `Tipo ':${rawType}' não suportado pelo sistema.`;
+        type = parsed.type;
+        options = parsed.options;
+        codeLanguage = parsed.codeLanguage;
       }
     }
 
@@ -67,6 +140,8 @@ export function extractVariables(promptText: string): ExtractedVariable[] {
         label: humanizeLabel(key),
         type,
         rawType,
+        options,
+        codeLanguage,
         error,
       });
     } else {
@@ -75,6 +150,8 @@ export function extractVariables(promptText: string): ExtractedVariable[] {
       if (type) {
         existing.type = type;
         existing.rawType = rawType;
+        existing.options = options;
+        existing.codeLanguage = codeLanguage;
         existing.error = undefined;
       } else if (!existing.type && error) {
         existing.rawType = rawType;

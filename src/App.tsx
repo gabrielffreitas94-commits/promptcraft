@@ -4,7 +4,7 @@ import {
   OFFICIAL_GIST_ID, 
   extractGistId 
 } from './services/templateService';
-import { interpolatePrompt } from './services/promptEngine';
+import { interpolatePrompt, resolveCodeLanguage } from './services/promptEngine';
 import { SimpleTemplate, extractVariables } from './types/template';
 import { 
   Copy, 
@@ -17,12 +17,85 @@ import {
   RefreshCw,
   Plus,
   X,
-  List
+  List,
+  Type,
+  AlignLeft,
+  ToggleRight,
+  CheckCircle2,
+  SlidersHorizontal,
+  Code2,
+  ClipboardPaste
 } from 'lucide-react';
 
 const STORAGE_KEY_GIST = 'promptcraft_active_gist_id';
 const STORAGE_KEY_VALUES = 'promptcraft_form_values_';
 const STORAGE_KEY_OMIT_EMPTY = 'promptcraft_omit_empty';
+
+interface TextFieldInputProps {
+  label: string;
+  variableKey: string;
+  value: string;
+  onChange: (value: string) => void;
+}
+
+function TextFieldInput({ label, variableKey, value, onChange }: TextFieldInputProps) {
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-semibold text-neutral-800 flex items-center gap-1.5">
+          <Type className="w-3.5 h-3.5 text-neutral-500" />
+          <span>{label}</span>
+          <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 text-neutral-600 border border-neutral-200">
+            texto
+          </span>
+        </label>
+        <span className="font-mono text-[10px] text-neutral-400 font-normal">
+          {`{{${variableKey}:text}}`}
+        </span>
+      </div>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={`Digite ${label.toLowerCase()}...`}
+        className="w-full text-xs font-sans bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-neutral-900 transition-all"
+      />
+    </div>
+  );
+}
+
+interface TextareaFieldInputProps {
+  label: string;
+  variableKey: string;
+  value: string;
+  onChange: (value: string) => void;
+}
+
+function TextareaFieldInput({ label, variableKey, value, onChange }: TextareaFieldInputProps) {
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-semibold text-neutral-800 flex items-center gap-1.5">
+          <AlignLeft className="w-3.5 h-3.5 text-neutral-500" />
+          <span>{label}</span>
+          <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 text-neutral-600 border border-neutral-200">
+            área de texto
+          </span>
+        </label>
+        <span className="font-mono text-[10px] text-neutral-400 font-normal">
+          {`{{${variableKey}:textarea}}`}
+        </span>
+      </div>
+      <textarea
+        rows={3}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={`Digite o conteúdo de ${label.toLowerCase()}...`}
+        className="w-full text-xs font-sans bg-neutral-50 border border-neutral-200 rounded-xl p-3 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-neutral-900 transition-all resize-y"
+      />
+    </div>
+  );
+}
 
 interface ListFieldInputProps {
   label: string;
@@ -37,7 +110,6 @@ function ListFieldInput({ label, variableKey, items, onChange }: ListFieldInputP
   const handleAddItem = () => {
     const trimmed = inputValue.trim();
     if (!trimmed) return;
-    // Se colou ou digitou múltiplas linhas
     const newItems = trimmed
       .split('\n')
       .map(s => s.trim().replace(/^[-*•]\s*/, ''))
@@ -73,7 +145,6 @@ function ListFieldInput({ label, variableKey, items, onChange }: ListFieldInputP
         </span>
       </div>
 
-      {/* Lista de Itens adicionados */}
       {items.length > 0 && (
         <div className="space-y-1.5 bg-neutral-50/80 border border-neutral-200 rounded-xl p-2.5 max-h-48 overflow-y-auto">
           {items.map((item, idx) => (
@@ -98,7 +169,6 @@ function ListFieldInput({ label, variableKey, items, onChange }: ListFieldInputP
         </div>
       )}
 
-      {/* Campo para adicionar novo item */}
       <div className="flex items-center gap-1.5">
         <input
           type="text"
@@ -118,6 +188,306 @@ function ListFieldInput({ label, variableKey, items, onChange }: ListFieldInputP
           <Plus className="w-3.5 h-3.5" />
           <span>Add</span>
         </button>
+      </div>
+    </div>
+  );
+}
+
+interface BooleanFieldInputProps {
+  label: string;
+  variableKey: string;
+  value: boolean;
+  onChange: (value: boolean) => void;
+}
+
+function BooleanFieldInput({ label, variableKey, value, onChange }: BooleanFieldInputProps) {
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-semibold text-neutral-800 flex items-center gap-1.5">
+          <ToggleRight className="w-3.5 h-3.5 text-neutral-500" />
+          <span>{label}</span>
+          <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 text-neutral-600 border border-neutral-200">
+            booleano
+          </span>
+        </label>
+        <span className="font-mono text-[10px] text-neutral-400 font-normal">
+          {`{{${variableKey}:boolean}}`}
+        </span>
+      </div>
+      <div 
+        onClick={() => onChange(!value)}
+        className="flex items-center justify-between bg-neutral-50 hover:bg-neutral-100/80 border border-neutral-200 rounded-xl px-3.5 py-2.5 cursor-pointer select-none transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <span className={`w-2 h-2 rounded-full ${value ? 'bg-emerald-500' : 'bg-neutral-300'}`} />
+          <span className="text-xs font-medium text-neutral-800">
+            {value ? 'Ativado (incluído no prompt)' : 'Desativado (omitido do prompt)'}
+          </span>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={value}
+          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+            value ? 'bg-neutral-900' : 'bg-neutral-300'
+          }`}
+        >
+          <span
+            className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+              value ? 'translate-x-4' : 'translate-x-0'
+            }`}
+          />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+interface SelectFieldInputProps {
+  label: string;
+  variableKey: string;
+  options: string[];
+  rawType?: string;
+  value: string;
+  onChange: (value: string) => void;
+}
+
+function SelectFieldInput({ label, variableKey, options, rawType, value, onChange }: SelectFieldInputProps) {
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-semibold text-neutral-800 flex items-center gap-1.5">
+          <CheckCircle2 className="w-3.5 h-3.5 text-neutral-500" />
+          <span>{label}</span>
+          <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 text-neutral-600 border border-neutral-200">
+            seleção única
+          </span>
+        </label>
+        <span className="font-mono text-[10px] text-neutral-400 font-normal">
+          {rawType ? `{{${variableKey}:${rawType}}}` : `{{${variableKey}:select}}`}
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-1.5 pt-0.5">
+        {options.map((opt) => {
+          const isSelected = value === opt;
+          return (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => onChange(isSelected ? '' : opt)}
+              className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-all flex items-center gap-1.5 ${
+                isSelected
+                  ? 'bg-neutral-900 border-neutral-900 text-white shadow-xs'
+                  : 'bg-white border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300'
+              }`}
+            >
+              {isSelected && <Check className="w-3 h-3" />}
+              <span>{opt}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+interface MultiSelectFieldInputProps {
+  label: string;
+  variableKey: string;
+  options: string[];
+  rawType?: string;
+  selected: string[];
+  onChange: (selected: string[]) => void;
+}
+
+function MultiSelectFieldInput({ label, variableKey, options, rawType, selected, onChange }: MultiSelectFieldInputProps) {
+  const toggleOption = (opt: string) => {
+    if (selected.includes(opt)) {
+      onChange(selected.filter(item => item !== opt));
+    } else {
+      onChange([...selected, opt]);
+    }
+  };
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-semibold text-neutral-800 flex items-center gap-1.5">
+          <SlidersHorizontal className="w-3.5 h-3.5 text-neutral-500" />
+          <span>{label}</span>
+          <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 text-neutral-600 border border-neutral-200">
+            múltipla seleção
+          </span>
+          {selected.length > 0 && (
+            <span className="text-[10px] text-neutral-500 font-normal">
+              ({selected.length} selecionado{selected.length > 1 ? 's' : ''})
+            </span>
+          )}
+        </label>
+        <div className="flex items-center gap-2">
+          {selected.length > 0 && (
+            <button
+              type="button"
+              onClick={() => onChange([])}
+              className="text-[10px] text-neutral-400 hover:text-neutral-700 underline"
+            >
+              Limpar
+            </button>
+          )}
+          <span className="font-mono text-[10px] text-neutral-400 font-normal">
+            {rawType ? `{{${variableKey}:${rawType}}}` : `{{${variableKey}:multiselect}}`}
+          </span>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-1.5 pt-0.5">
+        {options.map((opt) => {
+          const isSelected = selected.includes(opt);
+          return (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => toggleOption(opt)}
+              className={`text-xs px-2.5 py-1.5 rounded-lg border font-medium transition-all flex items-center gap-1.5 ${
+                isSelected
+                  ? 'bg-neutral-900 border-neutral-900 text-white shadow-xs'
+                  : 'bg-white border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300'
+              }`}
+            >
+              {isSelected ? (
+                <Check className="w-3 h-3 text-emerald-400" />
+              ) : (
+                <Plus className="w-3 h-3 text-neutral-400" />
+              )}
+              <span>{opt}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+interface CodeFieldInputProps {
+  label: string;
+  variableKey: string;
+  codeLanguage?: string;
+  rawType?: string;
+  resolvedLanguage: string;
+  isDynamicLang: boolean;
+  value: string;
+  onChange: (value: string) => void;
+}
+
+function CodeFieldInput({
+  label,
+  variableKey,
+  codeLanguage,
+  rawType,
+  resolvedLanguage,
+  isDynamicLang,
+  value,
+  onChange,
+}: CodeFieldInputProps) {
+  const [pasted, setPasted] = useState(false);
+
+  const handlePaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) {
+        onChange(text);
+        setPasted(true);
+        setTimeout(() => setPasted(false), 1500);
+      }
+    } catch (err) {
+      console.warn('Erro ao colar:', err);
+    }
+  };
+
+  const lineCount = value ? value.split('\n').length : 0;
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-semibold text-neutral-800 flex items-center gap-1.5">
+          <Code2 className="w-3.5 h-3.5 text-neutral-500" />
+          <span>{label}</span>
+          <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 text-neutral-600 border border-neutral-200">
+            código
+          </span>
+          {resolvedLanguage && (
+            <span 
+              className={`text-[10px] font-mono px-1.5 py-0.2 rounded border ${
+                isDynamicLang
+                  ? 'bg-blue-50 text-blue-700 border-blue-200'
+                  : 'bg-neutral-100 text-neutral-700 border-neutral-200'
+              }`}
+              title={isDynamicLang ? `Linguagem dinâmica vinda de {{${codeLanguage}}}` : `Linguagem: ${resolvedLanguage}`}
+            >
+              {isDynamicLang ? `lang: ${resolvedLanguage} (via {{${codeLanguage}}})` : `lang: ${resolvedLanguage}`}
+            </span>
+          )}
+          {isDynamicLang && !resolvedLanguage && (
+            <span 
+              className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-50 text-amber-700 border border-amber-200" 
+              title={`Aguardando seleção no campo {{${codeLanguage}}}`}
+            >
+              {`lang: dinâmico ({{${codeLanguage}}})`}
+            </span>
+          )}
+        </label>
+        <span className="font-mono text-[10px] text-neutral-400 font-normal">
+          {rawType ? `{{${variableKey}:${rawType}}}` : `{{${variableKey}:code}}`}
+        </span>
+      </div>
+
+      <div className="border border-neutral-800 rounded-xl bg-neutral-950 overflow-hidden shadow-xs">
+        <div className="bg-neutral-900/90 px-3 py-1.5 border-b border-neutral-800 flex items-center justify-between text-[11px] text-neutral-400 font-mono">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-neutral-600 inline-block" />
+            <span>{resolvedLanguage || 'texto / sem linguagem'}</span>
+            {lineCount > 0 && <span>• {lineCount} linha{lineCount > 1 ? 's' : ''}</span>}
+          </div>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={handlePaste}
+              className="flex items-center gap-1 px-2 py-0.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 transition-colors text-[10px]"
+              title="Colar da área de transferência"
+            >
+              {pasted ? (
+                <>
+                  <Check className="w-3 h-3 text-emerald-400" />
+                  <span className="text-emerald-400">Colado!</span>
+                </>
+              ) : (
+                <>
+                  <ClipboardPaste className="w-3 h-3" />
+                  <span>Colar</span>
+                </>
+              )}
+            </button>
+            {value && (
+              <button
+                type="button"
+                onClick={() => onChange('')}
+                className="px-1.5 py-0.5 rounded hover:bg-neutral-800 text-neutral-400 hover:text-red-400 transition-colors text-[10px]"
+                title="Limpar código"
+              >
+                Limpar
+              </button>
+            )}
+          </div>
+        </div>
+
+        <textarea
+          rows={5}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={`// Cole ou digite seu código aqui...`}
+          className="w-full text-xs font-mono bg-neutral-950 p-3 text-neutral-100 placeholder:text-neutral-600 focus:outline-none focus:ring-0 resize-y leading-relaxed border-0"
+          spellCheck={false}
+        />
       </div>
     </div>
   );
@@ -471,6 +841,30 @@ export function App() {
                         );
                       }
 
+                      if (v.type === 'text') {
+                        return (
+                          <TextFieldInput
+                            key={v.key}
+                            label={v.label}
+                            variableKey={v.key}
+                            value={typeof fieldValues[v.key] === 'string' ? fieldValues[v.key] : ''}
+                            onChange={(val) => handleValueChange(v.key, val)}
+                          />
+                        );
+                      }
+
+                      if (v.type === 'textarea') {
+                        return (
+                          <TextareaFieldInput
+                            key={v.key}
+                            label={v.label}
+                            variableKey={v.key}
+                            value={typeof fieldValues[v.key] === 'string' ? fieldValues[v.key] : ''}
+                            onChange={(val) => handleValueChange(v.key, val)}
+                          />
+                        );
+                      }
+
                       if (v.type === 'list') {
                         return (
                           <ListFieldInput
@@ -483,28 +877,74 @@ export function App() {
                         );
                       }
 
-                      return (
-                        <div key={v.key} className="space-y-1.5">
-                          <label className="text-xs font-semibold text-neutral-800 flex items-center justify-between">
-                            <div className="flex items-center gap-1.5">
-                              <span>{v.label}</span>
-                              <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 text-neutral-600 border border-neutral-200">
-                                texto
-                              </span>
-                            </div>
-                            <span className="font-mono text-[10px] text-neutral-400 font-normal">
-                              {`{{${v.key}:textarea}}`}
-                            </span>
-                          </label>
-                          <textarea
-                            rows={3}
-                            value={typeof fieldValues[v.key] === 'string' ? fieldValues[v.key] : ''}
-                            onChange={(e) => handleValueChange(v.key, e.target.value)}
-                            placeholder={`Digite o conteúdo de ${v.label.toLowerCase()}...`}
-                            className="w-full text-xs font-sans bg-neutral-50 border border-neutral-200 rounded-xl p-3 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-neutral-900 transition-all resize-y"
+                      if (v.type === 'boolean') {
+                        return (
+                          <BooleanFieldInput
+                            key={v.key}
+                            label={v.label}
+                            variableKey={v.key}
+                            value={Boolean(fieldValues[v.key])}
+                            onChange={(val) => handleValueChange(v.key, val)}
                           />
-                        </div>
-                      );
+                        );
+                      }
+
+                      if (v.type === 'select') {
+                        return (
+                          <SelectFieldInput
+                            key={v.key}
+                            label={v.label}
+                            variableKey={v.key}
+                            options={v.options || []}
+                            rawType={v.rawType}
+                            value={typeof fieldValues[v.key] === 'string' ? fieldValues[v.key] : ''}
+                            onChange={(val) => handleValueChange(v.key, val)}
+                          />
+                        );
+                      }
+
+                      if (v.type === 'multiselect') {
+                        return (
+                          <MultiSelectFieldInput
+                            key={v.key}
+                            label={v.label}
+                            variableKey={v.key}
+                            options={v.options || []}
+                            rawType={v.rawType}
+                            selected={Array.isArray(fieldValues[v.key]) ? fieldValues[v.key] : []}
+                            onChange={(val) => handleValueChange(v.key, val)}
+                          />
+                        );
+                      }
+
+                      if (v.type === 'code') {
+                        const isDynamic = Boolean(
+                          v.codeLanguage &&
+                          (v.codeLanguage in fieldValues ||
+                           variables.some(other => other.key === v.codeLanguage))
+                        );
+                        const resolvedLang = resolveCodeLanguage(
+                          v.codeLanguage,
+                          fieldValues,
+                          activeTemplate.prompt
+                        );
+
+                        return (
+                          <CodeFieldInput
+                            key={v.key}
+                            label={v.label}
+                            variableKey={v.key}
+                            codeLanguage={v.codeLanguage}
+                            rawType={v.rawType}
+                            resolvedLanguage={resolvedLang}
+                            isDynamicLang={isDynamic}
+                            value={typeof fieldValues[v.key] === 'string' ? fieldValues[v.key] : ''}
+                            onChange={(val) => handleValueChange(v.key, val)}
+                          />
+                        );
+                      }
+
+                      return null;
                     })}
 
                     {variables.length === 0 && (
