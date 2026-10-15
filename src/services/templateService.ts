@@ -116,7 +116,7 @@ export function normalizeTemplates(data: unknown): SimpleTemplate[] {
 export const templateService = {
   /**
    * Carrega os templates de um GitHub Gist (suporta .md e .json)
-   * @param bypassCache Quando true, ignora o cache local e do navegador para trazer a versão mais recente
+   * @param bypassCache Quando true, limpa cache local e força timestamp para ignorar CDN
    */
   async loadFromGist(gistInput: string, bypassCache: boolean = false): Promise<SimpleTemplate[]> {
     const rawId = !gistInput || gistInput === 'default' ? OFFICIAL_GIST_ID : gistInput;
@@ -134,19 +134,23 @@ export const templateService = {
       }
     }
 
-    const cacheBuster = bypassCache ? `?_nocache=${Date.now()}` : '';
+    // Usar apenas timestamp query param.
+    // NUNCA adicionar headers 'Cache-Control' ou 'Pragma', pois eles ativam CORS preflight (OPTIONS)
+    // que a API pública do GitHub bloqueia no navegador!
+    const cacheBuster = `?_t=${Date.now()}`;
     const apiUrl = `https://api.github.com/gists/${gistId}${cacheBuster}`;
     const res = await fetch(apiUrl, {
-      cache: bypassCache ? 'no-store' : 'default',
       headers: {
         Accept: 'application/vnd.github.v3+json',
-        ...(bypassCache ? { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' } : {}),
       },
     });
 
     if (!res.ok) {
       if (res.status === 404) {
         throw new Error('Gist não encontrado. Verifique se o ID está correto e se o Gist é público.');
+      }
+      if (res.status === 403) {
+        throw new Error('Limite temporário de requisições do GitHub atingido. Aguarde alguns instantes.');
       }
       throw new Error(`Erro ao conectar ao GitHub Gist (Status: ${res.status}).`);
     }
@@ -161,15 +165,29 @@ export const templateService = {
 
     // 1. Prioriza arquivo Markdown (.md)
     const mdFile = fileList.find(f => f.filename?.endsWith('.md'));
-    if (mdFile && mdFile.content) {
-      const parsedMd = parseMarkdownTemplates(mdFile.content);
-      if (parsedMd.length > 0) {
+    if (mdFile) {
+      let content = mdFile.content;
+      if (!content && mdFile.raw_url) {
         try {
-          localStorage.setItem(`promptcraft_gist_${gistId}`, JSON.stringify(parsedMd));
+          const rawRes = await fetch(`${mdFile.raw_url}${mdFile.raw_url.includes('?') ? '&' : '?'}_t=${Date.now()}`);
+          if (rawRes.ok) {
+            content = await rawRes.text();
+          }
         } catch {
           // ignore
         }
-        return parsedMd;
+      }
+
+      if (content) {
+        const parsedMd = parseMarkdownTemplates(content);
+        if (parsedMd.length > 0) {
+          try {
+            localStorage.setItem(`promptcraft_gist_${gistId}`, JSON.stringify(parsedMd));
+          } catch {
+            // ignore
+          }
+          return parsedMd;
+        }
       }
     }
 

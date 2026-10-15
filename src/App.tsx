@@ -86,9 +86,7 @@ export function App() {
         setTimeout(() => setReloaded(false), 2000);
       }
     } catch (err: any) {
-      if (!cached || cached.length === 0) {
-        setErrorMsg(err.message || 'Erro ao carregar templates do Gist.');
-      }
+      setErrorMsg(err.message || 'Erro ao carregar templates do Gist.');
     } finally {
       setLoading(false);
     }
@@ -270,6 +268,22 @@ export function App() {
         ) : (
           activeTemplate && (
             <div className="space-y-6">
+              {errorMsg && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-xs flex items-center justify-between shadow-xs">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+                    <span>{errorMsg}</span>
+                  </div>
+                  <button 
+                    onClick={() => setErrorMsg(null)} 
+                    className="text-red-500 hover:text-red-800 font-bold ml-2 text-sm leading-none"
+                    title="Fechar aviso"
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
+
               {/* Seletor de Templates (se houver mais de 1 no Gist) */}
               {templates.length > 1 && (
                 <div className="flex items-center gap-2 overflow-x-auto pb-1">
