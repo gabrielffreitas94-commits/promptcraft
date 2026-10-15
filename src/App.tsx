@@ -674,19 +674,11 @@ export function App() {
           <div className="flex items-center gap-3 sm:gap-6">
             <div 
               onClick={() => handleTabChange('generator')}
-              className="flex items-center gap-2.5 cursor-pointer select-none group"
-              title="Voltar ao início"
+              className="flex items-center cursor-pointer select-none group"
+              title="PromptCraft"
             >
               <div className="w-8 h-8 rounded-lg bg-neutral-900 text-white flex items-center justify-center font-mono font-bold text-xs shadow-xs group-hover:scale-105 transition-transform">
                 PC
-              </div>
-              <div className="hidden sm:block">
-                <span className="font-semibold text-sm tracking-tight text-neutral-900">
-                  PromptCraft
-                </span>
-                <span className="ml-2 text-[10px] font-mono px-1.5 py-0.5 rounded bg-neutral-100 border border-neutral-200 text-neutral-600">
-                  Gist Driven
-                </span>
               </div>
             </div>
 
@@ -702,7 +694,7 @@ export function App() {
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-neutral-700" />
-                <span>Gerador</span>
+                <span>PromptCraft</span>
               </button>
               <button
                 type="button"

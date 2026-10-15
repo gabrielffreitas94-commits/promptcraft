@@ -222,7 +222,7 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
               Nomeie como <code className="bg-neutral-100 px-1 py-0.5 rounded text-[11px]">promptcraft.md</code>
             </h3>
             <p className="text-xs text-neutral-500 leading-relaxed">
-              No campo de nome do arquivo, digite obrigatoriamente <strong className="text-neutral-800">promptcraft.md</strong> e escreva seus templates usando títulos <code className="font-mono bg-neutral-100 px-1 rounded text-[11px]">#</code> e campos <code className="font-mono bg-neutral-100 px-1 rounded text-[11px]">{'{{campo:tipo}}'}</code>.
+              No campo de nome do arquivo, digite <strong className="text-neutral-800">promptcraft.md</strong> e escreva seus templates usando títulos <code className="font-mono bg-neutral-100 px-1 rounded text-[11px]">#</code> e campos <code className="font-mono bg-neutral-100 px-1 rounded text-[11px]">{'{{campo:tipo}}'}</code>.
             </p>
           </div>
 
