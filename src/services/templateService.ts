@@ -116,8 +116,9 @@ export function normalizeTemplates(data: unknown): SimpleTemplate[] {
 export const templateService = {
   /**
    * Carrega os templates de um GitHub Gist (suporta .md e .json)
+   * @param bypassCache Quando true, ignora o cache local e do navegador para trazer a versão mais recente
    */
-  async loadFromGist(gistInput: string): Promise<SimpleTemplate[]> {
+  async loadFromGist(gistInput: string, bypassCache: boolean = false): Promise<SimpleTemplate[]> {
     const rawId = !gistInput || gistInput === 'default' ? OFFICIAL_GIST_ID : gistInput;
     const gistId = extractGistId(rawId);
 
@@ -125,10 +126,21 @@ export const templateService = {
       throw new Error('Informe o ID ou URL do GitHub Gist.');
     }
 
-    const apiUrl = `https://api.github.com/gists/${gistId}`;
+    if (bypassCache) {
+      try {
+        localStorage.removeItem(`promptcraft_gist_${gistId}`);
+      } catch {
+        // ignore
+      }
+    }
+
+    const cacheBuster = bypassCache ? `?_nocache=${Date.now()}` : '';
+    const apiUrl = `https://api.github.com/gists/${gistId}${cacheBuster}`;
     const res = await fetch(apiUrl, {
+      cache: bypassCache ? 'no-store' : 'default',
       headers: {
         Accept: 'application/vnd.github.v3+json',
+        ...(bypassCache ? { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' } : {}),
       },
     });
 

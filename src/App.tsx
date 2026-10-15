@@ -13,7 +13,8 @@ import {
   Loader2, 
   AlertCircle, 
   Sparkles, 
-  RotateCcw
+  RotateCcw,
+  RefreshCw
 } from 'lucide-react';
 
 const STORAGE_KEY_GIST = 'promptcraft_active_gist_id';
@@ -39,11 +40,12 @@ export function App() {
     return saved !== null ? saved === 'true' : true;
   });
   const [loading, setLoading] = useState<boolean>(true);
+  const [reloaded, setReloaded] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
 
   // Carrega templates do Gist ativo
-  const fetchTemplates = useCallback(async (idOrUrl: string) => {
+  const fetchTemplates = useCallback(async (idOrUrl: string, forceReload: boolean = false) => {
     const targetId = extractGistId(idOrUrl);
     if (!targetId) {
       setErrorMsg('Por favor, informe um ID ou URL de Gist válido.');
@@ -54,8 +56,8 @@ export function App() {
     setLoading(true);
     setErrorMsg(null);
 
-    // Tenta carregar do cache para renderização instantânea
-    const cached = templateService.getCachedTemplates(targetId);
+    // Se NÃO for forceReload, tenta carregar do cache para renderização instantânea
+    const cached = !forceReload ? templateService.getCachedTemplates(targetId) : null;
     if (cached && cached.length > 0) {
       setTemplates(cached);
       if (!activeTemplateId || !cached.some(t => t.id === activeTemplateId)) {
@@ -65,7 +67,7 @@ export function App() {
     }
 
     try {
-      const data = await templateService.loadFromGist(targetId);
+      const data = await templateService.loadFromGist(targetId, forceReload);
       setTemplates(data);
       setActiveGistId(targetId);
       localStorage.setItem(STORAGE_KEY_GIST, targetId);
@@ -77,6 +79,11 @@ export function App() {
 
       if (!activeTemplateId || !data.some(t => t.id === activeTemplateId)) {
         setActiveTemplateId(data[0].id);
+      }
+
+      if (forceReload) {
+        setReloaded(true);
+        setTimeout(() => setReloaded(false), 2000);
       }
     } catch (err: any) {
       if (!cached || cached.length === 0) {
@@ -186,7 +193,7 @@ export function App() {
             <form 
               onSubmit={(e) => {
                 e.preventDefault();
-                fetchTemplates(gistInput);
+                fetchTemplates(gistInput, true);
               }}
               className="flex items-center gap-1.5 w-full max-w-sm"
             >
@@ -200,9 +207,29 @@ export function App() {
               <button
                 type="submit"
                 disabled={loading}
-                className="text-xs font-semibold px-3 py-1.5 bg-neutral-900 hover:bg-black text-white rounded-lg transition-colors flex items-center gap-1 shrink-0 disabled:opacity-50"
+                className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shrink-0 shadow-xs ${
+                  reloaded
+                    ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                    : 'bg-neutral-900 hover:bg-black text-white'
+                } disabled:opacity-50`}
+                title="Carregar e recarregar os dados mais recentes do Gist (ignora cache)"
               >
-                {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : <span>Carregar</span>}
+                {loading ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Recarregando...</span>
+                  </>
+                ) : reloaded ? (
+                  <>
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Recarregado!</span>
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    <span>Carregar</span>
+                  </>
+                )}
               </button>
             </form>
 
