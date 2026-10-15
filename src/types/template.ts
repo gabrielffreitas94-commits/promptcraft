@@ -8,6 +8,7 @@ export const SUPPORTED_FIELD_TYPES = [
   'text',
   'textarea',
   'list',
+  'numbered_list',
   'boolean',
   'select',
   'multiselect',
@@ -32,6 +33,7 @@ export interface ExtractedVariable {
  * - text
  * - textarea
  * - list
+ * - numbered_list (ou ordered_list)
  * - boolean
  * - select[Opção 1, Opção 2]
  * - multiselect[Item A, Item B]
@@ -50,7 +52,11 @@ export function parseRawType(rawType: string): {
     return { error: `Tipo ':${trimmed}' não suportado pelo sistema.` };
   }
 
-  const baseType = match[1].toLowerCase();
+  let baseType = match[1].toLowerCase();
+  if (baseType === 'ordered_list' || baseType === 'numberlist' || baseType === 'lista_numerada') {
+    baseType = 'numbered_list';
+  }
+
   if (!(SUPPORTED_FIELD_TYPES as readonly string[]).includes(baseType)) {
     return { error: `Tipo ':${trimmed}' não suportado pelo sistema.` };
   }

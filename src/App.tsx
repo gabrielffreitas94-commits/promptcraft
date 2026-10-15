@@ -25,7 +25,8 @@ import {
   SlidersHorizontal,
   Code2,
   ClipboardPaste,
-  BookOpen
+  BookOpen,
+  ListOrdered
 } from 'lucide-react';
 import { GistGuidePage } from './components/GistGuidePage';
 
@@ -104,9 +105,10 @@ interface ListFieldInputProps {
   variableKey: string;
   items: string[];
   onChange: (items: string[]) => void;
+  numbered?: boolean;
 }
 
-function ListFieldInput({ label, variableKey, items, onChange }: ListFieldInputProps) {
+function ListFieldInput({ label, variableKey, items, onChange, numbered = false }: ListFieldInputProps) {
   const [inputValue, setInputValue] = useState('');
 
   const handleAddItem = () => {
@@ -114,7 +116,7 @@ function ListFieldInput({ label, variableKey, items, onChange }: ListFieldInputP
     if (!trimmed) return;
     const newItems = trimmed
       .split('\n')
-      .map(s => s.trim().replace(/^[-*•]\s*/, ''))
+      .map(s => s.trim().replace(/^(?:\d+[.)]|[-*•])\s*/, ''))
       .filter(Boolean);
 
     onChange([...items, ...newItems]);
@@ -132,18 +134,20 @@ function ListFieldInput({ label, variableKey, items, onChange }: ListFieldInputP
     onChange(items.filter((_, idx) => idx !== indexToRemove));
   };
 
+  const Icon = numbered ? ListOrdered : List;
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <label className="text-xs font-semibold text-neutral-800 flex items-center gap-1.5">
-          <List className="w-3.5 h-3.5 text-neutral-500" />
+          <Icon className="w-3.5 h-3.5 text-neutral-500" />
           <span>{label}</span>
           <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 text-neutral-600 border border-neutral-200">
-            lista
+            {numbered ? 'lista numerada' : 'lista'}
           </span>
         </label>
         <span className="font-mono text-[10px] text-neutral-400 font-normal">
-          {`{{${variableKey}:list}}`}
+          {numbered ? `{{${variableKey}:numbered_list}}` : `{{${variableKey}:list}}`}
         </span>
       </div>
 
@@ -155,7 +159,13 @@ function ListFieldInput({ label, variableKey, items, onChange }: ListFieldInputP
               className="flex items-center justify-between gap-2 text-xs bg-white border border-neutral-200 px-2.5 py-1.5 rounded-lg shadow-2xs group"
             >
               <div className="flex items-center gap-2 min-w-0">
-                <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 shrink-0" />
+                {numbered ? (
+                  <span className="w-4 h-4 rounded bg-neutral-100 border border-neutral-200 text-neutral-700 text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
+                    {idx + 1}
+                  </span>
+                ) : (
+                  <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 shrink-0" />
+                )}
                 <span className="truncate text-neutral-800">{item}</span>
               </div>
               <button
@@ -177,7 +187,7 @@ function ListFieldInput({ label, variableKey, items, onChange }: ListFieldInputP
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={`Adicionar item à lista (pressione Enter)...`}
+          placeholder={numbered ? `Adicionar item numerado (pressione Enter)...` : `Adicionar item à lista (pressione Enter)...`}
           className="w-full text-xs font-sans bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-neutral-900 transition-all"
         />
         <button
@@ -185,7 +195,7 @@ function ListFieldInput({ label, variableKey, items, onChange }: ListFieldInputP
           onClick={handleAddItem}
           disabled={!inputValue.trim()}
           className="px-3 py-2 bg-neutral-900 hover:bg-black text-white text-xs font-medium rounded-xl transition-all disabled:opacity-40 shrink-0 flex items-center gap-1 shadow-xs"
-          title="Adicionar à lista"
+          title={numbered ? "Adicionar à lista numerada" : "Adicionar à lista"}
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add</span>
@@ -774,7 +784,6 @@ export function App() {
         {activeTab === 'guide' ? (
           <GistGuidePage 
             onGoToGenerator={() => handleTabChange('generator')} 
-            activeGistId={activeGistId} 
           />
         ) : loading && templates.length === 0 ? (
           <div className="min-h-[50vh] flex flex-col items-center justify-center text-neutral-500 gap-3">
@@ -927,6 +936,19 @@ export function App() {
                             key={v.key}
                             label={v.label}
                             variableKey={v.key}
+                            items={Array.isArray(fieldValues[v.key]) ? fieldValues[v.key] : []}
+                            onChange={(newItems) => handleValueChange(v.key, newItems)}
+                          />
+                        );
+                      }
+
+                      if (v.type === 'numbered_list') {
+                        return (
+                          <ListFieldInput
+                            key={v.key}
+                            label={v.label}
+                            variableKey={v.key}
+                            numbered
                             items={Array.isArray(fieldValues[v.key]) ? fieldValues[v.key] : []}
                             onChange={(newItems) => handleValueChange(v.key, newItems)}
                           />

@@ -163,8 +163,17 @@ export const templateService = {
       throw new Error('Nenhum arquivo encontrado no Gist informado.');
     }
 
-    // 1. Prioriza arquivo Markdown (.md)
-    const mdFile = fileList.find(f => f.filename?.endsWith('.md'));
+    // 1. Ordem de prioridade para encontrar o arquivo de templates no Gist:
+    // a) promptcraft.md (nome explícito e oficial para o PromptCraft, evitando qualquer conflito)
+    // b) templates.md (nome padrão clássico)
+    // c) Qualquer outro arquivo .md que não seja readme.md
+    // d) Qualquer arquivo .md
+    const promptcraftMd = fileList.find(f => f.filename?.toLowerCase() === 'promptcraft.md');
+    const templatesMd = fileList.find(f => f.filename?.toLowerCase() === 'templates.md');
+    const cleanMd = fileList.find(f => f.filename?.endsWith('.md') && f.filename?.toLowerCase() !== 'readme.md');
+    const anyMd = fileList.find(f => f.filename?.endsWith('.md'));
+
+    const mdFile = promptcraftMd || templatesMd || cleanMd || anyMd;
     if (mdFile) {
       let content = mdFile.content;
       if (!content && mdFile.raw_url) {

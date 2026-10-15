@@ -18,10 +18,10 @@
 No PromptCraft, **não existe nenhum template chumbado no código-fonte**.  
 O site funciona como uma **engine executora minimalista**:
 
-1. **Templates em Markdown Puro:** Toda a lógica dos seus templates vive em um GitHub Gist público (`templates.md`).
+1. **Templates em Markdown Puro:** Toda a lógica dos seus templates vive em um GitHub Gist público nomeado preferencialmente como `promptcraft.md` (ou o clássico `templates.md`).
 2. **Zero Deploy:** Para criar novos templates, renomear campos ou mudar o texto do prompt, **você não precisa fazer commit, build ou deploy**. Basta editar o Gist no GitHub e clicar em **Carregar** no site.
-3. **Detecção Automática:** Qualquer `{{palavra}}` no Markdown vira automaticamente um campo de digitação na interface.
-4. **Omissão Inteligente de Vazios:** Seções e marcadores cujos campos você não preencheu somem sozinhos do prompt final, mantendo a saída 100% limpa.
+3. **Detecção Automática:** Qualquer `{{palavra:tipo}}` no Markdown vira automaticamente um campo de digitação na interface.
+4. **Omissão Inteligente de Vazios e Marcadores:** Seções e marcadores cujos campos você não preencheu somem sozinhos do prompt final. Blocos condicionais `{{#if}}` precedidos por marcadores de lista (`- `, `* `) removem o marcador automaticamente caso a condição seja falsa.
 5. **Recarregamento Anti-Cache:** Ao clicar em **Carregar**, o sistema força a busca da versão mais recente na API do GitHub, ignorando o cache do navegador.
 6. **Persistência Local (LocalStorage):** Seus rascunhos digitados, o último Gist conectado e suas preferências ficam salvos no seu próprio navegador.
 
@@ -31,7 +31,7 @@ O site funciona como uma **engine executora minimalista**:
 
 ### 1. Criando o Gist no GitHub
 1. Acesse [https://gist.github.com](https://gist.github.com).
-2. No nome do arquivo, digite `templates.md`.
+2. No nome do arquivo, digite `promptcraft.md` (ou `templates.md`). O PromptCraft prioriza `promptcraft.md` para evitar qualquer conflito com outros arquivos Markdown.
 3. Escreva seus templates em Markdown puro seguindo as regras abaixo.
 4. Selecione obrigatoriamente **Create public gist**.
 5. Copie o ID ou a URL do Gist e cole no campo de busca do PromptCraft.
@@ -46,17 +46,18 @@ O PromptCraft exige declaração explícita de tipos no formato `{{variavel:tipo
 | :--- | :--- | :--- |
 | **Texto Simples** | `{{nome_projeto:text}}` | Input de linha única para títulos, nomes ou termos curtos. |
 | **Área de Texto** | `{{descricao:textarea}}` | Caixa de texto multilinha expansível para descrições e instruções detalhadas. |
-| **Lista de Itens** | `{{requisitos:list}}` | Gerenciador de lista interativo (adiciona com Enter, remove por chip). No prompt final vira `- item 1\n- item 2`. |
+| **Lista Simples** | `{{requisitos:list}}` | Gerenciador de lista interativo (adiciona com Enter, remove por chip). No prompt final vira `- item 1\n- item 2`. |
+| **Lista Numerada** | `{{passos:numbered_list}}` | Gerenciador de lista numerada sequencial (`1`, `2`, `3`). No prompt final vira `1. item 1\n2. item 2`. |
 | **Booleano** | `{{incluir_testes:boolean}}` | Switch/Toggle ON/OFF elegante. Integra-se perfeitamente com blocos condicionais `{{#if incluir_testes}}...{{/if}}`. |
 | **Seleção Única** | `{{framework:select[React, Vue, Svelte]}}` | Botões de seleção em pílulas (1 clique). Permite desmarcar ao clicar novamente. |
 | **Múltipla Seleção** | `{{stack:multiselect[TypeScript, Docker, Redis]}}` | Chips interativos com botão de limpar. No prompt, interpola separado por vírgula ou em itens de lista. |
 | **Bloco de Código** | `{{codigo:code}}`<br>`{{codigo:code(python)}}`<br>`{{codigo:code(variavel_lang)}}` | Editor monoespaçado escuro com botão "Colar da área de transferência". Suporta **linguagem literal** (ex: `code(python)`) ou **linguagem dinâmica** herdada de outro campo (ex: `code(linguagem)`). |
 | **Validação de Tipos** | `{{campo}}` ou `{{campo:invalido}}` | Exibe card de erro explícito caso o tipo esteja ausente ou seja inválido. |
-| **Condicional** | `{{#if campo}}...{{/if}}` | Exibe a seção apenas se a variável estiver preenchida ou marcada como verdadeira. Não deixa quebras de linha acumuladas. |
+| **Condicional** | `{{#if campo}}...{{/if}}`<br>`- {{#if campo}}...{{/if}}` | Exibe a seção apenas se a variável estiver preenchida/verdadeira. Limpa quebras de linha e marcadores de lista (`-`) se falso. |
 
 ---
 
-### 3. Exemplo Real de `templates.md`
+### 3. Exemplo Real de `promptcraft.md`
 
 Este é um exemplo completo demonstrando todos os tipos em ação:
 
@@ -78,6 +79,9 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
 
 ### REQUISITOS E CRITÉRIOS DE ACEITE
 {{requisitos:list}}
+
+### ETAPAS DE IMPLEMENTAÇÃO
+{{etapas:numbered_list}}
 
 ### CÓDIGO DE REFERÊNCIA
 {{codigo_base:code(linguagem)}}

@@ -122,6 +122,20 @@ export function formatFieldValue(
     return String(val);
   }
 
+  if (fieldType === 'numbered_list') {
+    if (Array.isArray(val)) {
+      const cleanItems = val.map(i => String(i).trim()).filter(Boolean);
+      if (cleanItems.length === 0) return '';
+      return cleanItems.map((item, idx) => `${idx + 1}. ${item}`).join('\n');
+    }
+    const cleanLines = String(val)
+      .split('\n')
+      .map(s => s.trim().replace(/^(?:\d+[.)]|[-*•])\s*/, ''))
+      .filter(Boolean);
+    if (cleanLines.length === 0) return '';
+    return cleanLines.map((item, idx) => `${idx + 1}. ${item}`).join('\n');
+  }
+
   if (fieldType === 'list' || Array.isArray(val)) {
     if (Array.isArray(val)) {
       const cleanItems = val.map(i => String(i).trim()).filter(Boolean);
@@ -156,9 +170,10 @@ export function interpolatePrompt(
   let result = templatePrompt;
 
   // 1. Processa blocos condicionais explícitos {{#if var}}...{{/if}}
-  // Captura quebra de linha e espaços antes do if: se o if for ignorado, remove a quebra de linha anterior
+  // Captura quebra de linha, espaços e marcador de lista (- * •) antes do if:
+  // se o if for ignorado, remove o marcador e a quebra de linha anterior
   result = result.replace(
-    /((?:\r?\n)?[ \t]*)\{\{#if\s+([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/if\}\}/gi,
+    /((?:^|\r?\n)[ \t]*(?:[-*•][ \t]*)?)\{\{#if\s+([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/if\}\}/gi,
     (_, prefix, key, content) => {
       const val = values[key];
       if (isValueFilled(val)) {
@@ -170,7 +185,7 @@ export function interpolatePrompt(
 
   // 2. Processa blocos condicionais simplificados {{#var}}...{{/var}}
   result = result.replace(
-    /((?:\r?\n)?[ \t]*)\{\{#([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/\2\}\}/gi,
+    /((?:^|\r?\n)[ \t]*(?:[-*•][ \t]*)?)\{\{#([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/\2\}\}/gi,
     (_, prefix, key, content) => {
       const val = values[key];
       if (isValueFilled(val)) {
@@ -221,7 +236,7 @@ export function interpolatePrompt(
         return '';
       }
 
-      if (type === 'list' || (type === 'multiselect' && hasBullet)) {
+      if (type === 'list' || type === 'numbered_list' || (type === 'multiselect' && hasBullet)) {
         return formatted;
       }
 

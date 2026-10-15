@@ -4,7 +4,6 @@ import {
   Copy, 
   ExternalLink, 
   BookOpen, 
-  Sparkles, 
   ArrowRight, 
   Type, 
   AlignLeft, 
@@ -15,15 +14,15 @@ import {
   Code2, 
   Lightbulb,
   Layers,
-  FileText
+  FileText,
+  ListOrdered
 } from 'lucide-react';
 
 interface GistGuidePageProps {
-  onGoToGenerator: () => void;
-  activeGistId: string;
+  onGoToGenerator?: () => void;
 }
 
-export function GistGuidePage({ onGoToGenerator, activeGistId }: GistGuidePageProps) {
+export function GistGuidePage({ onGoToGenerator }: GistGuidePageProps) {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const handleCopy = async (text: string, key: string) => {
@@ -53,6 +52,9 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
 
 ### REQUISITOS E CRITÉRIOS DE ACEITE
 {{requisitos:list}}
+
+### ETAPAS DE IMPLEMENTAÇÃO
+{{etapas:numbered_list}}
 
 ### CÓDIGO DE REFERÊNCIA
 {{codigo_base:code(linguagem)}}
@@ -104,6 +106,15 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
       syntax: '{{requisitos:list}}',
       desc: 'Cria um gerenciador de lista interativo (adiciona com Enter, visualização em badges e botão de exclusão). No prompt, cada item vira um marcador.',
       output: '- Autenticação JWT\n- Integração com Stripe\n- Webhooks idempotentes',
+    },
+    {
+      id: 'numbered_list',
+      icon: ListOrdered,
+      title: 'Lista Numerada',
+      type: 'numbered_list',
+      syntax: '{{etapas:numbered_list}}',
+      desc: 'Cria um gerenciador de lista ordenada com numeração sequencial (1., 2., 3.). No prompt final, interpola com numeração sequencial.',
+      output: '1. Configuração inicial\n2. Desenvolvimento da feature\n3. Testes e validação',
     },
     {
       id: 'boolean',
@@ -174,28 +185,6 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
               <span>Criar Novo Gist no GitHub</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
-
-            <button
-              onClick={onGoToGenerator}
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-neutral-800 hover:bg-neutral-700/80 text-white text-xs font-semibold rounded-xl border border-neutral-700 transition-all"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Voltar para o Gerador</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-
-            {activeGistId && (
-              <a
-                href={`https://gist.github.com/${activeGistId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-mono border border-white/10 transition-colors"
-                title="Abrir o Gist atualmente conectado no PromptCraft"
-              >
-                <span>Gist conectado: {activeGistId.slice(0, 8)}...</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            )}
           </div>
         </div>
       </div>
@@ -229,10 +218,10 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
               2
             </div>
             <h3 className="font-semibold text-sm text-neutral-900">
-              Nomeie como <code className="bg-neutral-100 px-1 py-0.5 rounded text-[11px]">templates.md</code>
+              Nomeie como <code className="bg-neutral-100 px-1 py-0.5 rounded text-[11px]">promptcraft.md</code>
             </h3>
             <p className="text-xs text-neutral-500 leading-relaxed">
-              No campo de nome do arquivo, coloque <strong className="text-neutral-800">templates.md</strong> e escreva seus templates usando títulos <code className="font-mono bg-neutral-100 px-1 rounded text-[11px]">#</code> e campos <code className="font-mono bg-neutral-100 px-1 rounded text-[11px]">{'{{campo:tipo}}'}</code>.
+              No campo de nome do arquivo, coloque <strong className="text-neutral-800">promptcraft.md</strong> (ou <strong className="text-neutral-800">templates.md</strong>) e escreva seus templates usando títulos <code className="font-mono bg-neutral-100 px-1 rounded text-[11px]">#</code> e campos <code className="font-mono bg-neutral-100 px-1 rounded text-[11px]">{'{{campo:tipo}}'}</code>.
             </p>
           </div>
 
@@ -412,17 +401,19 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
 
         <div className="flex items-center justify-between pt-2">
           <p className="text-xs text-neutral-400">
-            Copie o código acima, cole no seu <code className="font-mono text-neutral-700 bg-neutral-100 px-1 py-0.5 rounded">templates.md</code> no GitHub Gist e clique em publicar!
+            Copie o código acima, cole no seu <code className="font-mono text-neutral-700 bg-neutral-100 px-1 py-0.5 rounded">promptcraft.md</code> (ou <code className="font-mono text-neutral-700 bg-neutral-100 px-1 py-0.5 rounded">templates.md</code>) no GitHub Gist e clique em publicar!
           </p>
 
-          <button
-            type="button"
-            onClick={onGoToGenerator}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-900 hover:text-black hover:underline"
-          >
-            <span>Ir para o Gerador e Testar</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          {onGoToGenerator && (
+            <button
+              type="button"
+              onClick={onGoToGenerator}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-900 hover:text-black hover:underline"
+            >
+              <span>Ir para o Gerador e Testar</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </section>
     </div>
