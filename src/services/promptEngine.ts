@@ -31,16 +31,37 @@ export function cleanupEmptySections(text: string): string {
   return current;
 }
 
+export function isValueFilled(val: unknown): boolean {
+  if (val === undefined || val === null) return false;
+  if (Array.isArray(val)) {
+    return val.some(item => typeof item === 'string' && item.trim().length > 0);
+  }
+  if (typeof val === 'string') {
+    return val.trim().length > 0;
+  }
+  return false;
+}
+
+export function formatFieldValue(val: unknown): string {
+  if (val === undefined || val === null) return '';
+  if (Array.isArray(val)) {
+    const cleanItems = val.map(i => String(i).trim()).filter(Boolean);
+    if (cleanItems.length === 0) return '';
+    return cleanItems.map(item => `- ${item}`).join('\n');
+  }
+  return String(val);
+}
+
 /**
  * Interpola os valores digitados no template de texto.
  * Suporta:
  * 1. Blocos condicionais explícitos: {{#if variavel}}...{{/if}} e {{#variavel}}...{{/variavel}}
- * 2. Variáveis normais: {{variavel}}
+ * 2. Variáveis com tipos: {{variavel:list}} e {{variavel:textarea}} ou {{variavel}}
  * 3. Omissão inteligente de seções/linhas não preenchidas (omitEmpty = true por padrão)
  */
 export function interpolatePrompt(
   templatePrompt: string,
-  values: Record<string, string>,
+  values: Record<string, any>,
   options: InterpolateOptions = { omitEmpty: true }
 ): string {
   if (!templatePrompt) return '';
@@ -52,8 +73,8 @@ export function interpolatePrompt(
   result = result.replace(
     /((?:\r?\n)?[ \t]*)\{\{#if\s+([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/if\}\}/gi,
     (_, prefix, key, content) => {
-      const val = values[key]?.trim();
-      if (val) {
+      const val = values[key];
+      if (isValueFilled(val)) {
         return prefix + content;
       }
       return '';
@@ -64,19 +85,26 @@ export function interpolatePrompt(
   result = result.replace(
     /((?:\r?\n)?[ \t]*)\{\{#([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/\2\}\}/gi,
     (_, prefix, key, content) => {
-      const val = values[key]?.trim();
-      if (val) {
+      const val = values[key];
+      if (isValueFilled(val)) {
         return prefix + content;
       }
       return '';
     }
   );
 
-  // 3. Substitui {{variavel}} pelo valor digitado
-  result = result.replace(/\{\{([a-zA-Z0-9_-]+)\}\}/g, (_, key) => {
-    const val = values[key];
-    return val !== undefined && val !== null ? val : '';
-  });
+  // 3. Substitui {{variavel}} ou {{variavel:tipo}} pelo valor correspondente
+  result = result.replace(
+    /(^[ \t]*[-*•][ \t]*)?\{\{([a-zA-Z0-9_-]+)(?::([a-zA-Z0-9_-]+))?\}\}/gm,
+    (_, bulletPrefix, key, type) => {
+      const val = values[key];
+      const isList = type === 'list' || Array.isArray(val);
+      if (isList) {
+        return formatFieldValue(val);
+      }
+      return (bulletPrefix || '') + formatFieldValue(val);
+    }
+  );
 
   // 4. Limpeza inteligente de seções não preenchidas
   if (options.omitEmpty) {

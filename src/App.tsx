@@ -14,12 +14,114 @@ import {
   AlertCircle, 
   Sparkles, 
   RotateCcw,
-  RefreshCw
+  RefreshCw,
+  Plus,
+  X,
+  List
 } from 'lucide-react';
 
 const STORAGE_KEY_GIST = 'promptcraft_active_gist_id';
 const STORAGE_KEY_VALUES = 'promptcraft_form_values_';
 const STORAGE_KEY_OMIT_EMPTY = 'promptcraft_omit_empty';
+
+interface ListFieldInputProps {
+  label: string;
+  variableKey: string;
+  items: string[];
+  onChange: (items: string[]) => void;
+}
+
+function ListFieldInput({ label, variableKey, items, onChange }: ListFieldInputProps) {
+  const [inputValue, setInputValue] = useState('');
+
+  const handleAddItem = () => {
+    const trimmed = inputValue.trim();
+    if (!trimmed) return;
+    // Se colou ou digitou múltiplas linhas
+    const newItems = trimmed
+      .split('\n')
+      .map(s => s.trim().replace(/^[-*•]\s*/, ''))
+      .filter(Boolean);
+
+    onChange([...items, ...newItems]);
+    setInputValue('');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddItem();
+    }
+  };
+
+  const handleRemoveItem = (indexToRemove: number) => {
+    onChange(items.filter((_, idx) => idx !== indexToRemove));
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-semibold text-neutral-800 flex items-center gap-1.5">
+          <List className="w-3.5 h-3.5 text-neutral-500" />
+          <span>{label}</span>
+          <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 text-neutral-600 border border-neutral-200">
+            lista
+          </span>
+        </label>
+        <span className="font-mono text-[10px] text-neutral-400 font-normal">
+          {`{{${variableKey}:list}}`}
+        </span>
+      </div>
+
+      {/* Lista de Itens adicionados */}
+      {items.length > 0 && (
+        <div className="space-y-1.5 bg-neutral-50/80 border border-neutral-200 rounded-xl p-2.5 max-h-48 overflow-y-auto">
+          {items.map((item, idx) => (
+            <div 
+              key={idx} 
+              className="flex items-center justify-between gap-2 text-xs bg-white border border-neutral-200 px-2.5 py-1.5 rounded-lg shadow-2xs group"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 shrink-0" />
+                <span className="truncate text-neutral-800">{item}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleRemoveItem(idx)}
+                className="text-neutral-400 hover:text-red-600 transition-colors p-0.5 shrink-0"
+                title="Remover item"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Campo para adicionar novo item */}
+      <div className="flex items-center gap-1.5">
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={`Adicionar item à lista (pressione Enter)...`}
+          className="w-full text-xs font-sans bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-2 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-neutral-900 transition-all"
+        />
+        <button
+          type="button"
+          onClick={handleAddItem}
+          disabled={!inputValue.trim()}
+          className="px-3 py-2 bg-neutral-900 hover:bg-black text-white text-xs font-medium rounded-xl transition-all disabled:opacity-40 shrink-0 flex items-center gap-1 shadow-xs"
+          title="Adicionar à lista"
+        >
+          <Plus className="w-3.5 h-3.5" />
+          <span>Add</span>
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export function App() {
   const [gistInput, setGistInput] = useState<string>(() => {
@@ -34,7 +136,7 @@ export function App() {
 
   const [templates, setTemplates] = useState<SimpleTemplate[]>([]);
   const [activeTemplateId, setActiveTemplateId] = useState<string>('');
-  const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
+  const [fieldValues, setFieldValues] = useState<Record<string, any>>({});
   const [omitEmpty, setOmitEmpty] = useState<boolean>(() => {
     const saved = localStorage.getItem(STORAGE_KEY_OMIT_EMPTY);
     return saved !== null ? saved === 'true' : true;
@@ -124,7 +226,7 @@ export function App() {
   }, [activeTemplate?.id]);
 
   // Atualiza valor de uma variável e persiste no localStorage
-  const handleValueChange = (key: string, val: string) => {
+  const handleValueChange = (key: string, val: any) => {
     setFieldValues(prev => {
       const updated = { ...prev, [key]: val };
       if (activeTemplate) {
@@ -333,21 +435,31 @@ export function App() {
                   {/* Campos gerados dinamicamente para cada {{variavel}} */}
                   <div className="space-y-4">
                     {variables.map(v => (
-                      <div key={v.key} className="space-y-1.5">
-                        <label className="text-xs font-semibold text-neutral-800 flex items-center justify-between">
-                          <span>{v.label}</span>
-                          <span className="font-mono text-[10px] text-neutral-400 font-normal">
-                            {`{{${v.key}}}`}
-                          </span>
-                        </label>
-                        <textarea
-                          rows={3}
-                          value={fieldValues[v.key] || ''}
-                          onChange={(e) => handleValueChange(v.key, e.target.value)}
-                          placeholder={`Digite o conteúdo de ${v.label.toLowerCase()}...`}
-                          className="w-full text-xs font-sans bg-neutral-50 border border-neutral-200 rounded-xl p-3 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-neutral-900 transition-all resize-y"
+                      v.type === 'list' ? (
+                        <ListFieldInput
+                          key={v.key}
+                          label={v.label}
+                          variableKey={v.key}
+                          items={Array.isArray(fieldValues[v.key]) ? fieldValues[v.key] : []}
+                          onChange={(newItems) => handleValueChange(v.key, newItems)}
                         />
-                      </div>
+                      ) : (
+                        <div key={v.key} className="space-y-1.5">
+                          <label className="text-xs font-semibold text-neutral-800 flex items-center justify-between">
+                            <span>{v.label}</span>
+                            <span className="font-mono text-[10px] text-neutral-400 font-normal">
+                              {`{{${v.key}}}`}
+                            </span>
+                          </label>
+                          <textarea
+                            rows={3}
+                            value={typeof fieldValues[v.key] === 'string' ? fieldValues[v.key] : ''}
+                            onChange={(e) => handleValueChange(v.key, e.target.value)}
+                            placeholder={`Digite o conteúdo de ${v.label.toLowerCase()}...`}
+                            className="w-full text-xs font-sans bg-neutral-50 border border-neutral-200 rounded-xl p-3 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-neutral-900 transition-all resize-y"
+                          />
+                        </div>
+                      )
                     ))}
 
                     {variables.length === 0 && (
