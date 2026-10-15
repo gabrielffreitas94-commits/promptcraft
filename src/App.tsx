@@ -18,6 +18,7 @@ import {
 
 const STORAGE_KEY_GIST = 'promptcraft_active_gist_id';
 const STORAGE_KEY_VALUES = 'promptcraft_form_values_';
+const STORAGE_KEY_OMIT_EMPTY = 'promptcraft_omit_empty';
 
 export function App() {
   const [gistInput, setGistInput] = useState<string>(() => {
@@ -33,6 +34,10 @@ export function App() {
   const [templates, setTemplates] = useState<SimpleTemplate[]>([]);
   const [activeTemplateId, setActiveTemplateId] = useState<string>('');
   const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
+  const [omitEmpty, setOmitEmpty] = useState<boolean>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY_OMIT_EMPTY);
+    return saved !== null ? saved === 'true' : true;
+  });
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
@@ -139,8 +144,8 @@ export function App() {
   // Prompt final interpolado
   const assembledPrompt = useMemo(() => {
     if (!activeTemplate) return '';
-    return interpolatePrompt(activeTemplate.prompt, fieldValues);
-  }, [activeTemplate, fieldValues]);
+    return interpolatePrompt(activeTemplate.prompt, fieldValues, { omitEmpty });
+  }, [activeTemplate, fieldValues, omitEmpty]);
 
   // Copiar prompt
   const handleCopy = async () => {
@@ -319,9 +324,33 @@ export function App() {
                       <Sparkles className="w-4 h-4 text-neutral-800" />
                       Prompt Gerado
                     </span>
-                    <span className="text-[11px] font-mono text-neutral-400">
-                      {assembledPrompt.length} caracteres
-                    </span>
+
+                    <div className="flex items-center gap-3">
+                      <label 
+                        className="flex items-center gap-1.5 text-xs text-neutral-600 hover:text-neutral-900 cursor-pointer select-none bg-neutral-50 px-2 py-1 rounded-md border border-neutral-200 transition-colors"
+                        title="Quando ativado, seções e campos deixados em branco não aparecem no prompt final"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={omitEmpty}
+                          onChange={(e) => {
+                            const val = e.target.checked;
+                            setOmitEmpty(val);
+                            try {
+                              localStorage.setItem(STORAGE_KEY_OMIT_EMPTY, String(val));
+                            } catch {
+                              // ignore
+                            }
+                          }}
+                          className="w-3.5 h-3.5 rounded text-neutral-900 border-neutral-300 focus:ring-0 cursor-pointer accent-neutral-900"
+                        />
+                        <span className="text-[11px] font-medium">Omitir vazios</span>
+                      </label>
+
+                      <span className="text-[11px] font-mono text-neutral-400">
+                        {assembledPrompt.length} caracteres
+                      </span>
+                    </div>
                   </div>
 
                   {/* Caixa de Texto do Prompt */}

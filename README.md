@@ -49,7 +49,19 @@ O catálogo de templates usa **Markdown puro (`.md`)**. Nada de JSONs difíceis 
 3. **Pular Linhas e Formatacão Livre:**
    Como é Markdown puro, você pode pular linhas, usar listas, negrito (`**`), seções (`###`), blocos de código (```` ``` ````) sem se preocupar em quebrar formato nenhum!
 
-4. **Separador Opcional (`---`):**
+4. **Omissão Automática de Campos Vazios (Zero Configuração):**
+   Se você deixar um campo em branco na tela, o site **remove automaticamente o título da seção e o campo**, mantendo o prompt final limpo e sem cabeçalhos vazios. Você pode ligar/desligar essa opção direto pelo botão *"Omitir vazios"* na interface.
+
+5. **Tags Condicionais Opcionais (`{{#if variavel}} ... {{/if}}`):**
+   Se quiser controle exato sobre trechos específicos de texto ou parágrafos condicionais, você pode envolver o texto com:
+   ```markdown
+   {{#if constraints}}
+   ### CONSTRAINTS
+   {{constraints}}
+   {{/if}}
+   ```
+
+6. **Separador Opcional (`---`):**
    Você pode colocar uma linha divisória `---` entre os templates se desejar para organizar visualmente.
 
 ---

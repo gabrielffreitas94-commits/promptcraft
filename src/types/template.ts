@@ -14,13 +14,14 @@ export interface ExtractedVariable {
  */
 export function extractVariables(promptText: string): ExtractedVariable[] {
   if (!promptText) return [];
-  const matches = promptText.matchAll(/\{\{([a-zA-Z0-9_-]+)\}\}/g);
+  // Captura {{variavel}}, {{#if variavel}} e {{#variavel}}, ignorando tags de fechamento {{/if}}
+  const matches = promptText.matchAll(/\{\{(?:#(?:if\s+)?([a-zA-Z0-9_-]+)|([a-zA-Z0-9_-]+))\}\}/g);
   const seen = new Set<string>();
   const vars: ExtractedVariable[] = [];
 
   for (const match of matches) {
-    const key = match[1];
-    if (!seen.has(key)) {
+    const key = match[1] || match[2];
+    if (key && !seen.has(key)) {
       seen.add(key);
       vars.push({
         key,
