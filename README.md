@@ -112,7 +112,8 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
 
 ## ⚙️ Funcionalidades da Interface
 
-* **Navegação Multitelas (Gerador vs Guia do Gist):** Alterne no topo entre o **Gerador de Prompts** e a nova página do **Guia do Gist**, que contém a documentação completa, dicionário de tipos e modelo para copiar em 1 clique.
+* **Suporte a Tema Escuro e Claro (Dark & Light Theme):** Alternador no topo com ícone Sol/Lua para alternar instantaneamente entre os modos claro e escuro, com detecção automática da preferência do sistema operacional e persistência no `localStorage`.
+* **Navegação Multitelas (PromptCraft vs Guia do Gist):** Alterne no cabeçalho entre a aba **PromptCraft** e a página do **Guia do Gist**, que contém a documentação completa, dicionário de tipos e modelo para copiar em 1 clique.
 * **Abas de Templates:** Alterne entre diferentes templates com apenas um clique.
 * **Preenchimento em Tempo Real:** Conforme você digita nos campos da esquerda, o preview do prompt à direita é atualizado instantaneamente.
 * **Toggle "Omitir vazios":** Permite ligar ou desligar a remoção automática de seções não preenchidas.
