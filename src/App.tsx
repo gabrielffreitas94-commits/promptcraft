@@ -24,8 +24,10 @@ import {
   CheckCircle2,
   SlidersHorizontal,
   Code2,
-  ClipboardPaste
+  ClipboardPaste,
+  BookOpen
 } from 'lucide-react';
+import { GistGuidePage } from './components/GistGuidePage';
 
 const STORAGE_KEY_GIST = 'promptcraft_active_gist_id';
 const STORAGE_KEY_VALUES = 'promptcraft_form_values_';
@@ -515,6 +517,21 @@ export function App() {
   const [reloaded, setReloaded] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'generator' | 'guide'>(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tab') === 'guide' ? 'guide' : 'generator';
+  });
+
+  const handleTabChange = (tab: 'generator' | 'guide') => {
+    setActiveTab(tab);
+    const url = new URL(window.location.href);
+    if (tab === 'guide') {
+      url.searchParams.set('tab', 'guide');
+    } else {
+      url.searchParams.delete('tab');
+    }
+    window.history.replaceState({}, '', url.toString());
+  };
 
   // Carrega templates do Gist ativo
   const fetchTemplates = useCallback(async (idOrUrl: string, forceReload: boolean = false) => {
@@ -643,19 +660,53 @@ export function App() {
       {/* Barra de Topo Minimalista */}
       <header className="border-b border-neutral-200 bg-white/90 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          {/* Logo */}
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-neutral-900 text-white flex items-center justify-center font-mono font-bold text-xs shadow-xs">
-              PC
+          {/* Logo e Navegação */}
+          <div className="flex items-center gap-3 sm:gap-6">
+            <div 
+              onClick={() => handleTabChange('generator')}
+              className="flex items-center gap-2.5 cursor-pointer select-none group"
+              title="Voltar ao início"
+            >
+              <div className="w-8 h-8 rounded-lg bg-neutral-900 text-white flex items-center justify-center font-mono font-bold text-xs shadow-xs group-hover:scale-105 transition-transform">
+                PC
+              </div>
+              <div className="hidden sm:block">
+                <span className="font-semibold text-sm tracking-tight text-neutral-900">
+                  PromptCraft
+                </span>
+                <span className="ml-2 text-[10px] font-mono px-1.5 py-0.5 rounded bg-neutral-100 border border-neutral-200 text-neutral-600">
+                  Gist Driven
+                </span>
+              </div>
             </div>
-            <div>
-              <span className="font-semibold text-sm tracking-tight text-neutral-900">
-                PromptCraft
-              </span>
-              <span className="ml-2 text-[10px] font-mono px-1.5 py-0.5 rounded bg-neutral-100 border border-neutral-200 text-neutral-600">
-                Gist Driven
-              </span>
-            </div>
+
+            {/* Navegação entre Páginas */}
+            <nav className="flex items-center gap-1 bg-neutral-100 p-1 rounded-xl border border-neutral-200">
+              <button
+                type="button"
+                onClick={() => handleTabChange('generator')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  activeTab === 'generator'
+                    ? 'bg-white text-neutral-900 shadow-xs'
+                    : 'text-neutral-500 hover:text-neutral-900'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-neutral-700" />
+                <span>Gerador</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleTabChange('guide')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  activeTab === 'guide'
+                    ? 'bg-white text-neutral-900 shadow-xs'
+                    : 'text-neutral-500 hover:text-neutral-900'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5 text-neutral-700" />
+                <span>Guia do Gist</span>
+              </button>
+            </nav>
           </div>
 
           {/* Campo de Conexão do Gist */}
@@ -720,7 +771,12 @@ export function App() {
 
       {/* Conteúdo Principal */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
-        {loading && templates.length === 0 ? (
+        {activeTab === 'guide' ? (
+          <GistGuidePage 
+            onGoToGenerator={() => handleTabChange('generator')} 
+            activeGistId={activeGistId} 
+          />
+        ) : loading && templates.length === 0 ? (
           <div className="min-h-[50vh] flex flex-col items-center justify-center text-neutral-500 gap-3">
             <Loader2 className="w-7 h-7 animate-spin text-neutral-900" />
             <p className="text-xs font-medium">Carregando templates do Gist...</p>
@@ -1031,17 +1087,27 @@ export function App() {
 
       {/* Rodapé Simples */}
       <footer className="border-t border-neutral-200 py-4 text-center text-xs text-neutral-400 bg-white">
-        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p>© {new Date().getFullYear()} PromptCraft — Simples, Direto &amp; 100% Gist.</p>
-          <a
-            href={currentGistUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[11px] font-mono text-neutral-500 hover:text-neutral-900 underline flex items-center gap-1"
-          >
-            <span>Ver Gist no GitHub</span>
-            <ExternalLink className="w-3 h-3" />
-          </a>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => handleTabChange(activeTab === 'guide' ? 'generator' : 'guide')}
+              className="text-[11px] font-medium text-neutral-500 hover:text-neutral-900 underline flex items-center gap-1 transition-colors"
+            >
+              <BookOpen className="w-3 h-3" />
+              <span>{activeTab === 'guide' ? 'Ir para o Gerador' : 'Guia de Sintaxe do Gist'}</span>
+            </button>
+            <a
+              href={currentGistUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] font-mono text-neutral-500 hover:text-neutral-900 underline flex items-center gap-1"
+            >
+              <span>Ver Gist no GitHub</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
         </div>
       </footer>
     </div>

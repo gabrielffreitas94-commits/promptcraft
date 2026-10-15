@@ -107,6 +107,7 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
 
 ## ⚙️ Funcionalidades da Interface
 
+* **Navegação Multitelas (Gerador vs Guia do Gist):** Alterne no topo entre o **Gerador de Prompts** e a nova página do **Guia do Gist**, que contém a documentação completa, dicionário de tipos e modelo para copiar em 1 clique.
 * **Abas de Templates:** Alterne entre diferentes templates com apenas um clique.
 * **Preenchimento em Tempo Real:** Conforme você digita nos campos da esquerda, o preview do prompt à direita é atualizado instantaneamente.
 * **Toggle "Omitir vazios":** Permite ligar ou desligar a remoção automática de seções não preenchidas.
@@ -115,6 +116,10 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
 * **Compartilhamento por Link Direto:** Adicione `?gist=SEU_GIST_ID` à URL para abrir o site já apontando para um Gist customizado:
   ```
   https://gabrielffreitas94-commits.github.io/promptcraft/?gist=e8c42b6d9f15a24dd7326af3152902c0
+  ```
+  Ou acesse diretamente a página de documentação via:
+  ```
+  https://gabrielffreitas94-commits.github.io/promptcraft/?tab=guide
   ```
 
 ---
