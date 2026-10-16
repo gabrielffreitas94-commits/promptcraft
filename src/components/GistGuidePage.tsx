@@ -17,12 +17,14 @@ import {
   FileText,
   ListOrdered
 } from 'lucide-react';
+import { useI18n } from '../i18n/I18nContext';
 
 interface GistGuidePageProps {
   onGoToGenerator?: () => void;
 }
 
 export function GistGuidePage({ onGoToGenerator }: GistGuidePageProps) {
+  const { t } = useI18n();
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const handleCopy = async (text: string, key: string) => {
@@ -35,122 +37,79 @@ export function GistGuidePage({ onGoToGenerator }: GistGuidePageProps) {
     }
   };
 
-  const starterTemplate = `# Desenvolvimento Full Stack
-Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
-
-### NOME DO PROJETO
-{{projeto:text}}
-
-### LINGUAGEM PRINCIPAL
-{{linguagem:select[TypeScript, Python, Go, Rust]}}
-
-### STACK E FERRAMENTAS
-{{stack:multiselect[Docker, PostgreSQL, Redis, TailwindCSS, GraphQL]}}
-
-### ESCOPO E OBJETIVO
-{{escopo:textarea}}
-
-### REQUISITOS E CRITÉRIOS DE ACEITE
-{{requisitos:list}}
-
-### ETAPAS DE IMPLEMENTAÇÃO
-{{etapas:numbered_list}}
-
-### CÓDIGO DE REFERÊNCIA
-{{codigo_base:code(linguagem)}}
-
-{{#if testes}}
-### TESTES AUTOMATIZADOS
-- Escrever testes unitários e de integração com cobertura mínima de 80%.
-- Incluir mocks de serviços externos.
-{{/if}}
-
-{{#if docker}}
-### CONTAINERIZAÇÃO
-- Fornecer Dockerfile multi-stage enxuto e docker-compose.yml pronto para execução local.
-{{/if}}
-
-### CONFIGURAÇÃO DE AMBIENTE
-- Testes Unitários: {{testes:boolean}}
-- Suporte Docker: {{docker:boolean}}
-
-### INSTRUÇÕES FINAIS
-1. {{#if testes}}Execute todos os testes unitários garantindo cobertura mínima de 80%.{{/if}}
-2. Respeite as boas práticas da linguagem {{linguagem}}.
-3. Mantenha os requisitos da lista atendidos de ponta a ponta.
-4. Produza código legível, fortemente tipado e pronto para produção.`;
+  const starterTemplate = t('guide.starterTemplateContent');
 
   const fieldTypes = [
     {
       id: 'text',
       icon: Type,
-      title: 'Texto Simples',
+      title: t('guide.fieldTextTitle'),
       type: 'text',
       syntax: '{{nome_do_projeto:text}}',
-      desc: 'Gera um campo de linha única (<input type="text">). Ideal para títulos, nomes, identificadores ou termos curtos.',
+      desc: t('guide.fieldTextDesc'),
       output: 'Meu Projeto Incrível',
     },
     {
       id: 'textarea',
       icon: AlignLeft,
-      title: 'Área de Texto',
+      title: t('guide.fieldTextareaTitle'),
       type: 'textarea',
       syntax: '{{descricao_escopo:textarea}}',
-      desc: 'Gera uma caixa de texto multilinha expansível. Ideal para descrições detalhadas, contexto de negócio ou especificações longas.',
+      desc: t('guide.fieldTextareaDesc'),
       output: 'O sistema deve processar pagamentos via PIX e cartão...',
     },
     {
       id: 'list',
       icon: List,
-      title: 'Lista de Itens',
+      title: t('guide.fieldListTitle'),
       type: 'list',
       syntax: '{{requisitos:list}}',
-      desc: 'Cria um gerenciador de lista interativo (adiciona com Enter, visualização em badges e botão de exclusão). No prompt, cada item vira um marcador.',
+      desc: t('guide.fieldListDesc'),
       output: '- Autenticação JWT\n- Integração com Stripe\n- Webhooks idempotentes',
     },
     {
       id: 'numbered_list',
       icon: ListOrdered,
-      title: 'Lista Numerada',
+      title: t('guide.fieldNumberedListTitle'),
       type: 'numbered_list',
       syntax: '{{etapas:numbered_list}}',
-      desc: 'Cria um gerenciador de lista ordenada com numeração sequencial (1., 2., 3.). No prompt final, interpola com numeração sequencial.',
+      desc: t('guide.fieldNumberedListDesc'),
       output: '1. Configuração inicial\n2. Desenvolvimento da feature\n3. Testes e validação',
     },
     {
       id: 'boolean',
       icon: ToggleRight,
-      title: 'Booleano (Toggle Switch)',
+      title: t('guide.fieldBooleanTitle'),
       type: 'boolean',
       syntax: '{{incluir_testes:boolean}}',
-      desc: 'Cria um interruptor ON/OFF. Quando ligado, interpola "Sim" e ativa condicionais {{#if incluir_testes}}. Quando desligado, é omitido.',
+      desc: t('guide.fieldBooleanDesc'),
       output: 'Sim (ou omitido se desmarcado)',
     },
     {
       id: 'select',
       icon: CheckCircle2,
-      title: 'Seleção Única',
+      title: t('guide.fieldSelectTitle'),
       type: 'select',
       syntax: '{{framework:select[React, Vue, Svelte, Angular]}}',
-      desc: 'Cria botões de seleção em pílulas (1 clique). As opções são definidas entre colchetes separadas por vírgula. Permite desmarcar ao clicar novamente.',
+      desc: t('guide.fieldSelectDesc'),
       output: 'React',
     },
     {
       id: 'multiselect',
       icon: SlidersHorizontal,
-      title: 'Múltipla Seleção (Chips)',
+      title: t('guide.fieldMultiSelectTitle'),
       type: 'multiselect',
       syntax: '{{stack:multiselect[TypeScript, Docker, Redis, Tailwind]}}',
-      desc: 'Cria chips interativos que podem ser ligados/desligados individualmente. No prompt, interpola separado por vírgula ou em lista se precedido de marcador.',
+      desc: t('guide.fieldMultiSelectDesc'),
       output: 'TypeScript, Docker, Redis',
     },
     {
       id: 'code',
       icon: Code2,
-      title: 'Bloco de Código (Dinâmico ou Literal)',
+      title: t('guide.fieldCodeTitle'),
       type: 'code',
       syntax: '{{snippet:code(linguagem)}}',
-      desc: 'Editor monoespaçado escuro com botão "Colar da área de transferência". A linguagem pode ser fixa (ex: code(python)) ou dinâmica apontando para outra variável (ex: code(linguagem)).',
+      desc: t('guide.fieldCodeDesc'),
       output: '```python\ndef hello():\n    print("mundo")\n```',
     },
   ];
@@ -164,16 +123,15 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
         <div className="relative z-10 max-w-2xl space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-xs font-medium backdrop-blur-sm border border-white/10">
             <BookOpen className="w-3.5 h-3.5" />
-            <span>Guia Oficial de Templates</span>
+            <span>{t('guide.badge')}</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight">
-            Como Criar e Conectar seu Próprio Gist de Templates
+            {t('guide.heroTitle')}
           </h1>
 
           <p className="text-neutral-300 text-xs sm:text-sm leading-relaxed">
-            No PromptCraft você tem liberdade total: seus templates vivem em um <strong>GitHub Gist em Markdown puro</strong>. 
-            Não precisa de servidor, não precisa de banco de dados e não precisa fazer deploy para criar ou alterar prompts!
+            {t('guide.heroSubtitle')}
           </p>
 
           <div className="pt-2 flex flex-wrap items-center gap-3">
@@ -181,9 +139,9 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
               href="https://gist.github.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-neutral-900 text-xs font-semibold rounded-xl hover:bg-neutral-100 transition-all shadow-xs"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-neutral-900 text-xs font-semibold rounded-xl hover:bg-neutral-100 transition-all shadow-xs cursor-pointer"
             >
-              <span>Criar Novo Gist no GitHub</span>
+              <span>{t('guide.btnCreateGist')}</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
@@ -195,7 +153,7 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
         <div className="flex items-center gap-2">
           <Layers className="w-4 h-4 text-neutral-700 dark:text-neutral-400" />
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-200 tracking-tight">
-            Passo a Passo em 3 Minutos
+            {t('guide.stepsTitle')}
           </h2>
         </div>
 
@@ -203,39 +161,39 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
           {/* Card 1 */}
           <div className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-2.5">
             <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-neutral-200 flex items-center justify-center font-bold text-xs font-mono">
-              1
+              {t('guide.step1Num')}
             </div>
             <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-200">
-              Acesse o GitHub Gist
+              {t('guide.step1Title')}
             </h3>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
-              Vá para <a href="https://gist.github.com" target="_blank" rel="noopener noreferrer" className="text-neutral-900 dark:text-neutral-300 underline font-medium hover:text-black dark:hover:text-white">gist.github.com</a> com sua conta do GitHub logada.
+              {t('guide.step1Desc')}
             </p>
           </div>
 
           {/* Card 2 */}
           <div className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-2.5">
             <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-neutral-200 flex items-center justify-center font-bold text-xs font-mono">
-              2
+              {t('guide.step2Num')}
             </div>
             <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-200">
-              Nomeie como <code className="bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-300 px-1 py-0.5 rounded text-[11px]">promptcraft.md</code>
+              {t('guide.step2Title')}
             </h3>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
-              No campo de nome do arquivo, digite <strong className="text-neutral-800 dark:text-neutral-200">promptcraft.md</strong> e escreva seus templates usando títulos <code className="font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-300 px-1 rounded text-[11px]">#</code> e campos <code className="font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-300 px-1 rounded text-[11px]">{'{{campo:tipo}}'}</code>.
+              {t('guide.step2Desc')}
             </p>
           </div>
 
           {/* Card 3 */}
           <div className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-2.5">
             <div className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-neutral-200 flex items-center justify-center font-bold text-xs font-mono">
-              3
+              {t('guide.step3Num')}
             </div>
             <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-200">
-              Salve como Public Gist &amp; Conecte
+              {t('guide.step3Title')}
             </h3>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
-              Selecione <strong className="text-neutral-800 dark:text-neutral-200">"Create public gist"</strong>. Copie o ID da URL gerada e cole no campo de busca do PromptCraft!
+              {t('guide.step3Desc')}
             </p>
           </div>
         </div>
@@ -247,11 +205,11 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
           <div className="flex items-center gap-2">
             <SlidersHorizontal className="w-4 h-4 text-neutral-700 dark:text-neutral-400" />
             <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-200 tracking-tight">
-              Tipos de Campos Suportados
+              {t('guide.typesTitle')}
             </h2>
           </div>
           <span className="text-xs text-neutral-400 dark:text-neutral-500 font-mono">
-            Formato obrigatório: {'{{variavel:tipo}}'}
+            {t('guide.typesSubtitle')}
           </span>
         </div>
 
@@ -288,22 +246,22 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
                 {/* Bloco de Sintaxe e Botão Copiar */}
                 <div className="space-y-2 pt-2 border-t border-neutral-100 dark:border-neutral-800">
                   <div className="flex items-center justify-between text-[11px] text-neutral-400 dark:text-neutral-500 font-medium">
-                    <span>Sintaxe no Markdown:</span>
+                    <span>{t('guide.syntaxLabel')}</span>
                     <button
                       type="button"
                       onClick={() => handleCopy(ft.syntax, ft.id)}
-                      className="inline-flex items-center gap-1 text-[11px] font-mono text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
-                      title="Copiar sintaxe"
+                      className="inline-flex items-center gap-1 text-[11px] font-mono text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors cursor-pointer"
+                      title={t('guide.btnCopySyntax')}
                     >
                       {isCopied ? (
                         <>
                           <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-                          <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Copiado!</span>
+                          <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{t('guide.copiedSyntax')}</span>
                         </>
                       ) : (
                         <>
                           <Copy className="w-3 h-3" />
-                          <span>Copiar</span>
+                          <span>{t('guide.btnCopySyntax')}</span>
                         </>
                       )}
                     </button>
@@ -324,17 +282,17 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
         <div className="flex items-center gap-2">
           <Lightbulb className="w-4 h-4 text-amber-500" />
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-200 tracking-tight">
-            Condicionais &amp; Omissão Inteligente
+            {t('guide.conditionalsTitle')}
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-200">Blocos com <code>{'{{#if}}'}</code></span>
+              <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-200">{t('guide.cond1Title')}</span>
             </div>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
-              Envolva qualquer seção ou texto com <code className="font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-300 px-1 py-0.5 rounded text-[11px]">{'{{#if variavel}}...{{/if}}'}</code>. O bloco só aparecerá se o campo estiver preenchido (ou ligado se for <code className="font-mono text-[11px]">boolean</code>).
+              {t('guide.cond1Desc')}
             </p>
             <div className="bg-neutral-950 dark:bg-[#111113] text-neutral-200 dark:text-neutral-300 font-mono text-[11px] p-3 rounded-xl border border-neutral-800 leading-relaxed">
               <pre className="whitespace-pre-wrap">
@@ -348,10 +306,10 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
 
           <div className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-200">Listas &amp; Renumeração</span>
+              <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-200">{t('guide.cond2Title')}</span>
             </div>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
-              Use direto em itens: <code className="font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-300 px-1 py-0.5 rounded text-[11px]">{'- {{#if}}'}</code> ou <code className="font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-300 px-1 py-0.5 rounded text-[11px]">{'1. {{#if}}'}</code>. Se falso, o marcador é removido e a lista é <strong>automaticamente renumerada</strong> em sequência!
+              {t('guide.cond2Desc')}
             </p>
             <div className="bg-neutral-950 dark:bg-[#111113] text-neutral-200 dark:text-neutral-300 font-mono text-[11px] p-3 rounded-xl border border-neutral-800 leading-relaxed">
               <pre className="whitespace-pre-wrap">
@@ -364,15 +322,15 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
 
           <div className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-200">Omissão de Vazios</span>
+              <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-200">{t('guide.cond3Title')}</span>
             </div>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
-              Com <strong>"Omitir vazios"</strong> ativo, qualquer seção (<code className="font-mono text-[11px]">### Título</code>) sem valor é omitida silenciosamente do prompt, sem gerar linhas em branco órfãs.
+              {t('guide.cond3Desc')}
             </p>
             <div className="bg-neutral-50 dark:bg-[#111113]/60 border border-neutral-200 dark:border-neutral-700/80 rounded-xl p-3 text-xs text-neutral-600 dark:text-neutral-300 space-y-1">
-              <p className="font-medium text-neutral-800 dark:text-neutral-200">💡 Dica de Ouro:</p>
+              <p className="font-medium text-neutral-800 dark:text-neutral-200">{t('guide.tipTitle')}</p>
               <p className="text-[11px] leading-relaxed">
-                Se colocar <code className="font-mono text-[11px]">### NOTAS{'\n'}{'{{obs:textarea}}'}</code>, a seção inteira some automaticamente se estiver vazia.
+                {t('guide.tipDesc')}
               </p>
             </div>
           </div>
@@ -385,14 +343,14 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
           <div className="flex items-center gap-2">
             <FileText className="w-4 h-4 text-neutral-700 dark:text-neutral-400" />
             <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-200 tracking-tight">
-              Modelo Completo para Iniciar seu Gist
+              {t('guide.starterTitle')}
             </h2>
           </div>
 
           <button
             type="button"
             onClick={() => handleCopy(starterTemplate, 'full_template')}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-xs ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-xs cursor-pointer ${
               copiedKey === 'full_template'
                 ? 'bg-emerald-600 text-white'
                 : 'bg-neutral-900 hover:bg-black dark:bg-neutral-200 dark:hover:bg-white text-white dark:text-neutral-950'
@@ -401,12 +359,12 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
             {copiedKey === 'full_template' ? (
               <>
                 <Check className="w-3.5 h-3.5" />
-                <span>Modelo Copiado!</span>
+                <span>{t('guide.starterCopied')}</span>
               </>
             ) : (
               <>
                 <Copy className="w-3.5 h-3.5" />
-                <span>Copiar Modelo Completo</span>
+                <span>{t('guide.btnCopyStarter')}</span>
               </>
             )}
           </button>
@@ -418,16 +376,16 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
 
         <div className="flex items-center justify-between pt-2">
           <p className="text-xs text-neutral-400 dark:text-neutral-500">
-            Copie o código acima, cole no seu <code className="font-mono text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800 px-1 py-0.5 rounded">promptcraft.md</code> no GitHub Gist e clique em publicar!
+            {t('guide.starterFooterDesc')}
           </p>
 
           {onGoToGenerator && (
             <button
               type="button"
               onClick={onGoToGenerator}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-900 dark:text-neutral-200 hover:text-black dark:hover:text-white hover:underline transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-900 dark:text-neutral-200 hover:text-black dark:hover:text-white hover:underline transition-colors cursor-pointer"
             >
-              <span>Ir para o Gerador e Testar</span>
+              <span>{t('guide.btnGoToGenerator')}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           )}

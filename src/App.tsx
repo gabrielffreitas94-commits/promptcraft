@@ -31,6 +31,8 @@ import {
   Moon
 } from 'lucide-react';
 import { GistGuidePage } from './components/GistGuidePage';
+import { useI18n } from './i18n/I18nContext';
+import { LanguageSelector } from './components/LanguageSelector';
 
 const STORAGE_KEY_GIST = 'promptcraft_active_gist_id';
 const STORAGE_KEY_VALUES = 'promptcraft_form_values_';
@@ -45,6 +47,8 @@ interface TextFieldInputProps {
 }
 
 function TextFieldInput({ label, variableKey, value, onChange }: TextFieldInputProps) {
+  const { t } = useI18n();
+
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
@@ -52,7 +56,7 @@ function TextFieldInput({ label, variableKey, value, onChange }: TextFieldInputP
           <Type className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
           <span>{label}</span>
           <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
-            texto
+            {t('fields.text')}
           </span>
         </label>
         <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 font-normal">
@@ -63,7 +67,7 @@ function TextFieldInput({ label, variableKey, value, onChange }: TextFieldInputP
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={`Digite ${label.toLowerCase()}...`}
+        placeholder={t('fields.textPlaceholder', { label: label.toLowerCase() })}
         className="w-full text-xs font-sans bg-neutral-50 dark:bg-[#111113] border border-neutral-200 dark:border-neutral-800 rounded-xl px-3 py-2 text-neutral-900 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-500 transition-all"
       />
     </div>
@@ -78,6 +82,8 @@ interface TextareaFieldInputProps {
 }
 
 function TextareaFieldInput({ label, variableKey, value, onChange }: TextareaFieldInputProps) {
+  const { t } = useI18n();
+
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
@@ -85,7 +91,7 @@ function TextareaFieldInput({ label, variableKey, value, onChange }: TextareaFie
           <AlignLeft className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
           <span>{label}</span>
           <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
-            área de texto
+            {t('fields.textarea')}
           </span>
         </label>
         <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 font-normal">
@@ -96,7 +102,7 @@ function TextareaFieldInput({ label, variableKey, value, onChange }: TextareaFie
         rows={3}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={`Digite o conteúdo de ${label.toLowerCase()}...`}
+        placeholder={t('fields.textareaPlaceholder', { label: label.toLowerCase() })}
         className="w-full text-xs font-sans bg-neutral-50 dark:bg-[#111113] border border-neutral-200 dark:border-neutral-800 rounded-xl p-3 text-neutral-900 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-500 transition-all resize-y"
       />
     </div>
@@ -112,6 +118,7 @@ interface ListFieldInputProps {
 }
 
 function ListFieldInput({ label, variableKey, items, onChange, numbered = false }: ListFieldInputProps) {
+  const { t } = useI18n();
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -151,7 +158,7 @@ function ListFieldInput({ label, variableKey, items, onChange, numbered = false 
           <Icon className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
           <span>{label}</span>
           <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
-            {numbered ? 'lista numerada' : 'lista'}
+            {numbered ? t('fields.numberedList') : t('fields.list')}
           </span>
         </label>
         <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 font-normal">
@@ -180,7 +187,7 @@ function ListFieldInput({ label, variableKey, items, onChange, numbered = false 
                 type="button"
                 onClick={() => handleRemoveItem(idx)}
                 className="text-neutral-400 hover:text-red-600 dark:hover:text-red-400 transition-colors p-0.5 shrink-0"
-                title="Remover item"
+                title={t('fields.btnRemoveItem')}
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -196,17 +203,17 @@ function ListFieldInput({ label, variableKey, items, onChange, numbered = false 
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={numbered ? `Adicionar item numerado (pressione Enter)...` : `Adicionar item à lista (pressione Enter)...`}
+          placeholder={numbered ? t('fields.numberedListPlaceholder') : t('fields.listPlaceholder')}
           className="w-full text-xs font-sans bg-neutral-50 dark:bg-[#111113] border border-neutral-200 dark:border-neutral-800 rounded-xl px-3 py-2 text-neutral-900 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-500 transition-all"
         />
         <button
           type="button"
           onClick={handleAddItem}
           className="px-3 py-2 bg-neutral-900 hover:bg-black dark:bg-neutral-200 dark:hover:bg-white text-white dark:text-neutral-950 text-xs font-medium rounded-xl transition-all shrink-0 flex items-center gap-1 shadow-xs cursor-pointer"
-          title={numbered ? "Adicionar à lista numerada" : "Adicionar à lista"}
+          title={numbered ? t('fields.btnAddNumberedListTitle') : t('fields.btnAddListTitle')}
         >
           <Plus className="w-3.5 h-3.5" />
-          <span>Add</span>
+          <span>{t('fields.btnAdd')}</span>
         </button>
       </div>
     </div>
@@ -221,6 +228,8 @@ interface BooleanFieldInputProps {
 }
 
 function BooleanFieldInput({ label, variableKey, value, onChange }: BooleanFieldInputProps) {
+  const { t } = useI18n();
+
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
@@ -228,7 +237,7 @@ function BooleanFieldInput({ label, variableKey, value, onChange }: BooleanField
           <ToggleRight className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
           <span>{label}</span>
           <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
-            booleano
+            {t('fields.boolean')}
           </span>
         </label>
         <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 font-normal">
@@ -242,7 +251,7 @@ function BooleanFieldInput({ label, variableKey, value, onChange }: BooleanField
         <div className="flex items-center gap-2">
           <span className={`w-2 h-2 rounded-full ${value ? 'bg-emerald-500' : 'bg-neutral-300 dark:bg-neutral-700'}`} />
           <span className="text-xs font-medium text-neutral-800 dark:text-neutral-300">
-            {value ? 'Ativado (incluído no prompt)' : 'Desativado (omitido do prompt)'}
+            {value ? t('fields.booleanActive') : t('fields.booleanInactive')}
           </span>
         </div>
         <button
@@ -274,6 +283,8 @@ interface SelectFieldInputProps {
 }
 
 function SelectFieldInput({ label, variableKey, options, rawType, value, onChange }: SelectFieldInputProps) {
+  const { t } = useI18n();
+
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
@@ -281,7 +292,7 @@ function SelectFieldInput({ label, variableKey, options, rawType, value, onChang
           <CheckCircle2 className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
           <span>{label}</span>
           <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
-            seleção única
+            {t('fields.select')}
           </span>
         </label>
         <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 font-normal">
@@ -322,6 +333,8 @@ interface MultiSelectFieldInputProps {
 }
 
 function MultiSelectFieldInput({ label, variableKey, options, rawType, selected, onChange }: MultiSelectFieldInputProps) {
+  const { t } = useI18n();
+
   const toggleOption = (opt: string) => {
     if (selected.includes(opt)) {
       onChange(selected.filter(item => item !== opt));
@@ -337,11 +350,13 @@ function MultiSelectFieldInput({ label, variableKey, options, rawType, selected,
           <SlidersHorizontal className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
           <span>{label}</span>
           <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
-            múltipla seleção
+            {t('fields.multiselect')}
           </span>
           {selected.length > 0 && (
             <span className="text-[10px] text-neutral-500 dark:text-neutral-400 font-normal">
-              ({selected.length} selecionado{selected.length > 1 ? 's' : ''})
+              {selected.length === 1 
+                ? t('fields.selectedCountSingular', { count: selected.length })
+                : t('fields.selectedCountPlural', { count: selected.length })}
             </span>
           )}
         </label>
@@ -352,7 +367,7 @@ function MultiSelectFieldInput({ label, variableKey, options, rawType, selected,
               onClick={() => onChange([])}
               className="text-[10px] text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 underline"
             >
-              Limpar
+              {t('fields.btnClear')}
             </button>
           )}
           <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 font-normal">
@@ -409,6 +424,7 @@ function CodeFieldInput({
   value,
   onChange,
 }: CodeFieldInputProps) {
+  const { t } = useI18n();
   const [pasted, setPasted] = useState(false);
 
   const handlePaste = async () => {
@@ -433,7 +449,7 @@ function CodeFieldInput({
           <Code2 className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
           <span>{label}</span>
           <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
-            código
+            {t('fields.code')}
           </span>
           {resolvedLanguage && (
             <span 
@@ -442,17 +458,17 @@ function CodeFieldInput({
                   ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
                   : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700'
               }`}
-              title={isDynamicLang ? `Linguagem dinâmica vinda de {{${codeLanguage}}}` : `Linguagem: ${resolvedLanguage}`}
+              title={isDynamicLang ? t('fields.codeLangDynamicReady', { lang: resolvedLanguage, key: codeLanguage || '' }) : t('fields.codeLangStatic', { lang: resolvedLanguage })}
             >
-              {isDynamicLang ? `lang: ${resolvedLanguage} (via {{${codeLanguage}}})` : `lang: ${resolvedLanguage}`}
+              {isDynamicLang ? t('fields.codeLangDynamicReady', { lang: resolvedLanguage, key: codeLanguage || '' }) : t('fields.codeLangStatic', { lang: resolvedLanguage })}
             </span>
           )}
           {isDynamicLang && !resolvedLanguage && (
             <span 
               className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800" 
-              title={`Aguardando seleção no campo {{${codeLanguage}}}`}
+              title={t('fields.codeLangDynamicWaiting', { key: codeLanguage || '' })}
             >
-              {`lang: dinâmico ({{${codeLanguage}}})`}
+              {t('fields.codeLangDynamicWaiting', { key: codeLanguage || '' })}
             </span>
           )}
         </label>
@@ -465,25 +481,25 @@ function CodeFieldInput({
         <div className="bg-neutral-900/90 dark:bg-[#161618] px-3 py-1.5 border-b border-neutral-800 flex items-center justify-between text-[11px] text-neutral-400 font-mono">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-neutral-600 inline-block" />
-            <span>{resolvedLanguage || 'texto / sem linguagem'}</span>
-            {lineCount > 0 && <span>• {lineCount} linha{lineCount > 1 ? 's' : ''}</span>}
+            <span>{resolvedLanguage || t('fields.codeNoLang')}</span>
+            {lineCount > 0 && <span>• {lineCount === 1 ? t('fields.codeLinesSingular', { count: lineCount }) : t('fields.codeLinesPlural', { count: lineCount })}</span>}
           </div>
           <div className="flex items-center gap-1.5">
             <button
               type="button"
               onClick={handlePaste}
               className="flex items-center gap-1 px-2 py-0.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 transition-colors text-[10px]"
-              title="Colar da área de transferência"
+              title={t('fields.btnPasteTitle')}
             >
               {pasted ? (
                 <>
                   <Check className="w-3 h-3 text-emerald-400" />
-                  <span className="text-emerald-400">Colado!</span>
+                  <span className="text-emerald-400">{t('fields.pastedSuccess')}</span>
                 </>
               ) : (
                 <>
                   <ClipboardPaste className="w-3 h-3" />
-                  <span>Colar</span>
+                  <span>{t('fields.btnPaste')}</span>
                 </>
               )}
             </button>
@@ -492,9 +508,9 @@ function CodeFieldInput({
                 type="button"
                 onClick={() => onChange('')}
                 className="px-1.5 py-0.5 rounded hover:bg-neutral-800 text-neutral-400 hover:text-red-400 transition-colors text-[10px]"
-                title="Limpar código"
+                title={t('fields.btnClearCodeTitle')}
               >
-                Limpar
+                {t('fields.btnClearCode')}
               </button>
             )}
           </div>
@@ -504,7 +520,7 @@ function CodeFieldInput({
           rows={5}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder={`// Cole ou digite seu código aqui...`}
+          placeholder={t('fields.codePlaceholder')}
           className="w-full text-xs font-mono bg-neutral-950 dark:bg-[#111113] p-3 text-neutral-200 dark:text-neutral-300 placeholder:text-neutral-500 dark:placeholder:text-neutral-600 focus:outline-none focus:ring-0 resize-y leading-relaxed border-0 selection:bg-white selection:text-neutral-950"
           spellCheck={false}
         />
@@ -514,6 +530,8 @@ function CodeFieldInput({
 }
 
 export function App() {
+  const { t } = useI18n();
+
   const [gistInput, setGistInput] = useState<string>(() => {
     const params = new URLSearchParams(window.location.search);
     return params.get('gist') || localStorage.getItem(STORAGE_KEY_GIST) || OFFICIAL_GIST_ID;
@@ -730,7 +748,7 @@ export function App() {
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-neutral-700 dark:text-neutral-300" />
-                <span>PromptCraft</span>
+                <span>{t('header.tabGenerator')}</span>
               </button>
               <button
                 type="button"
@@ -742,7 +760,7 @@ export function App() {
                 }`}
               >
                 <BookOpen className="w-3.5 h-3.5 text-neutral-700 dark:text-neutral-300" />
-                <span>Guia do Gist</span>
+                <span>{t('header.tabGuide')}</span>
               </button>
             </nav>
           </div>
@@ -760,7 +778,7 @@ export function App() {
                 type="text"
                 value={gistInput}
                 onChange={(e) => setGistInput(e.target.value)}
-                placeholder="Cole o ID ou URL do Gist..."
+                placeholder={t('header.gistInputPlaceholder')}
                 className="w-full text-xs font-mono bg-neutral-50 dark:bg-[#111113] border border-neutral-200 dark:border-neutral-800 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-500 transition-all text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
               />
               <button
@@ -771,22 +789,22 @@ export function App() {
                     ? 'bg-emerald-600 text-white hover:bg-emerald-700'
                     : 'bg-neutral-900 hover:bg-black dark:bg-neutral-200 dark:hover:bg-white text-white dark:text-neutral-950'
                 } disabled:opacity-50`}
-                title="Carregar e recarregar os dados mais recentes do Gist (ignora cache)"
+                title={t('header.tooltipLoad')}
               >
                 {loading ? (
                   <>
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span>Recarregando...</span>
+                    <span>{t('header.btnReloading')}</span>
                   </>
                 ) : reloaded ? (
                   <>
                     <Check className="w-3.5 h-3.5" />
-                    <span>Recarregado!</span>
+                    <span>{t('header.btnReloaded')}</span>
                   </>
                 ) : (
                   <>
                     <RefreshCw className="w-3.5 h-3.5" />
-                    <span>Carregar</span>
+                    <span>{t('header.btnLoad')}</span>
                   </>
                 )}
               </button>
@@ -797,20 +815,23 @@ export function App() {
                 href={currentGistUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 text-neutral-500 dark:text-neutral-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg border border-transparent hover:border-neutral-200 dark:hover:border-neutral-800 transition-colors"
-                title="Editar este Gist diretamente no GitHub"
+                className="p-2 text-neutral-500 dark:text-neutral-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg border border-transparent hover:border-neutral-200 dark:border-neutral-800 transition-colors"
+                title={t('header.tooltipEditGist')}
               >
                 <ExternalLink className="w-4 h-4" />
               </a>
             )}
 
+            {/* Menu Seletor de Idioma (i18n) */}
+            <LanguageSelector />
+
             {/* Botão de Alternar Tema (Dark / Light) */}
             <button
               type="button"
               onClick={toggleTheme}
-              className="p-2 rounded-lg border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white bg-white dark:bg-neutral-900 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors shadow-2xs shrink-0 flex items-center justify-center"
-              title={theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
-              aria-label="Alternar tema claro e escuro"
+              className="p-2 rounded-lg border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white bg-white dark:bg-neutral-900 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors shadow-2xs shrink-0 flex items-center justify-center cursor-pointer"
+              title={theme === 'dark' ? t('header.themeLight') : t('header.themeDark')}
+              aria-label={t('header.themeAria')}
             >
               {theme === 'dark' ? (
                 <Sun className="w-4 h-4 text-amber-400" />
@@ -831,18 +852,18 @@ export function App() {
         ) : loading && templates.length === 0 ? (
           <div className="min-h-[50vh] flex flex-col items-center justify-center text-neutral-500 dark:text-neutral-400 gap-3">
             <Loader2 className="w-7 h-7 animate-spin text-neutral-900 dark:text-neutral-300" />
-            <p className="text-xs font-medium">Carregando templates do Gist...</p>
+            <p className="text-xs font-medium">{t('generator.loadingGist')}</p>
           </div>
         ) : errorMsg && templates.length === 0 ? (
           <div className="min-h-[50vh] flex flex-col items-center justify-center max-w-md mx-auto text-center gap-3 bg-white dark:bg-[#161618] p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-xs">
             <AlertCircle className="w-8 h-8 text-red-500" />
-            <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-200">Não foi possível carregar o Gist</h3>
+            <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-200">{t('generator.errorTitle')}</h3>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">{errorMsg}</p>
             <button
               onClick={() => fetchTemplates(OFFICIAL_GIST_ID)}
-              className="mt-2 text-xs font-semibold px-4 py-2 bg-neutral-900 hover:bg-black dark:bg-neutral-200 dark:hover:bg-white text-white dark:text-neutral-950 rounded-xl transition-all"
+              className="mt-2 text-xs font-semibold px-4 py-2 bg-neutral-900 hover:bg-black dark:bg-neutral-200 dark:hover:bg-white text-white dark:text-neutral-950 rounded-xl transition-all cursor-pointer"
             >
-              Carregar Gist Base
+              {t('generator.btnLoadDefault')}
             </button>
           </div>
         ) : (
@@ -856,7 +877,7 @@ export function App() {
                   </div>
                   <button 
                     onClick={() => setErrorMsg(null)} 
-                    className="text-red-500 hover:text-red-800 dark:hover:text-red-200 font-bold ml-2 text-sm leading-none"
+                    className="text-red-500 hover:text-red-800 dark:hover:text-red-200 font-bold ml-2 text-sm leading-none cursor-pointer"
                     title="Fechar aviso"
                   >
                     ×
@@ -868,19 +889,19 @@ export function App() {
               {templates.length > 1 && (
                 <div className="flex items-center gap-2 overflow-x-auto pb-1">
                   <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider shrink-0 mr-1">
-                    Templates:
+                    {t('generator.labelTemplates')}
                   </span>
-                  {templates.map(t => (
+                  {templates.map(tItem => (
                     <button
-                      key={t.id}
-                      onClick={() => setActiveTemplateId(t.id)}
-                      className={`text-xs px-3.5 py-1.5 rounded-lg border font-medium whitespace-nowrap transition-all ${
-                        t.id === activeTemplate.id
+                      key={tItem.id}
+                      onClick={() => setActiveTemplateId(tItem.id)}
+                      className={`text-xs px-3.5 py-1.5 rounded-lg border font-medium whitespace-nowrap transition-all cursor-pointer ${
+                        tItem.id === activeTemplate.id
                           ? 'bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-950 shadow-xs'
                           : 'bg-white dark:bg-[#161618] border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/80 dark:hover:text-neutral-200'
                       }`}
                     >
-                      {t.titulo}
+                      {tItem.titulo}
                     </button>
                   ))}
                 </div>
@@ -899,22 +920,22 @@ export function App() {
                         {variables.some(v => Boolean(v.error)) && (
                           <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 flex items-center gap-1 shrink-0">
                             <AlertCircle className="w-3 h-3 text-red-600 dark:text-red-400" />
-                            <span>Corrigir tipos no Gist</span>
+                            <span>{t('generator.fixTypesInGist')}</span>
                           </span>
                         )}
                       </div>
                       <p className="text-[11px] text-neutral-400 dark:text-neutral-500 mt-0.5">
-                        {variables.length} variáveis detectadas
+                        {t('generator.variablesDetected', { count: variables.length })}
                       </p>
                     </div>
 
                     <button
                       onClick={handleClearFields}
-                      className="flex items-center gap-1 text-[11px] text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 px-2 py-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-                      title="Limpar todos os campos"
+                      className="flex items-center gap-1 text-[11px] text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 px-2 py-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
+                      title={t('generator.btnClearAllTitle')}
                     >
                       <RotateCcw className="w-3 h-3" />
-                      <span>Limpar</span>
+                      <span>{t('generator.btnClearAll')}</span>
                     </button>
                   </div>
 
@@ -932,7 +953,7 @@ export function App() {
                                 <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />
                                 <span>{v.label}</span>
                                 <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-900/60 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-800">
-                                  tipo inválido
+                                  {t('generator.invalidType')}
                                 </span>
                               </div>
                               <span className="font-mono text-[10px] text-red-500 dark:text-red-400 font-semibold">
@@ -943,7 +964,7 @@ export function App() {
                               {v.error}
                             </p>
                             <div className="text-[11px] text-red-700 dark:text-red-300 font-mono bg-white/80 dark:bg-neutral-900/80 px-2.5 py-1.5 rounded-lg border border-red-200 dark:border-red-900/50">
-                              💡 Formato obrigatório no Gist: <strong>{`{{${v.key}:tipo}}`}</strong>
+                              {t('generator.formatRequiredInGist')} <strong>{`{{${v.key}:tipo}}`}</strong>
                             </div>
                           </div>
                         );
@@ -1070,7 +1091,7 @@ export function App() {
 
                     {variables.length === 0 && (
                       <p className="text-xs text-neutral-400 dark:text-neutral-500 text-center py-6">
-                        Nenhuma variável identificada no template (use <code className="font-mono bg-neutral-100 dark:bg-neutral-800 px-1 py-0.5 rounded text-neutral-800 dark:text-neutral-200">{'{{variavel:tipo}}'}</code> no texto do Gist).
+                        {t('generator.noVariablesFound')}
                       </p>
                     )}
                   </div>
@@ -1081,13 +1102,13 @@ export function App() {
                   <div className="flex items-center justify-between border-b border-neutral-100 dark:border-neutral-800/80 pb-3 mb-4">
                     <span className="font-semibold text-neutral-900 dark:text-neutral-200 text-sm flex items-center gap-1.5">
                       <Sparkles className="w-4 h-4 text-neutral-800 dark:text-neutral-300" />
-                      Prompt Gerado
+                      {t('generator.previewTitle')}
                     </span>
 
                     <div className="flex items-center gap-3">
                       <label 
                         className="flex items-center gap-1.5 text-xs text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 cursor-pointer select-none bg-neutral-50 dark:bg-[#111113] px-2 py-1 rounded-md border border-neutral-200 dark:border-neutral-800 transition-colors"
-                        title="Quando ativado, seções e campos deixados em branco não aparecem no prompt final"
+                        title={t('generator.omitEmptyTooltip')}
                       >
                         <input
                           type="checkbox"
@@ -1103,11 +1124,11 @@ export function App() {
                           }}
                           className="w-3.5 h-3.5 rounded text-neutral-900 dark:text-neutral-200 border-neutral-300 dark:border-neutral-600 focus:ring-0 cursor-pointer accent-neutral-900 dark:accent-neutral-200"
                         />
-                        <span className="text-[11px] font-medium">Omitir vazios</span>
+                        <span className="text-[11px] font-medium">{t('generator.omitEmpty')}</span>
                       </label>
 
                       <span className="text-[11px] font-mono text-neutral-400 dark:text-neutral-500">
-                        {assembledPrompt.length} caracteres
+                        {t('generator.charCount', { count: assembledPrompt.length })}
                       </span>
                     </div>
                   </div>
@@ -1115,7 +1136,7 @@ export function App() {
                   {/* Caixa de Texto do Prompt */}
                   <div className="min-h-[340px] max-h-[520px] overflow-y-auto bg-neutral-950 dark:bg-[#111113] text-neutral-200 dark:text-neutral-300 font-mono text-xs rounded-xl p-4 leading-relaxed border border-neutral-800 select-text selection:bg-white selection:text-neutral-950">
                     <pre className="whitespace-pre-wrap break-words font-mono selection:bg-white selection:text-neutral-950">
-                      {assembledPrompt || '// Preencha os campos ao lado para visualizar o prompt...'}
+                      {assembledPrompt || t('generator.promptPlaceholder')}
                     </pre>
                   </div>
 
@@ -1124,7 +1145,7 @@ export function App() {
                     <button
                       type="button"
                       onClick={handleCopy}
-                      className={`flex items-center gap-2 px-5 py-2.5 text-xs font-semibold rounded-xl transition-all shadow-xs ${
+                      className={`flex items-center gap-2 px-5 py-2.5 text-xs font-semibold rounded-xl transition-all shadow-xs cursor-pointer ${
                         copied
                           ? 'bg-green-600 text-white hover:bg-green-700'
                           : 'bg-neutral-900 hover:bg-black dark:bg-neutral-200 dark:hover:bg-white text-white dark:text-neutral-950'
@@ -1133,12 +1154,12 @@ export function App() {
                       {copied ? (
                         <>
                           <Check className="w-4 h-4" />
-                          <span>Prompt Copiado com Sucesso!</span>
+                          <span>{t('generator.copiedSuccess')}</span>
                         </>
                       ) : (
                         <>
                           <Copy className="w-4 h-4" />
-                          <span>Copiar Prompt</span>
+                          <span>{t('generator.btnCopy')}</span>
                         </>
                       )}
                     </button>
@@ -1153,15 +1174,15 @@ export function App() {
       {/* Rodapé Simples */}
       <footer className="border-t border-neutral-200 dark:border-neutral-800/80 py-4 text-center text-xs text-neutral-400 dark:text-neutral-500 bg-white dark:bg-[#141416] transition-colors">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p>© {new Date().getFullYear()} PromptCraft — Simples, Direto &amp; 100% Gist.</p>
+          <p>{t('footer.copyright', { year: new Date().getFullYear() })}</p>
           <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={() => handleTabChange(activeTab === 'guide' ? 'generator' : 'guide')}
-              className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 underline flex items-center gap-1 transition-colors"
+              className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 underline flex items-center gap-1 transition-colors cursor-pointer"
             >
               <BookOpen className="w-3 h-3" />
-              <span>{activeTab === 'guide' ? 'Ir para o Gerador' : 'Guia de Sintaxe do Gist'}</span>
+              <span>{activeTab === 'guide' ? t('footer.goToGenerator') : t('footer.syntaxGuide')}</span>
             </button>
             <a
               href={currentGistUrl}
@@ -1169,7 +1190,7 @@ export function App() {
               rel="noopener noreferrer"
               className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 underline flex items-center gap-1 transition-colors"
             >
-              <span>Ver Gist no GitHub</span>
+              <span>{t('footer.viewGist')}</span>
               <ExternalLink className="w-3 h-3" />
             </a>
           </div>
