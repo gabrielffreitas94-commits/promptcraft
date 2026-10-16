@@ -112,8 +112,12 @@ Você é um Arquiteto de Software Sênior especializado em Clean Architecture.
 
 ## ⚙️ Funcionalidades da Interface
 
+* **Suporte Multi-idiomas (i18n — EFIGS + CJK + pt-BR):** Suporte nativo completo a 9 idiomas (Português, Inglês, Espanhol, Francês, Italiano, Alemão, Chinês Simplificado, Japonês e Coreano), com detecção automática do navegador e seletor manual persistente.
+* **Skills para Agentes de IA (Antigravity, Claude Code, Cursor, Copilot):** Duas skills prontas disponíveis para cópia em 1 clique na aba **Guia do Gist** e versionadas na pasta `skills/`:
+  - `skills/promptcraft-template-creator/SKILL.md`: Guia o agente na criação e validação de templates Markdown compatíveis com todas as variáveis e condicionais do PromptCraft.
+  - `skills/promptcraft-github-gist/SKILL.md`: Cria o template e o publica automaticamente como GitHub Gist (via CLI `gh` ou API), retornando a URL raw pronta para carregar no site.
 * **Suporte a Tema Escuro e Claro (Dark & Light Theme):** Alternador no topo com ícone Sol/Lua para alternar instantaneamente entre os modos claro e escuro, com detecção automática da preferência do sistema operacional e persistência no `localStorage`.
-* **Navegação Multitelas (PromptCraft vs Guia do Gist):** Alterne no cabeçalho entre a aba **PromptCraft** e a página do **Guia do Gist**, que contém a documentação completa, dicionário de tipos e modelo para copiar em 1 clique.
+* **Navegação Multitelas (PromptCraft vs Guia do Gist):** Alterne no cabeçalho entre a aba **PromptCraft** e a página do **Guia do Gist**, que contém a documentação completa, dicionário de tipos, skills de IA e modelo para copiar em 1 clique.
 * **Abas de Templates:** Alterne entre diferentes templates com apenas um clique.
 * **Preenchimento em Tempo Real:** Conforme você digita nos campos da esquerda, o preview do prompt à direita é atualizado instantaneamente.
 * **Toggle "Omitir vazios":** Permite ligar ou desligar a remoção automática de seções não preenchidas.

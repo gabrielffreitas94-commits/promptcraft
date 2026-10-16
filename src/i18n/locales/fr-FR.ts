@@ -153,6 +153,175 @@ Refactorisez le code suivant pour le rendre maintenable, modulaire et performant
 {{remarques:textarea}}
 {{/if}}`,
   },
+  skills: {
+    sectionBadge: 'Agents IA & Automatisation',
+    sectionTitle: 'Skills pour Assistants IA',
+    sectionSubtitle: 'Copiez et ajoutez ces skills à votre assistant IA favori (Google Antigravity, Claude Code, Cursor, Copilot, ChatGPT) pour générer et publier des templates automatiquement.',
+    tabTemplateCreator: 'Créer un Template',
+    tabGithubGist: 'Créer Directement sur GitHub',
+    templateCreatorBadge: 'Génération & Validation de Templates',
+    templateCreatorDesc: 'Apprend à l’agent à comprendre vos objectifs, mapper des variables typées et générer des templates Markdown 100% compatibles avec PromptCraft.',
+    githubGistBadge: 'Automatisation & Publication GitHub',
+    githubGistDesc: 'Génère le template et le publie directement en tant que GitHub Gist (public ou secret via CLI gh ou API), fournissant l’URL raw prête pour PromptCraft.',
+    howToUseTitle: 'Comment utiliser avec votre agent IA :',
+    howToUseDesc: 'Copiez le contenu ci-dessous et enregistrez-le sous .skills/<nom>/SKILL.md dans votre projet, ou utilisez-le comme instructions personnalisées / prompt système.',
+    btnCopySkill: 'Copier SKILL.md',
+    skillCopied: 'SKILL.md Copié !',
+    templateCreatorContent: `---
+name: promptcraft-template-creator
+description: Crée et valide des templates markdown dynamiques compatibles avec PromptCraft en utilisant des champs typés {{champ:type}} et des conditions {{#if champ}}...{{/if}}.
+---
+
+# PromptCraft Template Creator
+
+Cette skill vous permet de concevoir, structurer et valider des templates dynamiques prêts pour **PromptCraft**.
+
+## Qu'est-ce que PromptCraft ?
+
+PromptCraft est un générateur de prompts basé sur des templates Markdown hébergés dans le cloud (GitHub Gists ou URLs raw). Il analyse automatiquement les variables typées dans le Markdown et génère un formulaire interactif que l'utilisateur remplit avant d'obtenir son prompt final.
+
+## Règles de Syntaxe des Champs
+
+Tous les champs utilisent des doubles accolades avec un identifiant et un type : \`{{nom_du_champ:type}}\`.
+
+### 1. Types de Champs Supportés
+
+- **Texte Court** : \`{{nom_projet:text}}\`
+  - Rend un champ de saisie sur une seule ligne.
+  - Usage : noms de projets, titres, points de terminaison, versions.
+
+- **Zone de Texte (Multiligne)** : \`{{description_portee:textarea}}\`
+  - Rend une zone de texte extensible.
+  - Usage : explications détaillées, contexte, spécifications rédigées, logs.
+
+- **Liste à Puces** : \`{{exigences:list}}\`
+  - Rend un constructeur de liste avec bouton d'ajout.
+  - Dans le prompt final, les éléments sont préfixés de tirets : \`- Élément 1\\n- Élément 2\`.
+
+- **Liste Numérotée** : \`{{etapes:numbered_list}}\`
+  - Rend un constructeur de liste ordonnée.
+  - Dans le prompt final, les éléments sont numérotés : \`1. Élément 1\\n2. Élément 2\`.
+
+- **Bouton Bascule Booléen** : \`{{incluire_tests:boolean}}\`
+  - Rend un commutateur Oui/Non.
+  - Idéal pour combiner avec des blocs conditionnels.
+
+- **Sélection Unique** : \`{{framework:select[React, Vue, Svelte, Angular]}}\`
+  - Rend une liste déroulante où l'utilisateur choisit une seule option.
+  - Les options sont placées entre crochets, séparées par des virgules.
+
+- **Sélection Multiple** : \`{{bases_donnees:multiselect[PostgreSQL, Redis, MongoDB]}}\`
+  - Rend des boutons de choix multiple.
+  - Dans le prompt final, les éléments choisis sont séparés par des virgules.
+
+- **Bloc de Code** : \`{{exemple_code:code}}\`
+  - Rend un éditeur de code à espacement fixe.
+  - Idéal pour snippets, charges utiles JSON, SQL et configurations YAML.
+
+### 2. Conditionnels \`{{#if}}\`
+
+Utilisez des conditions pour inclure ou omettre des sections entières :
+
+\`\`\`markdown
+{{#if inclure_tests}}
+### DIRECTIVES DE TESTS
+- Rédigez des tests unitaires complets.
+- Utilisez la bibliothèque standard du projet.
+{{/if}}
+\`\`\`
+
+- Si la valeur est remplie / vaut \`true\`, le bloc s'affiche.
+- Si elle est vide ou vaut \`false\`, le bloc entier est omis du prompt final.
+
+### 3. Bonnes Pratiques et Conventions
+
+1. **Noms de Variables** : Utilisez toujours \`snake_case\` sans accents ni caractères spéciaux (ex : \`nom_projet\`).
+2. **Clarté des Libellés** : PromptCraft transforme automatiquement l'identifiant en étiquette lisible (ex : \`nom_projet\` devient "Nom Projet").
+3. **Structure Markdown** : Utilisez un Markdown propre avec des titres (\`#\`, \`##\`, \`###\`), des listes et des blocs de code.
+
+## Déroulement pour Créer un Template
+
+1. **Comprendre l'Objectif** : Identifiez le prompt souhaité par l'utilisateur.
+2. **Identifier les Entrées Dynamiques** : Déterminez les données variables et choisissez le type idéal pour chacune.
+3. **Structurer le Markdown** : Définissez le rôle de l'IA, le contexte, les entrées et les blocs conditionnels.
+4. **Valider la Syntaxe** : Vérifiez la bonne fermeture de toutes les balises \`{{...}}\`.
+5. **Livrer** : Fournissez le template complet dans un bloc Markdown ou un fichier \`.md\`.`,
+    githubGistContent: `---
+name: promptcraft-github-gist
+description: Crée des templates markdown dynamiques pour PromptCraft et les publie directement sur GitHub Gists (publics ou secrets) avec la CLI gh ou l'API GitHub, renvoyant l'URL raw prête pour PromptCraft.
+---
+
+# PromptCraft GitHub Gist Publisher
+
+Cette skill permet de concevoir des templates **PromptCraft** et de les publier directement sur **GitHub Gist**, fournissant l'URL Raw requise pour charger le template en un clic.
+
+## Syntaxe de Template Supportée
+
+- \`{{champ:text}}\` - Texte d'une seule ligne
+- \`{{champ:textarea}}\` - Zone de texte multiligne
+- \`{{champ:list}}\` - Liste à puces (\`- élément\`)
+- \`{{champ:numbered_list}}\` - Liste numérotée (\`1. élément\`)
+- \`{{champ:boolean}}\` - Commutateur Oui/Non
+- \`{{champ:select[Option A, Option B]}}\` - Choix unique
+- \`{{champ:multiselect[Option A, Option B]}}\` - Choix multiple
+- \`{{champ:code}}\` - Bloc de code
+- \`{{#if variable}}...{{/if}}\` - Blocs conditionnels
+
+## Flux de Publication sur GitHub Gist
+
+### Méthode 1 : GitHub CLI (\`gh\`) - Recommandée
+
+1. **Vérifier l'Authentification** :
+   \`\`\`bash
+   gh auth status
+   \`\`\`
+2. **Créer le Gist** :
+   \`\`\`bash
+   # Gist Public (recommandé pour le partage)
+   gh gist create template.md --public --desc "PromptCraft: Template de Code Review"
+
+   # Ou Gist Secret (accessible uniquement avec le lien)
+   gh gist create template.md --desc "PromptCraft: Template Interne"
+   \`\`\`
+3. **Obtenir l'URL Raw** :
+   Construisez l'URL : \`https://gist.githubusercontent.com/<utilisateur>/<gist_id>/raw/<nom_fichier>.md\` ou cliquez sur "Raw" sur la page du gist.
+
+### Méthode 2 : API REST GitHub (avec Token PAT)
+
+\`\`\`bash
+curl -L \\
+  -X POST \\
+  -H "Accept: application/vnd.github+json" \\
+  -H "Authorization: Bearer <VOTRE_TOKEN_GITHUB>" \\
+  -H "X-GitHub-Api-Version: 2022-11-28" \\
+  https://api.github.com/gists \\
+  -d '{
+    "description": "PromptCraft: Template Automatisé",
+    "public": true,
+    "files": {
+      "template.md": {
+        "content": "# MON TEMPLATE\\n\\nNom: {{nom_projet:text}}\\n{{#if tests}}Tests: Oui{{/if}}"
+      }
+    }
+  }'
+\`\`\`
+
+Extrayez le champ \`files["template.md"].raw_url\` de la réponse.
+
+### Méthode 3 : Création Manuelle dans le Navigateur (Alternative)
+
+1. Rendez-vous sur https://gist.github.com
+2. Nommez le fichier avec l'extension \`.md\` (ex : \`mon-template.md\`).
+3. Collez le template et cliquez sur **Create public gist** ou **Create secret gist**.
+4. Cliquez sur le bouton **Raw** et copiez l'URL dans la barre d'adresse.
+
+## Restitution Finale à l'Utilisateur
+
+Une fois la publication effectuée, transmettez :
+> 🚀 **Template publié avec succès !**
+> Collez cette URL dans le champ "Charger depuis URL / Gist" de PromptCraft :
+> \`https://gist.githubusercontent.com/.../template.md\``,
+  },
   footer: {
     copyright: '© {year} PromptCraft — Simple, Direct et 100% Gist.',
     syntaxGuide: 'Guide de Syntaxe Gist',
@@ -160,3 +329,4 @@ Refactorisez le code suivant pour le rendre maintenable, modulaire et performant
     viewGist: 'Voir le Gist sur GitHub',
   },
 };
+

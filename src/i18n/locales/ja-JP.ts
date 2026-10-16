@@ -153,6 +153,175 @@ Clean Code とクリーンアーキテクチャに精通したシニアソフト
 {{補足メモ:textarea}}
 {{/if}}`,
   },
+  skills: {
+    sectionBadge: 'AI エージェント & 自動化',
+    sectionTitle: 'AI アシスタント向けスキル (Skills)',
+    sectionSubtitle: 'お気に入りの AI アシスタント（Google Antigravity、Claude Code、Cursor、Copilot、ChatGPT）にこれらのスキルを追加して、テンプレートの生成と公開を自動化しましょう。',
+    tabTemplateCreator: 'テンプレート作成',
+    tabGithubGist: 'GitHub へ直接公開',
+    templateCreatorBadge: 'テンプレート生成 & 検証',
+    templateCreatorDesc: 'AI エージェントがあなたの目的を把握し、型付き変数をマッピングして PromptCraft と 100% 互換性のある Markdown テンプレートを生成します。',
+    githubGistBadge: 'GitHub 自動化 & 公開',
+    githubGistDesc: 'テンプレートを作成し、GitHub Gist（gh CLI または API 経由）に直接公開して PromptCraft に即読み込める Raw URL を取得します。',
+    howToUseTitle: 'AI エージェントでの使い方:',
+    howToUseDesc: '以下の内容をコピーしてプロジェクトの .skills/<名前>/SKILL.md に保存するか、アシスタントのカスタム指示 (Custom Instructions) / システムプロンプトに貼り付けてください。',
+    btnCopySkill: 'SKILL.md をコピー',
+    skillCopied: 'SKILL.md をコピーしました！',
+    templateCreatorContent: `---
+name: promptcraft-template-creator
+description: PromptCraft に準拠した動的 Markdown テンプレートを作成および検証します。型付き変数 {{変数名:型}} と条件分岐 {{#if 変数名}}...{{/if}} をサポートします。
+---
+
+# PromptCraft Template Creator
+
+このスキルを使用すると、**PromptCraft** ですぐに使える動的プロンプトテンプレートを設計、構成、および検証できます。
+
+## PromptCraft とは？
+
+PromptCraft は、クラウド上の Markdown テンプレート（GitHub Gist や Raw URL）を活用するプロンプトジェネレーターです。Markdown 内の型付き変数を自動解析し、ユーザーが入力するためのインタラクティブなフォームを生成します。
+
+## フィールド構文ルール
+
+すべてのフィールドは二重波括弧で識別子と型を指定します: \`{{フィールド名:型}}\`。
+
+### 1. サポートされているフィールド型
+
+- **短文テキスト**: \`{{プロジェクト名:text}}\`
+  - 1行のテキスト入力フィールドを表示します。
+  - 用途: プロジェクト名、タイトル、エンドポイント、作者、バージョン番号。
+
+- **テキストエリア（複数行）**: \`{{スコープ概要:textarea}}\`
+  - 拡張可能な複数行テキストボックスを表示します。
+  - 用途: 詳細な背景説明、コンテキスト、要件、エラーログ。
+
+- **箇条書きリスト**: \`{{要件一覧:list}}\`
+  - アイテム追加ボタン付きのリストビルダーを表示します。
+  - 最終プロンプトではハイフン付きで出力されます: \`- 項目 1\\n- 項目 2\`。
+
+- **番号付きリスト**: \`{{作業手順:numbered_list}}\`
+  - 順序付きリストビルダーを表示します。
+  - 最終プロンプトでは連番が付与されます: \`1. 項目 1\\n2. 項目 2\`。
+
+- **ブール値トグル**: \`{{テストを含める:boolean}}\`
+  - はい/いいえ のトグルスイッチを表示します。
+  - 条件分岐ブロックとの組み合わせに最適です。
+
+- **単一選択（プルダウン）**: \`{{フレームワーク:select[React, Vue, Svelte, Angular]}}\`
+  - 1つの選択肢を選ぶドロップダウンを表示します。
+  - 選択肢は角括弧内にカンマ区切りで指定します。
+
+- **複数選択（タグ）**: \`{{データベース:multiselect[PostgreSQL, Redis, MongoDB]}}\`
+  - 複数選択可能なボタンを表示します。
+  - 最終プロンプトではカンマ区切りで挿入されます。
+
+- **コードブロック**: \`{{コード例:code}}\`
+  - 等幅フォントのコードエディタを表示します。
+  - 用途: コードスニペット、JSON ペイロード、SQL、YAML 設定。
+
+### 2. 条件分岐構文 \`{{#if}}\`
+
+入力値に応じてプロンプトのセクション全体を含めるか除外するかを制御します:
+
+\`\`\`markdown
+{{#if テストを含める}}
+### テストガイドライン
+- 境界条件を網羅する単体テストを作成してください。
+- プロジェクトの標準テストライブラリを使用してください。
+{{/if}}
+\`\`\`
+
+- 入力がある、または \`true\` の場合はブロックがレンダリングされます。
+- 空または \`false\` の場合は最終プロンプトから完全に省略されます。
+
+### 3. ベストプラクティスと命名規約
+
+1. **変数名**: 半角英数の小文字スネークケース \`snake_case\`（例: \`project_name\`）を推奨します。
+2. **ラベルの可読性**: PromptCraft は識別子を自動的に読みやすいラベルに変換します（例: \`project_name\` -> "Project Name"）。
+3. **Markdown 構造**: 見出し（\`#\`, \`##\`, \`###\`）、リスト、コードブロックを活用して整理してください。
+
+## テンプレート作成のワークフロー
+
+1. **目的の把握**: ユーザーが生成したいプロンプトの目的を確認します。
+2. **動的入力のマッピング**: 変動する項目を特定し、最適なフィールド型を割り当てます。
+3. **Markdown の構成**: 役割定義、前提、入力項目、条件ブロックを記述します。
+4. **構文の検証**: すべての \`{{...}}\` タグが正しい形式か確認します。
+5. **納品**: Markdown ブロックまたは \`.md\` ファイルとして完全なテンプレートを提供します。`,
+    githubGistContent: `---
+name: promptcraft-github-gist
+description: PromptCraft 用の動的 Markdown テンプレートを作成し、GitHub CLI (gh) または REST API を使って GitHub Gist に直接公開し、即座に読み込める Raw URL を提供します。
+---
+
+# PromptCraft GitHub Gist Publisher
+
+このスキルは、**PromptCraft** テンプレートの作成から **GitHub Gist** への直接公開までを行い、Web アプリにワンクリックでロード可能な Raw URL を生成します。
+
+## サポートされている構文
+
+- \`{{フィールド:text}}\` - 1行テキスト
+- \`{{フィールド:textarea}}\` - 複数行テキストエリア
+- \`{{フィールド:list}}\` - 箇条書きリスト (\`- 項目\`)
+- \`{{フィールド:numbered_list}}\` - 番号付きリスト (\`1. 項目\`)
+- \`{{フィールド:boolean}}\` - オン/オフトグル (はい/いいえ)
+- \`{{フィールド:select[選択肢 A, 選択肢 B]}}\` - 単一選択
+- \`{{フィールド:multiselect[選択肢 A, 選択肢 B]}}\` - 複数選択
+- \`{{フィールド:code}}\` - 等幅コードブロック
+- \`{{#if 変数名}}...{{/if}}\` - 条件分岐
+
+## GitHub Gist 公開フロー
+
+### 方法 1: GitHub CLI (\`gh\`) - 推奨
+
+1. **認証状態の確認**:
+   \`\`\`bash
+   gh auth status
+   \`\`\`
+2. **Gist の作成**:
+   \`\`\`bash
+   # 公開 Gist（共有に推奨）
+   gh gist create template.md --public --desc "PromptCraft: コードレビュー用テンプレート"
+
+   # またはシークレット Gist（リンクを知っている人のみ）
+   gh gist create template.md --desc "PromptCraft: 内部テンプレート"
+   \`\`\`
+3. **Raw URL の取得**:
+   URL の組み立て: \`https://gist.githubusercontent.com/<ユーザー名>/<gist_id>/raw/<ファイル名>.md\` または Gist ページの "Raw" ボタンをクリック。
+
+### 方法 2: GitHub REST API（パーソナルアクセストークン使用）
+
+\`\`\`bash
+curl -L \\
+  -X POST \\
+  -H "Accept: application/vnd.github+json" \\
+  -H "Authorization: Bearer <あなたの_GITHUB_TOKEN>" \\
+  -H "X-GitHub-Api-Version: 2022-11-28" \\
+  https://api.github.com/gists \\
+  -d '{
+    "description": "PromptCraft: 自動生成テンプレート",
+    "public": true,
+    "files": {
+      "template.md": {
+        "content": "# マイテンプレート\\n\\nプロジェクト: {{プロジェクト名:text}}\\n{{#if テスト}}テスト: 有り{{/if}}"
+      }
+    }
+  }'
+\`\`\`
+
+レスポンス内の \`files["template.md"].raw_url\` を取得します。
+
+### 方法 3: ブラウザでの手動作成（フォールバック）
+
+1. https://gist.github.com にアクセスします。
+2. ファイル名を \`.md\` 拡張子で入力します（例: \`my-template.md\`）。
+3. テンプレートを貼り付け、**Create public gist** または **Create secret gist** をクリックします。
+4. 右上の **Raw** ボタンをクリックし、ブラウザのアドレスバーから URL をコピーします。
+
+## ユーザーへの最終出力
+
+公開完了後、ユーザーに以下を案内します:
+> 🚀 **テンプレートが正常に公開されました！**
+> この URL を PromptCraft の「URL / Gist から読み込む」入力欄に貼り付けてください:
+> \`https://gist.githubusercontent.com/.../template.md\``,
+  },
   footer: {
     copyright: '© {year} PromptCraft — シンプル、直感的、100% Gist 駆動。',
     syntaxGuide: 'Gist 構文ガイド',
@@ -160,3 +329,4 @@ Clean Code とクリーンアーキテクチャに精通したシニアソフト
     viewGist: 'GitHub で Gist を見る',
   },
 };
+

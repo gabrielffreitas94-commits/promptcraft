@@ -153,6 +153,175 @@ export const koKR: TranslationSchema = {
 {{추가참고사항:textarea}}
 {{/if}}`,
   },
+  skills: {
+    sectionBadge: 'AI 에이전트 및 자동화',
+    sectionTitle: 'AI 어시스턴트용 스킬 (Skills)',
+    sectionSubtitle: '선호하는 AI 어시스턴트(Google Antigravity, Claude Code, Cursor, Copilot, ChatGPT)에 이 스킬을 추가하여 템플릿 생성과 게시를 자동으로 처리하세요.',
+    tabTemplateCreator: '템플릿 생성',
+    tabGithubGist: 'GitHub에 바로 게시',
+    templateCreatorBadge: '템플릿 생성 및 유효성 검증',
+    templateCreatorDesc: 'AI 에이전트가 사용자의 목표를 파악하고, 타입이 지정된 변수를 매핑하여 PromptCraft와 100% 호환되는 Markdown 템플릿을 생성합니다.',
+    githubGistBadge: 'GitHub 자동화 및 게시',
+    githubGistDesc: '템플릿을 생성한 후 GitHub Gist(gh CLI 또는 REST API 사용)에 직접 게시하여 PromptCraft에 즉시 붙여넣을 수 있는 Raw URL을 제공합니다.',
+    howToUseTitle: 'AI 에이전트에서 사용하는 방법:',
+    howToUseDesc: '아래 내용을 복사하여 프로젝트의 .skills/<이름>/SKILL.md에 저장하거나, 어시스턴트의 커스텀 지침(Custom Instructions) 또는 시스템 프롬프트에 붙여넣으세요.',
+    btnCopySkill: 'SKILL.md 복사',
+    skillCopied: 'SKILL.md 복사됨!',
+    templateCreatorContent: `---
+name: promptcraft-template-creator
+description: PromptCraft와 완벽히 호환되는 동적 Markdown 템플릿을 생성하고 검증합니다. 타입이 지정된 {{변수:타입}} 필드와 {{#if 변수}}...{{/if}} 조건문을 지원합니다.
+---
+
+# PromptCraft Template Creator
+
+이 스킬을 통해 **PromptCraft**에서 즉시 사용할 수 있는 동적 프롬프트 템플릿을 설계, 구성 및 검증할 수 있습니다.
+
+## PromptCraft란?
+
+PromptCraft는 클라우드에 호스팅된 Markdown 템플릿(GitHub Gist 또는 원시 Raw URL)을 기반으로 작동하는 프롬프트 생성기입니다. Markdown 내부의 타입화된 변수를 자동으로 파싱하여 사용자가 입력할 수 있는 대화형 폼을 생성합니다.
+
+## 필드 문법 규칙
+
+모든 필드는 이중 중괄호 안에 식별자와 타입을 지정합니다: \`{{필드이름:타입}}\`.
+
+### 1. 지원되는 필드 타입
+
+- **한 줄 텍스트**: \`{{프로젝트이름:text}}\`
+  - 단일 행 텍스트 입력창을 렌더링합니다.
+  - 용도: 프로젝트명, 제목, 엔드포인트, 작성자, 버전 번호.
+
+- **텍스트 영역 (여러 줄)**: \`{{범위설명:textarea}}\`
+  - 확장 가능한 여러 줄 텍스트 입력창을 렌더링합니다.
+  - 용도: 상세 배경 설명, 컨텍스트, 요구사항, 오류 로그.
+
+- **글머리 기호 목록**: \`{{요구사항:list}}\`
+  - 항목 추가 버튼이 포함된 목록 작성기를 렌더링합니다.
+  - 최종 프롬프트에서는 각 항목 앞에 대시가 붙습니다: \`- 항목 1\\n- 항목 2\`.
+
+- **번호 매기기 목록**: \`{{실행단계:numbered_list}}\`
+  - 순서가 있는 목록 작성기를 렌더링합니다.
+  - 최종 프롬프트에서는 순차적으로 번호가 매겨집니다: \`1. 항목 1\\n2. 항목 2\`.
+
+- **불리언 토글**: \`{{테스트포함:boolean}}\`
+  - 예/아니오 스위치를 렌더링합니다.
+  - 조건문 블록과 결합하여 사용하기에 가장 적합합니다.
+
+- **단일 선택 (드롭다운)**: \`{{프레임워크:select[React, Vue, Svelte, Angular]}}\`
+  - 하나의 옵션만 선택할 수 있는 드롭다운 메뉴를 렌더링합니다.
+  - 대괄호 안에 쉼표로 구분하여 옵션을 작성합니다.
+
+- **다중 선택 (태그)**: \`{{데이터베이스:multiselect[PostgreSQL, Redis, MongoDB]}}\`
+  - 여러 개를 선택할 수 있는 버튼 그룹을 렌더링합니다.
+  - 최종 프롬프트에서는 선택된 항목들이 쉼표로 구분되어 입력됩니다.
+
+- **코드 블록**: \`{{예제코드:code}}\`
+  - 고정폭 글꼴의 코드 편집기를 렌더링합니다.
+  - 용도: 코드 스니펫, JSON 데이터, SQL 쿼리, YAML 설정.
+
+### 2. 조건문 문법 \`{{#if}}\`
+
+필드 입력 여부에 따라 프롬프트의 특정 섹션 전체를 포함하거나 제외할 수 있습니다:
+
+\`\`\`markdown
+{{#if 테스트포함}}
+### 테스트 지침
+- 엣지 케이스를 모두 포괄하는 단위 테스트를 작성하세요.
+- 프로젝트 표준 테스트 라이브러리를 활용하세요.
+{{/if}}
+\`\`\`
+
+- 값이 채워져 있거나 \`true\`인 경우 블록 내용이 출력됩니다.
+- 비어 있거나 \`false\`인 경우 최종 프롬프트에서 완전히 생략됩니다.
+
+### 3. 권장 규칙 및 네이밍
+
+1. **변수 이름**: 영문 소문자와 언더스코어를 사용하는 \`snake_case\`(예: \`project_name\`)를 권장합니다.
+2. **라벨 가독성**: PromptCraft는 식별자를 사용자 친화적인 라벨로 자동 변환합니다(예: \`project_name\` -> "Project Name").
+3. **Markdown 구조**: 제목(\`#\`, \`##\`, \`###\`), 목록, 코드 블록을 구조화하여 깔끔한 Markdown을 작성하세요.
+
+## 템플릿 생성 워크플로
+
+1. **목적 파악**: 사용자가 만들고자 하는 프롬프트의 목표를 확인합니다.
+2. **동적 입력값 식별**: 변경되는 데이터 항목을 파악하고 최적의 필드 타입을 할당합니다.
+3. **Markdown 작성**: AI 역할, 배경, 입력 필드, 조건문 블록을 체계적으로 구성합니다.
+4. **문법 검증**: 모든 \`{{...}}\` 태그가 올바르게 닫혀 있는지 확인합니다.
+5. **결과 제공**: 완성된 템플릿을 단일 Markdown 블록 또는 \`.md\` 파일로 제공합니다.`,
+    githubGistContent: `---
+name: promptcraft-github-gist
+description: PromptCraft용 동적 Markdown 템플릿을 생성하고 GitHub CLI(gh) 또는 REST API를 통해 GitHub Gist에 직접 게시하여 즉시 사용할 수 있는 Raw URL을 반환합니다.
+---
+
+# PromptCraft GitHub Gist Publisher
+
+이 스킬은 **PromptCraft** 템플릿을 설계하고 **GitHub Gist**에 바로 게시하여, 웹 앱에서 한 번의 클릭으로 불러올 수 있는 Raw URL을 얻도록 지원합니다.
+
+## 지원되는 템플릿 문법
+
+- \`{{필드:text}}\` - 한 줄 텍스트
+- \`{{필드:textarea}}\` - 여러 줄 텍스트 영역
+- \`{{필드:list}}\` - 글머리 기호 목록 (\`- 항목\`)
+- \`{{필드:numbered_list}}\` - 번호 매기기 목록 (\`1. 항목\`)
+- \`{{필드:boolean}}\` - 온/오프 토글 (예/아니오)
+- \`{{필드:select[옵션 A, 옵션 B]}}\` - 단일 선택
+- \`{{필드:multiselect[옵션 A, 옵션 B]}}\` - 다중 선택
+- \`{{필드:code}}\` - 고정폭 코드 블록
+- \`{{#if 변수}}...{{/if}}\` - 조건문 블록
+
+## GitHub Gist 게시 워크플로
+
+### 방법 1: GitHub CLI (\`gh\`) - 권장
+
+1. **로그인 상태 확인**:
+   \`\`\`bash
+   gh auth status
+   \`\`\`
+2. **Gist 생성**:
+   \`\`\`bash
+   # 공개 Gist (공유용으로 권장)
+   gh gist create template.md --public --desc "PromptCraft: 코드 리뷰 템플릿"
+
+   # 또는 비밀 Gist (링크 소지자만 접근 가능)
+   gh gist create template.md --desc "PromptCraft: 내부 템플릿"
+   \`\`\`
+3. **Raw URL 가져오기**:
+   URL 주소 구성: \`https://gist.githubusercontent.com/<사용자명>/<gist_id>/raw/<파일명>.md\` 또는 Gist 페이지에서 "Raw" 버튼 클릭.
+
+### 방법 2: GitHub REST API (개인 액세스 토큰 사용)
+
+\`\`\`bash
+curl -L \\
+  -X POST \\
+  -H "Accept: application/vnd.github+json" \\
+  -H "Authorization: Bearer <사용자_GITHUB_TOKEN>" \\
+  -H "X-GitHub-Api-Version: 2022-11-28" \\
+  https://api.github.com/gists \\
+  -d '{
+    "description": "PromptCraft: 자동 생성 템플릿",
+    "public": true,
+    "files": {
+      "template.md": {
+        "content": "# 내 템플릿\\n\\n프로젝트: {{프로젝트이름:text}}\\n{{#if 테스트}}테스트: 예{{/if}}"
+      }
+    }
+  }'
+\`\`\`
+
+응답 JSON에서 \`files["template.md"].raw_url\` 필드를 추출합니다.
+
+### 방법 3: 브라우저에서 직접 생성 (수동 방법)
+
+1. https://gist.github.com 에 접속합니다.
+2. 파일 이름 끝에 \`.md\` 확장자를 붙입니다 (예: \`my-template.md\`).
+3. 템플릿 내용을 붙여넣고 **Create public gist** 또는 **Create secret gist**를 클릭합니다.
+4. 우측 상단의 **Raw** 버튼을 클릭하고 브라우저 주소창의 URL을 복사합니다.
+
+## 최종 사용자 피드백
+
+게시 완료 후 사용자에게 다음 안내를 제공하세요:
+> 🚀 **템플릿이 성공적으로 게시되었습니다!**
+> 이 URL을 PromptCraft의 "URL / Gist에서 로드" 입력창에 붙여넣으세요:
+> \`https://gist.githubusercontent.com/.../template.md\``,
+  },
   footer: {
     copyright: '© {year} PromptCraft — 단순하고 직관적인 100% Gist 프롬프트 도구.',
     syntaxGuide: 'Gist 문법 가이드',
@@ -160,3 +329,4 @@ export const koKR: TranslationSchema = {
     viewGist: 'GitHub에서 Gist 보기',
   },
 };
+

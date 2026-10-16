@@ -15,7 +15,10 @@ import {
   Lightbulb,
   Layers,
   FileText,
-  ListOrdered
+  ListOrdered,
+  Sparkles,
+  Bot,
+  Terminal
 } from 'lucide-react';
 import { useI18n } from '../i18n/I18nContext';
 
@@ -26,6 +29,7 @@ interface GistGuidePageProps {
 export function GistGuidePage({ onGoToGenerator }: GistGuidePageProps) {
   const { t } = useI18n();
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [activeSkillTab, setActiveSkillTab] = useState<'template_creator' | 'github_gist'>('template_creator');
 
   const handleCopy = async (text: string, key: string) => {
     try {
@@ -38,6 +42,12 @@ export function GistGuidePage({ onGoToGenerator }: GistGuidePageProps) {
   };
 
   const starterTemplate = t('guide.starterTemplateContent');
+  const currentSkillContent = activeSkillTab === 'template_creator' 
+    ? t('skills.templateCreatorContent') 
+    : t('skills.githubGistContent');
+  const currentSkillKey = activeSkillTab === 'template_creator' 
+    ? 'skill_template_creator' 
+    : 'skill_github_gist';
 
   const fieldTypes = [
     {
@@ -337,6 +347,111 @@ export function GistGuidePage({ onGoToGenerator }: GistGuidePageProps) {
         </div>
       </section>
 
+      {/* Skills para Assistentes de IA */}
+      <section className="space-y-4 pt-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-wide uppercase bg-emerald-100/80 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300/40 dark:border-emerald-800/60 w-fit">
+              <Sparkles className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+              <span>{t('skills.sectionBadge')}</span>
+            </div>
+            <h2 className="text-base sm:text-lg font-bold text-neutral-900 dark:text-neutral-100 tracking-tight flex items-center gap-2">
+              <Bot className="w-5 h-5 text-neutral-800 dark:text-neutral-300" />
+              <span>{t('skills.sectionTitle')}</span>
+            </h2>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 max-w-2xl leading-relaxed">
+              {t('skills.sectionSubtitle')}
+            </p>
+          </div>
+        </div>
+
+        {/* Card Principal de Skills */}
+        <div className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-4">
+          {/* Seletor de Abas da Skill */}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 dark:border-neutral-800/80 pb-4">
+            <div className="inline-flex p-1 bg-neutral-100 dark:bg-[#111113] rounded-xl border border-neutral-200/80 dark:border-neutral-800">
+              <button
+                type="button"
+                onClick={() => setActiveSkillTab('template_creator')}
+                className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  activeSkillTab === 'template_creator'
+                    ? 'bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white shadow-xs'
+                    : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
+                }`}
+              >
+                <Code2 className="w-3.5 h-3.5" />
+                <span>{t('skills.tabTemplateCreator')}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveSkillTab('github_gist')}
+                className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  activeSkillTab === 'github_gist'
+                    ? 'bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white shadow-xs'
+                    : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
+                }`}
+              >
+                <Terminal className="w-3.5 h-3.5" />
+                <span>{t('skills.tabGithubGist')}</span>
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => handleCopy(currentSkillContent, currentSkillKey)}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-xs cursor-pointer ${
+                copiedKey === currentSkillKey
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-neutral-900 hover:bg-black dark:bg-neutral-200 dark:hover:bg-white text-white dark:text-neutral-950'
+              }`}
+            >
+              {copiedKey === currentSkillKey ? (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  <span>{t('skills.skillCopied')}</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>{t('skills.btnCopySkill')}</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Cabeçalho da Skill Ativa */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+            <div className="space-y-0.5">
+              <span className="font-semibold text-neutral-900 dark:text-neutral-200">
+                {activeSkillTab === 'template_creator' ? t('skills.templateCreatorBadge') : t('skills.githubGistBadge')}
+              </span>
+              <p className="text-neutral-500 dark:text-neutral-400 text-[11px]">
+                {activeSkillTab === 'template_creator' ? t('skills.templateCreatorDesc') : t('skills.githubGistDesc')}
+              </p>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-neutral-100 dark:bg-[#111113] border border-neutral-200 dark:border-neutral-800 rounded-lg text-[11px] font-mono text-neutral-600 dark:text-neutral-400 w-fit shrink-0">
+              <span>{activeSkillTab === 'template_creator' ? '.skills/promptcraft-template-creator/SKILL.md' : '.skills/promptcraft-github-gist/SKILL.md'}</span>
+            </div>
+          </div>
+
+          {/* Dica de como usar */}
+          <div className="bg-neutral-50 dark:bg-[#111113]/70 border border-neutral-200 dark:border-neutral-800/80 rounded-xl p-3 text-xs text-neutral-600 dark:text-neutral-300 space-y-1">
+            <p className="font-semibold text-neutral-800 dark:text-neutral-200 flex items-center gap-1.5">
+              <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
+              <span>{t('skills.howToUseTitle')}</span>
+            </p>
+            <p className="text-[11px] leading-relaxed text-neutral-500 dark:text-neutral-400">
+              {t('skills.howToUseDesc')}
+            </p>
+          </div>
+
+          {/* Preview do SKILL.md */}
+          <div className="bg-neutral-950 dark:bg-[#111113] text-neutral-200 dark:text-neutral-300 font-mono text-xs rounded-xl p-5 border border-neutral-800 shadow-xs max-h-[380px] overflow-y-auto leading-relaxed select-all">
+            <pre className="whitespace-pre-wrap">{currentSkillContent}</pre>
+          </div>
+        </div>
+      </section>
+
       {/* Modelo Completo para Copiar e Colar */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
@@ -346,6 +461,7 @@ export function GistGuidePage({ onGoToGenerator }: GistGuidePageProps) {
               {t('guide.starterTitle')}
             </h2>
           </div>
+
 
           <button
             type="button"

@@ -153,6 +153,175 @@ Refactor the following code to make it maintainable, modular, and performant:
 {{additional_notes:textarea}}
 {{/if}}`,
   },
+  skills: {
+    sectionBadge: 'AI Agents & Automation',
+    sectionTitle: 'AI Assistant Skills',
+    sectionSubtitle: 'Copy and add these skills to your favorite AI assistant (Google Antigravity, Claude Code, Cursor, Copilot, ChatGPT) to generate and publish templates automatically.',
+    tabTemplateCreator: 'Create Template',
+    tabGithubGist: 'Create Directly on GitHub',
+    templateCreatorBadge: 'Template Generation & Validation',
+    templateCreatorDesc: 'Teaches the AI agent to understand your goals, map typed input variables, and generate Markdown templates 100% compliant with PromptCraft.',
+    githubGistBadge: 'GitHub Automation & Publishing',
+    githubGistDesc: 'Generates the template and publishes it directly as a GitHub Gist (public or secret via gh CLI or API), returning the raw URL ready to load into PromptCraft.',
+    howToUseTitle: 'How to use in your AI agent:',
+    howToUseDesc: 'Copy the content below and save it as .skills/<name>/SKILL.md in your project, or paste into your assistant’s custom instructions / system prompt.',
+    btnCopySkill: 'Copy SKILL.md',
+    skillCopied: 'SKILL.md Copied!',
+    templateCreatorContent: `---
+name: promptcraft-template-creator
+description: Creates and validates dynamic markdown templates compatible with PromptCraft using typed {{field:type}} inputs and {{#if field}}...{{/if}} conditionals.
+---
+
+# PromptCraft Template Creator
+
+This skill enables you to design, structure, and validate dynamic prompt templates ready for **PromptCraft**.
+
+## What is PromptCraft?
+
+PromptCraft is a prompt generator powered by cloud-hosted Markdown templates (GitHub Gists or raw URLs). It automatically parses typed variables within Markdown and generates an interactive form for users to fill out before generating their final prompt.
+
+## Field Syntax Rules
+
+All fields use double curly braces with an identifier and a type: \`{{field_name:type}}\`.
+
+### 1. Supported Field Types
+
+- **Short Text**: \`{{project_name:text}}\`
+  - Renders a single-line text input.
+  - Usage: project names, titles, endpoints, authors, version numbers.
+
+- **Textarea (Multiline)**: \`{{scope_description:textarea}}\`
+  - Renders an expandable multiline text area.
+  - Usage: detailed context, background, prose requirements, error logs.
+
+- **Bullet List**: \`{{requirements:list}}\`
+  - Renders a list builder with an add-item button.
+  - In the final prompt, items are prefixed with bullet points: \`- Item 1\\n- Item 2\`.
+
+- **Numbered List**: \`{{steps:numbered_list}}\`
+  - Renders an ordered list builder.
+  - In the final prompt, items are sequentially numbered: \`1. Item 1\\n2. Item 2\`.
+
+- **Boolean Toggle**: \`{{include_tests:boolean}}\`
+  - Renders a True/False switch.
+  - Great for pairing with conditional blocks.
+
+- **Single Select**: \`{{framework:select[React, Vue, Svelte, Angular]}}\`
+  - Renders a dropdown where the user selects exactly one option.
+  - Options are placed in square brackets, separated by commas.
+
+- **Multi Select**: \`{{databases:multiselect[PostgreSQL, Redis, MongoDB]}}\`
+  - Renders multi-choice pills where the user can pick zero, one, or multiple items.
+  - In the final prompt, selected items are comma-separated.
+
+- **Code Block**: \`{{code_sample:code}}\`
+  - Renders a monospace code editor.
+  - Ideal for snippets, JSON payloads, SQL, and YAML configs.
+
+### 2. Conditionals \`{{#if}}\`
+
+Use conditionals to include or omit entire prompt sections based on field values:
+
+\`\`\`markdown
+{{#if include_tests}}
+### TEST GUIDELINES
+- Write unit tests covering edge cases.
+- Use the standard test framework.
+{{/if}}
+\`\`\`
+
+- If truthy or populated, the block is rendered.
+- If false or empty, the entire block is omitted from the final prompt.
+
+### 3. Best Practices & Conventions
+
+1. **Variable Names**: Always use \`snake_case\` without accents or special characters (e.g. \`project_name\`).
+2. **Clear Labels**: PromptCraft automatically converts identifiers to human-readable labels (e.g. \`project_name\` becomes "Project Name").
+3. **Markdown Structure**: Use clean Markdown with headers (\`#\`, \`##\`, \`###\`), lists, and code blocks.
+
+## Workflow When Creating a Template
+
+1. **Understand Purpose**: Determine what prompt the user wants to generate.
+2. **Map Dynamic Inputs**: Identify variable data points and pick the best field type for each.
+3. **Assemble Markdown**: Define AI persona, context, dynamic fields, and conditionals.
+4. **Validate Syntax**: Check all \`{{...}}\` tags and options syntax.
+5. **Deliver**: Output the completed template in a single Markdown block or \`.md\` file.`,
+    githubGistContent: `---
+name: promptcraft-github-gist
+description: Creates dynamic markdown templates for PromptCraft and publishes them directly as GitHub Gists (public or secret) using the gh CLI or GitHub REST API, returning the raw URL ready for immediate use in PromptCraft.
+---
+
+# PromptCraft GitHub Gist Publisher
+
+This skill enables you to design **PromptCraft** templates and publish them directly to **GitHub Gist**, outputting the Raw URL needed to load the template into the web app with a single click.
+
+## Supported Template Syntax
+
+- \`{{field:text}}\` - Single-line text
+- \`{{field:textarea}}\` - Multiline text area
+- \`{{field:list}}\` - Bulleted list (\`- item\`)
+- \`{{field:numbered_list}}\` - Sequential numbered list (\`1. item\`)
+- \`{{field:boolean}}\` - Boolean toggle (Yes/No)
+- \`{{field:select[Option A, Option B]}}\` - Single choice
+- \`{{field:multiselect[Option A, Option B]}}\` - Multi choice
+- \`{{field:code}}\` - Monospace code block
+- \`{{#if variable}}...{{/if}}\` - Conditional blocks
+
+## GitHub Gist Publishing Workflow
+
+### Method 1: GitHub CLI (\`gh\`) - Recommended
+
+1. **Check Authentication**:
+   \`\`\`bash
+   gh auth status
+   \`\`\`
+2. **Create the Gist**:
+   \`\`\`bash
+   # Public Gist (recommended for sharing)
+   gh gist create template.md --public --desc "PromptCraft: Code Review Template"
+
+   # Or Secret Gist (accessible only via direct link)
+   gh gist create template.md --desc "PromptCraft: Internal Template"
+   \`\`\`
+3. **Obtain the Raw URL**:
+   Construct the URL: \`https://gist.githubusercontent.com/<user>/<gist_id>/raw/<filename>.md\` or click "Raw" on the Gist page.
+
+### Method 2: GitHub REST API (with Personal Access Token)
+
+\`\`\`bash
+curl -L \\
+  -X POST \\
+  -H "Accept: application/vnd.github+json" \\
+  -H "Authorization: Bearer <YOUR_GITHUB_TOKEN>" \\
+  -H "X-GitHub-Api-Version: 2022-11-28" \\
+  https://api.github.com/gists \\
+  -d '{
+    "description": "PromptCraft: Automated Template",
+    "public": true,
+    "files": {
+      "template.md": {
+        "content": "# MY TEMPLATE\\n\\nName: {{project_name:text}}\\n{{#if tests}}Tests: Yes{{/if}}"
+      }
+    }
+  }'
+\`\`\`
+
+Extract the \`files["template.md"].raw_url\` field from the JSON response.
+
+### Method 3: Browser Manual Creation (Fallback)
+
+1. Open https://gist.github.com
+2. Name the file with a \`.md\` extension (e.g. \`my-template.md\`).
+3. Paste the template and click **Create public gist** or **Create secret gist**.
+4. Click the **Raw** button and copy the URL from your browser address bar.
+
+## Final Output to the User
+
+Upon publication, provide the user with:
+> 🚀 **Template published successfully!**
+> Paste this URL into the "Load from URL / Gist" field in PromptCraft:
+> \`https://gist.githubusercontent.com/.../template.md\``,
+  },
   footer: {
     copyright: '© {year} PromptCraft — Simple, Direct & 100% Gist.',
     syntaxGuide: 'Gist Syntax Guide',
@@ -160,3 +329,4 @@ Refactor the following code to make it maintainable, modular, and performant:
     viewGist: 'View Gist on GitHub',
   },
 };
+

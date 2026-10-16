@@ -153,6 +153,175 @@ export const zhCN: TranslationSchema = {
 {{补充说明:textarea}}
 {{/if}}`,
   },
+  skills: {
+    sectionBadge: 'AI Agent 与自动化',
+    sectionTitle: 'AI 助手专属 Skills',
+    sectionSubtitle: '复制并将这些技能添加到你常用的 AI 助手（Google Antigravity、Claude Code、Cursor、Copilot、ChatGPT），即可全自动生成并发布模版。',
+    tabTemplateCreator: '创建模版',
+    tabGithubGist: '直接发布到 GitHub',
+    templateCreatorBadge: '模版生成与校验',
+    templateCreatorDesc: '引导 AI Agent 了解你的需求、映射类型化输入变量，并生成 100% 契合 PromptCraft 语法的 Markdown 模版。',
+    githubGistBadge: 'GitHub 自动化与发布',
+    githubGistDesc: '自动生成模版并直接发布为 GitHub Gist（支持通过 gh CLI 或 API 发布公开或私密 Gist），返回即用型 Raw 链接。',
+    howToUseTitle: '如何在 AI Agent 中使用：',
+    howToUseDesc: '复制下方内容并保存到项目的 .skills/<名称>/SKILL.md，或直接粘贴至助手的自定义指令 (Custom Instructions) / 系统提示词中。',
+    btnCopySkill: '复制 SKILL.md',
+    skillCopied: 'SKILL.md 已复制！',
+    templateCreatorContent: `---
+name: promptcraft-template-creator
+description: 创建并校验适用于 PromptCraft 的动态 Markdown 模版，支持类型化变量 {{字段:类型}} 及条件块 {{#if 字段}}...{{/if}}。
+---
+
+# PromptCraft Template Creator
+
+此 Skill 能帮助你设计、编排与校验可直接用于 **PromptCraft** 的动态提示词模版。
+
+## 什么是 PromptCraft？
+
+PromptCraft 是基于云端 Markdown 模版（GitHub Gist 或 Raw 链接）的提示词生成器。它自动解析 Markdown 中的类型化变量，生成交互式表单供用户填写，并在最终生成完整的提示词。
+
+## 字段语法规则
+
+所有字段均使用双花括号标识符与类型：\`{{字段名:类型}}\`。
+
+### 1. 支持的字段类型
+
+- **单行文本**: \`{{项目名称:text}}\`
+  - 渲染单行文本输入框。
+  - 适用：项目名、标题、接口路径、作者、版本号。
+
+- **多行文本区**: \`{{范围描述:textarea}}\`
+  - 渲染可展开的多行文本框。
+  - 适用：详细背景、需求说明、错误日志。
+
+- **项目符号列表**: \`{{需求列表:list}}\`
+  - 渲染带“添加项”按钮的列表组件。
+  - 最终提示词中每个项目以短横线开头：\`- 事项 1\\n- 事项 2\`。
+
+- **编号有序列表**: \`{{执行步骤:numbered_list}}\`
+  - 渲染有序列表组件。
+  - 最终提示词中自动生成序号：\`1. 第一步\\n2. 第二步\`。
+
+- **布尔开关**: \`{{包含测试:boolean}}\`
+  - 渲染“开/关”滑动开关。
+  - 极适合与条件块搭配使用。
+
+- **单选下拉框**: \`{{技术栈:select[React, Vue, Svelte, Angular]}}\`
+  - 渲染单选下拉列表。
+  - 选项置于中括号内，以逗号分隔。
+
+- **多选标签组**: \`{{数据库:multiselect[PostgreSQL, Redis, MongoDB]}}\`
+  - 渲染多选按钮组。
+  - 最终提示词中选中的项目以逗号连接。
+
+- **代码块输入**: \`{{代码示例:code}}\`
+  - 渲染等宽字体代码编辑框。
+  - 适用：代码片段、JSON 数据、SQL 语句、YAML 配置。
+
+### 2. 条件语法 \`{{#if}}\`
+
+使用条件块根据字段输入情况决定是否输出某段内容：
+
+\`\`\`markdown
+{{#if 包含测试}}
+### 单元测试规范
+- 编写覆盖边界情况的完整单元测试。
+- 使用项目内置的测试框架。
+{{/if}}
+\`\`\`
+
+- 若字段有值或为 \`true\`，则渲染该区块。
+- 若为空或为 \`false\`，最终提示词中将彻底剔除此区块。
+
+### 3. 最佳实践规范
+
+1. **变量命名**: 推荐使用小写蛇形命名 \`snake_case\`（例如 \`project_name\`），避免特殊字符。
+2. **标签可读性**: PromptCraft 会自动将标识符转为易读标签（如 \`project_name\` 转换为 "Project Name"）。
+3. **Markdown 结构**: 保持清晰的 Markdown 标题（\`#\`, \`##\`, \`###\`）、列表和代码块划分。
+
+## 创建模版的工作流
+
+1. **明确目标**: 询问或梳理用户需要生成的具体提示词任务。
+2. **梳理动态输入**: 确定哪些是可变信息，并为每项匹配最适合的字段类型。
+3. **组织 Markdown**: 规划角色定位、任务背景、输入字段与可选条件块。
+4. **校验语法**: 检查所有 \`{{...}}\` 标签完整性与格式。
+5. **交付结果**: 在 Markdown 块或 \`.md\` 文件中输出完整模版。`,
+    githubGistContent: `---
+name: promptcraft-github-gist
+description: 为 PromptCraft 创建动态 Markdown 模版，并通过 GitHub CLI (gh) 或 REST API 直接发布到 GitHub Gist，输出可直接粘贴到 PromptCraft 的 Raw 链接。
+---
+
+# PromptCraft GitHub Gist Publisher
+
+此 Skill 支持构思 **PromptCraft** 模版并一键发布至 **GitHub Gist**，直接生成用于载入 Web 应用的 Raw 访问链接。
+
+## 支持的模版语法
+
+- \`{{字段:text}}\` - 单行文本
+- \`{{字段:textarea}}\` - 多行文本
+- \`{{字段:list}}\` - 项目符号列表 (\`- 项目\`)
+- \`{{字段:numbered_list}}\` - 编号有序列表 (\`1. 项目\`)
+- \`{{字段:boolean}}\` - 开关 (是/否)
+- \`{{字段:select[选项 A, 选项 B]}}\` - 单选
+- \`{{字段:multiselect[选项 A, 选项 B]}}\` - 多选
+- \`{{字段:code}}\` - 等宽代码块
+- \`{{#if 变量}}...{{/if}}\` - 条件逻辑块
+
+## GitHub Gist 发布流程
+
+### 方法 1: GitHub CLI (\`gh\`) - 推荐
+
+1. **检查登录状态**:
+   \`\`\`bash
+   gh auth status
+   \`\`\`
+2. **创建 Gist**:
+   \`\`\`bash
+   # 公开 Gist（推荐用于分享）
+   gh gist create template.md --public --desc "PromptCraft: 代码审查模版"
+
+   # 或私密 Gist（仅持链接者可访问）
+   gh gist create template.md --desc "PromptCraft: 内部模版"
+   \`\`\`
+3. **获取 Raw 链接**:
+   链接格式：\`https://gist.githubusercontent.com/<用户名>/<gist_id>/raw/<文件名>.md\` 或在 Gist 页面点击 "Raw" 按钮复制。
+
+### 方法 2: GitHub REST API（配合 Personal Access Token）
+
+\`\`\`bash
+curl -L \\
+  -X POST \\
+  -H "Accept: application/vnd.github+json" \\
+  -H "Authorization: Bearer <你的_GITHUB_TOKEN>" \\
+  -H "X-GitHub-Api-Version: 2022-11-28" \\
+  https://api.github.com/gists \\
+  -d '{
+    "description": "PromptCraft: 自动化模版",
+    "public": true,
+    "files": {
+      "template.md": {
+        "content": "# 我的模版\\n\\n项目: {{项目名称:text}}\\n{{#if 包含测试}}测试: 是{{/if}}"
+      }
+    }
+  }'
+\`\`\`
+
+从返回的 JSON 中提取 \`files["template.md"].raw_url\` 字段。
+
+### 方法 3: 浏览器手动创建（兜底方案）
+
+1. 打开 https://gist.github.com
+2. 将文件命名为 \`.md\` 后缀（如 \`my-template.md\`）。
+3. 粘贴模版内容，点击 **Create public gist** 或 **Create secret gist**。
+4. 点击右上方 **Raw** 按钮，从浏览器地址栏复制最终链接。
+
+## 交付反馈
+
+发布完成后，请向用户提供：
+> 🚀 **模版发布成功！**
+> 将此 Raw 链接复制并粘贴到 PromptCraft 的“加载 Gist / URL”输入框中：
+> \`https://gist.githubusercontent.com/.../template.md\``,
+  },
   footer: {
     copyright: '© {year} PromptCraft — 极简、高效、100% Gist 驱动。',
     syntaxGuide: 'Gist 语法指南',
@@ -160,3 +329,4 @@ export const zhCN: TranslationSchema = {
     viewGist: '在 GitHub 查看 Gist',
   },
 };
+

@@ -150,6 +150,23 @@ export interface TranslationSchema {
     fieldCodeDesc: string;
     starterTemplateContent: string;
   };
+  skills: {
+    sectionBadge: string;
+    sectionTitle: string;
+    sectionSubtitle: string;
+    tabTemplateCreator: string;
+    tabGithubGist: string;
+    templateCreatorBadge: string;
+    templateCreatorDesc: string;
+    githubGistBadge: string;
+    githubGistDesc: string;
+    howToUseTitle: string;
+    howToUseDesc: string;
+    btnCopySkill: string;
+    skillCopied: string;
+    templateCreatorContent: string;
+    githubGistContent: string;
+  };
   footer: {
     copyright: string;
     syntaxGuide: string;
@@ -157,3 +174,4 @@ export interface TranslationSchema {
     viewGist: string;
   };
 }
+
