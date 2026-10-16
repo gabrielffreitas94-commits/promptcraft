@@ -37,37 +37,53 @@ Todos os campos utilizam chaves duplas com o nome do identificador e o tipo: `{{
   - Renderiza um interruptor (toggle) Sim/Não.
   - Perfeito para ser combinado com blocos condicionais.
 
-- **Seleção Única**: `{{framework:select[React, Vue, Svelte, Angular]}}`
-  - Renderiza um menu suspenso (dropdown) onde o usuário escolhe exatamente uma opção.
+- **Seleção Única**: `{{framework:select[React, Vue*, Svelte]}}`
+  - Renderiza um menu suspenso ou botões onde o usuário escolhe exatamente uma opção.
   - As opções ficam entre colchetes, separadas por vírgula.
+  - **Padrão inicial:** Adicione um asterisco `*` ao final da opção desejada para que ela venha selecionada por padrão (ex: `Vue*`).
 
-- **Seleção Múltipla**: `{{bancos_de_dados:multiselect[PostgreSQL, Redis, MongoDB]}}`
+- **Seleção Múltipla**: `{{stack:multiselect[TypeScript*, Docker*, Redis]}}` ou `{{stack:multiselect:all[TypeScript, Docker]}}`
   - Renderiza botões de múltipla escolha onde o usuário pode selecionar zero, um ou vários itens.
-  - No prompt final, os itens selecionados são inseridos separados por vírgula (ex: `PostgreSQL, Redis`).
+  - **Itens selecionados por padrão:** Adicione `*` aos itens desejados (ex: `Docker*`) para que venham ativados por padrão.
+  - **Todos selecionados por padrão:** Use a sintaxe `multiselect:all[...]` para que todas as opções venham marcadas como ativas inicialmente.
+  - No prompt final, os itens selecionados são inseridos separados por vírgula ou em itens de lista se precedidos por marcador `- `.
 
-- **Bloco de Código**: `{{exemplo_codigo:code}}`
+- **Bloco de Código**: `{{exemplo_codigo:code}}` ou `{{exemplo_codigo:code(python)}}`
   - Renderiza um editor de código com fonte monoespaçada e realce sutil.
   - Ideal para snippets, payloads JSON, SQL, configurações YAML.
 
-### 2. Condicionais `{{#if}}`
+### 2. Condicionais `{{#if}}`, `{{#if not}}` e `{{#unless}}`
 
-Use condicionais para incluir ou omitir seções inteiras do prompt com base no valor de um campo (especialmente campos `boolean`):
+Use condicionais para incluir ou omitir seções inteiras do prompt com base no preenchimento ou negação de um campo:
 
+#### 2.1 Condicional Positiva (`{{#if campo}}`)
 ```markdown
 {{#if incluir_testes}}
 ### DIRETRIZES DE TESTES
 - Escreva testes unitários cobrindo casos de sucesso e de falha.
-- Utilize a biblioteca padrão do projeto.
 {{/if}}
 ```
-
 - Se o valor estiver preenchido / for `true`, o conteúdo dentro do bloco é renderizado.
 - Se estiver vazio ou for `false`, o bloco é completamente omitido do prompt final.
-- Você pode aninhar outras variáveis dentro de um bloco condicional:
+
+#### 2.2 Condicional Negativa (`{{#if not campo}}` ou `{{#if !campo}}` ou `{{#unless campo}}`)
 ```markdown
-{{#if precisa_auth}}
-### AUTENTICAÇÃO
-- Método de autenticação: {{tipo_auth:select[JWT, OAuth2, API Key, Session]}}
+{{#if not casos_de_teste}}
+- Não crie novos testes; apenas adapte ou atualize testes pré-existentes caso a alteração os quebre.
+{{/if}}
+```
+- Renderiza o conteúdo **apenas quando o campo estiver vazio, desmarcado ou não preenchido**.
+- Ideal para mensagens de fallback e instruções alternativas.
+
+Você pode inclusive alternar entre os dois cenários:
+```markdown
+{{#if casos_de_teste}}
+### CASOS DE TESTE
+{{casos_de_teste:list}}
+{{/if}}
+{{#if not casos_de_teste}}
+### POLÍTICA DE TESTES
+- Nenhum novo teste foi solicitado. Apenas garanta que a suíte existente continue passando.
 {{/if}}
 ```
 

@@ -49,11 +49,11 @@ O PromptCraft exige declaração explícita de tipos no formato `{{variavel:tipo
 | **Lista Simples** | `{{requisitos:list}}` | Gerenciador de lista interativo (adiciona com Enter, remove por chip). No prompt final vira `- item 1\n- item 2`. |
 | **Lista Numerada** | `{{passos:numbered_list}}` | Gerenciador de lista numerada sequencial (`1`, `2`, `3`). No prompt final vira `1. item 1\n2. item 2`. |
 | **Booleano** | `{{incluir_testes:boolean}}` | Switch/Toggle ON/OFF elegante. Integra-se perfeitamente com blocos condicionais `{{#if incluir_testes}}...{{/if}}`. |
-| **Seleção Única** | `{{framework:select[React, Vue, Svelte]}}` | Botões de seleção em pílulas (1 clique). Permite desmarcar ao clicar novamente. |
-| **Múltipla Seleção** | `{{stack:multiselect[TypeScript, Docker, Redis]}}` | Chips interativos com botão de limpar. No prompt, interpola separado por vírgula ou em itens de lista. |
+| **Seleção Única** | `{{framework:select[React, Vue*, Svelte]}}` | Botões de seleção em pílulas (1 clique). O asterisco `*` marca a opção padrão inicial. |
+| **Múltipla Seleção** | `{{stack:multiselect[TypeScript*, Docker*, Redis]}}`<br>`{{diretrizes:multiselect:all[Item 1, Item 2]}}` | Chips interativos com botão de limpar. Use `*` nos itens para marcar seleções padrão, ou `:all` para todas virem marcadas. Interpola separado por vírgula ou em itens de lista com `- `. |
 | **Bloco de Código** | `{{codigo:code}}`<br>`{{codigo:code(python)}}`<br>`{{codigo:code(variavel_lang)}}` | Editor monoespaçado escuro com botão "Colar da área de transferência". Suporta **linguagem literal** (ex: `code(python)`) ou **linguagem dinâmica** herdada de outro campo (ex: `code(linguagem)`). |
 | **Validação de Tipos** | `{{campo}}` ou `{{campo:invalido}}` | Exibe card de erro explícito caso o tipo esteja ausente ou seja inválido. |
-| **Condicional** | `{{#if campo}}...{{/if}}`<br>`- {{#if campo}}...{{/if}}`<br>`1. {{#if campo}}...{{/if}}` | Exibe a seção apenas se a variável estiver preenchida/verdadeira. Remove marcadores (`-`, `1.`) e quebras de linha se falso, com **renumeração automática** sequencial de listas ordenadas. |
+| **Condicional** | `{{#if campo}}...{{/if}}`<br>`{{#if not campo}}...{{/if}}`<br>`{{#unless campo}}...{{/unless}}`<br>`- {{#if campo}}...{{/if}}`<br>`1. {{#if campo}}...{{/if}}` | Exibe a seção se preenchido (ou se vazio/falso no caso de `not` / `!`). Remove marcadores (`-`, `1.`) e quebras de linha se falso, com **renumeração automática** sequencial de listas ordenadas. |
 
 ---
 

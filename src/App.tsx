@@ -699,11 +699,29 @@ export function App() {
     }
   };
 
+  // Combina valores salvos/digitados com valores padrão declarados no template (ex: multiselect:all ou opções com *)
+  const effectiveFieldValues = useMemo(() => {
+    const result: Record<string, any> = {};
+    for (const v of variables) {
+      if (v.defaultValues !== undefined) {
+        result[v.key] = v.defaultValues;
+      } else if (v.defaultValue !== undefined) {
+        result[v.key] = v.defaultValue;
+      }
+    }
+    for (const [k, val] of Object.entries(fieldValues)) {
+      if (val !== undefined) {
+        result[k] = val;
+      }
+    }
+    return result;
+  }, [variables, fieldValues]);
+
   // Prompt final interpolado
   const assembledPrompt = useMemo(() => {
     if (!activeTemplate) return '';
-    return interpolatePrompt(activeTemplate.prompt, fieldValues, { omitEmpty });
-  }, [activeTemplate, fieldValues, omitEmpty]);
+    return interpolatePrompt(activeTemplate.prompt, effectiveFieldValues, { omitEmpty });
+  }, [activeTemplate, effectiveFieldValues, omitEmpty]);
 
   // Copiar prompt
   const handleCopy = async () => {
@@ -976,7 +994,7 @@ export function App() {
                             key={v.key}
                             label={v.label}
                             variableKey={v.key}
-                            value={typeof fieldValues[v.key] === 'string' ? fieldValues[v.key] : ''}
+                            value={typeof effectiveFieldValues[v.key] === 'string' ? effectiveFieldValues[v.key] : ''}
                             onChange={(val) => handleValueChange(v.key, val)}
                           />
                         );
@@ -988,7 +1006,7 @@ export function App() {
                             key={v.key}
                             label={v.label}
                             variableKey={v.key}
-                            value={typeof fieldValues[v.key] === 'string' ? fieldValues[v.key] : ''}
+                            value={typeof effectiveFieldValues[v.key] === 'string' ? effectiveFieldValues[v.key] : ''}
                             onChange={(val) => handleValueChange(v.key, val)}
                           />
                         );
@@ -1000,7 +1018,7 @@ export function App() {
                             key={v.key}
                             label={v.label}
                             variableKey={v.key}
-                            items={Array.isArray(fieldValues[v.key]) ? fieldValues[v.key] : []}
+                            items={Array.isArray(effectiveFieldValues[v.key]) ? effectiveFieldValues[v.key] : []}
                             onChange={(newItems) => handleValueChange(v.key, newItems)}
                           />
                         );
@@ -1013,7 +1031,7 @@ export function App() {
                             label={v.label}
                             variableKey={v.key}
                             numbered
-                            items={Array.isArray(fieldValues[v.key]) ? fieldValues[v.key] : []}
+                            items={Array.isArray(effectiveFieldValues[v.key]) ? effectiveFieldValues[v.key] : []}
                             onChange={(newItems) => handleValueChange(v.key, newItems)}
                           />
                         );
@@ -1025,7 +1043,7 @@ export function App() {
                             key={v.key}
                             label={v.label}
                             variableKey={v.key}
-                            value={Boolean(fieldValues[v.key])}
+                            value={Boolean(effectiveFieldValues[v.key])}
                             onChange={(val) => handleValueChange(v.key, val)}
                           />
                         );
@@ -1039,7 +1057,7 @@ export function App() {
                             variableKey={v.key}
                             options={v.options || []}
                             rawType={v.rawType}
-                            value={typeof fieldValues[v.key] === 'string' ? fieldValues[v.key] : ''}
+                            value={typeof effectiveFieldValues[v.key] === 'string' ? effectiveFieldValues[v.key] : ''}
                             onChange={(val) => handleValueChange(v.key, val)}
                           />
                         );
@@ -1053,7 +1071,7 @@ export function App() {
                             variableKey={v.key}
                             options={v.options || []}
                             rawType={v.rawType}
-                            selected={Array.isArray(fieldValues[v.key]) ? fieldValues[v.key] : []}
+                            selected={Array.isArray(effectiveFieldValues[v.key]) ? effectiveFieldValues[v.key] : []}
                             onChange={(val) => handleValueChange(v.key, val)}
                           />
                         );
@@ -1062,12 +1080,12 @@ export function App() {
                       if (v.type === 'code') {
                         const isDynamic = Boolean(
                           v.codeLanguage &&
-                          (v.codeLanguage in fieldValues ||
+                          (v.codeLanguage in effectiveFieldValues ||
                            variables.some(other => other.key === v.codeLanguage))
                         );
                         const resolvedLang = resolveCodeLanguage(
                           v.codeLanguage,
-                          fieldValues,
+                          effectiveFieldValues,
                           activeTemplate.prompt
                         );
 
@@ -1080,7 +1098,7 @@ export function App() {
                             rawType={v.rawType}
                             resolvedLanguage={resolvedLang}
                             isDynamicLang={isDynamic}
-                            value={typeof fieldValues[v.key] === 'string' ? fieldValues[v.key] : ''}
+                            value={typeof effectiveFieldValues[v.key] === 'string' ? effectiveFieldValues[v.key] : ''}
                             onChange={(val) => handleValueChange(v.key, val)}
                           />
                         );

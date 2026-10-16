@@ -100,18 +100,18 @@ export function GistGuidePage({ onGoToGenerator }: GistGuidePageProps) {
       icon: CheckCircle2,
       title: t('guide.fieldSelectTitle'),
       type: 'select',
-      syntax: '{{framework:select[React, Vue, Svelte, Angular]}}',
+      syntax: '{{framework:select[React, Vue*, Svelte]}}',
       desc: t('guide.fieldSelectDesc'),
-      output: 'React',
+      output: 'Vue (com * como padrão)',
     },
     {
       id: 'multiselect',
       icon: SlidersHorizontal,
       title: t('guide.fieldMultiSelectTitle'),
       type: 'multiselect',
-      syntax: '{{stack:multiselect[TypeScript, Docker, Redis, Tailwind]}}',
+      syntax: '{{stack:multiselect[TypeScript*, Docker*, Redis]}} ou {{diretrizes:multiselect:all[A, B]}}',
       desc: t('guide.fieldMultiSelectDesc'),
-      output: 'TypeScript, Docker, Redis',
+      output: 'TypeScript, Docker',
     },
     {
       id: 'code',
@@ -296,7 +296,7 @@ export function GistGuidePage({ onGoToGenerator }: GistGuidePageProps) {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-3">
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-200">{t('guide.cond1Title')}</span>
@@ -309,6 +309,22 @@ export function GistGuidePage({ onGoToGenerator }: GistGuidePageProps) {
 {`{{#if testes}}
 ### TESTES UNITÁRIOS
 - Cobertura mínima de 80%
+{{/if}}`}
+              </pre>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-[#161618] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs space-y-3">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-200">{t('guide.cond4Title') || 'Negação com {{#if not}}'}</span>
+            </div>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
+              {t('guide.cond4Desc') || 'Exibe o bloco quando o campo NÃO estiver preenchido. Suporta {{#if not var}}, {{#if !var}} e {{#unless var}}.'}
+            </p>
+            <div className="bg-neutral-950 dark:bg-[#111113] text-neutral-200 dark:text-neutral-300 font-mono text-[11px] p-3 rounded-xl border border-neutral-800 leading-relaxed">
+              <pre className="whitespace-pre-wrap">
+{`{{#if not testes}}
+- Nenhum teste novo; apenas garanta os existentes.
 {{/if}}`}
               </pre>
             </div>

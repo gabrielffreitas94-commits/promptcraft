@@ -204,21 +204,36 @@ export function interpolatePrompt(
 
   let result = templatePrompt;
 
-  // 1. Processa blocos condicionais explícitos {{#if var}}...{{/if}}
+  // 1. Processa blocos condicionais explícitos {{#if var}}...{{/if}} e {{#if not var}} / {{#if !var}}
   // Captura quebra de linha, espaços e marcadores de lista (- * + • ou 1. 2. 1) etc.) antes do if:
   // se o if for ignorado, remove o marcador e a quebra de linha anterior
   result = result.replace(
-    /((?:^|\r?\n)[ \t]*(?:(?:\d+[.)]|[-*+•])[ \t]*)?)?\{\{#if\s+([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/if\}\}/gi,
-    (_, prefix = '', key, content) => {
+    /((?:^|\r?\n)[ \t]*(?:(?:\d+[.)]|[-*+•])[ \t]*)?)?\{\{#if\s+(?:(!|not\s+))?([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/if\}\}/gi,
+    (_, prefix = '', notOp, key, content) => {
+      const isNegated = Boolean(notOp);
       const val = values[key];
-      if (isValueFilled(val)) {
+      const filled = isValueFilled(val);
+      const conditionPassed = isNegated ? !filled : filled;
+      if (conditionPassed) {
         return prefix + content;
       }
       return '';
     }
   );
 
-  // 2. Processa blocos condicionais simplificados {{#var}}...{{/var}}
+  // 2. Processa blocos condicionais {{#unless var}}...{{/unless}}
+  result = result.replace(
+    /((?:^|\r?\n)[ \t]*(?:(?:\d+[.)]|[-*+•])[ \t]*)?)?\{\{#unless\s+([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/unless\}\}/gi,
+    (_, prefix = '', key, content) => {
+      const val = values[key];
+      if (!isValueFilled(val)) {
+        return prefix + content;
+      }
+      return '';
+    }
+  );
+
+  // 3. Processa blocos condicionais simplificados {{#var}}...{{/var}}
   result = result.replace(
     /((?:^|\r?\n)[ \t]*(?:(?:\d+[.)]|[-*+•])[ \t]*)?)?\{\{#([a-zA-Z0-9_-]+)\}\}([\s\S]*?)\{\{\/\2\}\}/gi,
     (_, prefix = '', key, content) => {

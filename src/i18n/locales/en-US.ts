@@ -97,6 +97,8 @@ export const enUS: TranslationSchema = {
     cond2Desc: 'Use directly on items: - {{#if}} or 1. {{#if}}. When false, the bullet is removed and numbered lists renumber sequentially!',
     cond3Title: 'Omission of Empty Sections',
     cond3Desc: 'With "Omit empty" turned on, any section (### Title) with no value is cleanly omitted from the output prompt without leaving orphan blank lines.',
+    cond4Title: 'Negation with {{#if not}}',
+    cond4Desc: 'Use {{#if not variable}}...{{/if}} or {{#unless variable}} to render fallback content when a field is empty or false.',
     tipTitle: '💡 Pro Tip:',
     tipDesc: 'If you write ### NOTES\\n{{notes:textarea}}, the entire section automatically vanishes when empty.',
     starterTitle: 'Complete Starter Gist Template',

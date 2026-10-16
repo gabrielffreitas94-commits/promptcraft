@@ -125,6 +125,8 @@ export interface TranslationSchema {
     cond2Desc: string;
     cond3Title: string;
     cond3Desc: string;
+    cond4Title?: string;
+    cond4Desc?: string;
     tipTitle: string;
     tipDesc: string;
     starterTitle: string;

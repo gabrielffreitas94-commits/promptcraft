@@ -97,6 +97,8 @@ export const ptBR: TranslationSchema = {
     cond2Desc: 'Use direto em itens: - {{#if}} ou 1. {{#if}}. Se falso, o marcador é removido e a lista é automaticamente renumerada em sequência!',
     cond3Title: 'Omissão de Vazios',
     cond3Desc: 'Com "Omitir vazios" ativo, qualquer seção (### Título) sem valor é omitida silenciosamente do prompt, sem gerar linhas em branco órfãs.',
+    cond4Title: 'Negação com {{#if not}}',
+    cond4Desc: 'Use {{#if not variavel}}...{{/if}} ou {{#unless variavel}} para renderizar conteúdo quando um campo estiver vazio ou desmarcado.',
     tipTitle: '💡 Dica de Ouro:',
     tipDesc: 'Se colocar ### NOTAS\\n{{obs:textarea}}, a seção inteira some automaticamente se estiver vazia.',
     starterTitle: 'Modelo Completo para Iniciar seu Gist',
