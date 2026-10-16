@@ -282,7 +282,7 @@ interface SelectFieldInputProps {
   onChange: (value: string) => void;
 }
 
-function SelectFieldInput({ label, variableKey, options, rawType, value, onChange }: SelectFieldInputProps) {
+function SelectFieldInput({ label, variableKey, options, rawType: _rawType, value, onChange }: SelectFieldInputProps) {
   const { t } = useI18n();
 
   return (
@@ -296,10 +296,10 @@ function SelectFieldInput({ label, variableKey, options, rawType, value, onChang
           </span>
         </label>
         <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 font-normal">
-          {rawType ? `{{${variableKey}:${rawType}}}` : `{{${variableKey}:select}}`}
+          {`{{${variableKey}:select}}`}
         </span>
       </div>
-      <div className="flex flex-wrap gap-1.5 pt-0.5">
+      <div className="flex flex-wrap gap-2 pt-0.5">
         {options.map((opt) => {
           const isSelected = value === opt;
           return (
@@ -307,13 +307,21 @@ function SelectFieldInput({ label, variableKey, options, rawType, value, onChang
               key={opt}
               type="button"
               onClick={() => onChange(isSelected ? '' : opt)}
-              className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-all flex items-center gap-1.5 ${
+              className={`text-xs px-3 py-2 rounded-xl border font-medium transition-all flex items-center gap-2.5 text-left cursor-pointer select-none ${
                 isSelected
-                  ? 'bg-neutral-900 dark:bg-neutral-200 border-neutral-900 dark:border-neutral-200 text-white dark:text-neutral-950 shadow-xs'
-                  : 'bg-white dark:bg-[#111113] border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-[#161618] hover:border-neutral-300 dark:hover:border-neutral-700 dark:hover:text-neutral-200'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-400 dark:border-emerald-600/80 text-emerald-950 dark:text-emerald-100 shadow-xs'
+                  : 'bg-white dark:bg-[#111113] border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-[#161618] hover:border-neutral-300 dark:hover:border-neutral-700'
               }`}
             >
-              {isSelected && <Check className="w-3 h-3" />}
+              <div
+                className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 transition-colors ${
+                  isSelected
+                    ? 'border-2 border-emerald-600 dark:border-emerald-400 bg-white dark:bg-[#111113]'
+                    : 'border border-neutral-300 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800/60'
+                }`}
+              >
+                {isSelected && <div className="w-2 h-2 rounded-full bg-emerald-600 dark:bg-emerald-400" />}
+              </div>
               <span>{opt}</span>
             </button>
           );
@@ -332,7 +340,7 @@ interface MultiSelectFieldInputProps {
   onChange: (selected: string[]) => void;
 }
 
-function MultiSelectFieldInput({ label, variableKey, options, rawType, selected, onChange }: MultiSelectFieldInputProps) {
+function MultiSelectFieldInput({ label, variableKey, options, rawType: _rawType, selected, onChange }: MultiSelectFieldInputProps) {
   const { t } = useI18n();
 
   const toggleOption = (opt: string) => {
@@ -371,11 +379,11 @@ function MultiSelectFieldInput({ label, variableKey, options, rawType, selected,
             </button>
           )}
           <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 font-normal">
-            {rawType ? `{{${variableKey}:${rawType}}}` : `{{${variableKey}:multiselect}}`}
+            {`{{${variableKey}:multiselect}}`}
           </span>
         </div>
       </div>
-      <div className="flex flex-wrap gap-1.5 pt-0.5">
+      <div className="flex flex-wrap gap-2 pt-0.5">
         {options.map((opt) => {
           const isSelected = selected.includes(opt);
           return (
@@ -383,17 +391,21 @@ function MultiSelectFieldInput({ label, variableKey, options, rawType, selected,
               key={opt}
               type="button"
               onClick={() => toggleOption(opt)}
-              className={`text-xs px-2.5 py-1.5 rounded-lg border font-medium transition-all flex items-center gap-1.5 ${
+              className={`text-xs px-3 py-2 rounded-xl border font-medium transition-all flex items-center gap-2.5 text-left cursor-pointer select-none ${
                 isSelected
-                  ? 'bg-neutral-900 dark:bg-neutral-200 border-neutral-900 dark:border-neutral-200 text-white dark:text-neutral-950 shadow-xs'
-                  : 'bg-white dark:bg-[#111113] border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-[#161618] hover:border-neutral-300 dark:hover:border-neutral-700 dark:hover:text-neutral-200'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-400 dark:border-emerald-600/80 text-emerald-950 dark:text-emerald-100 shadow-xs'
+                  : 'bg-white dark:bg-[#111113] border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-[#161618] hover:border-neutral-300 dark:hover:border-neutral-700'
               }`}
             >
-              {isSelected ? (
-                <Check className="w-3 h-3 text-emerald-400" />
-              ) : (
-                <Plus className="w-3 h-3 text-neutral-400 dark:text-neutral-500" />
-              )}
+              <div
+                className={`w-4 h-4 rounded flex items-center justify-center shrink-0 transition-colors ${
+                  isSelected
+                    ? 'bg-emerald-600 dark:bg-emerald-500 text-white shadow-xs'
+                    : 'border border-neutral-300 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800/60'
+                }`}
+              >
+                {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+              </div>
               <span>{opt}</span>
             </button>
           );
@@ -418,7 +430,7 @@ function CodeFieldInput({
   label,
   variableKey,
   codeLanguage,
-  rawType,
+  rawType: _rawType,
   resolvedLanguage,
   isDynamicLang,
   value,
@@ -473,7 +485,7 @@ function CodeFieldInput({
           )}
         </label>
         <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500 font-normal">
-          {rawType ? `{{${variableKey}:${rawType}}}` : `{{${variableKey}:code}}`}
+          {codeLanguage ? `{{${variableKey}:code(${codeLanguage})}}` : `{{${variableKey}:code}}`}
         </span>
       </div>
 
