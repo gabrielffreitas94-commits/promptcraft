@@ -309,18 +309,18 @@ function SelectFieldInput({ label, variableKey, options, rawType: _rawType, valu
               onClick={() => onChange(isSelected ? '' : opt)}
               className={`text-xs px-3 py-2 rounded-xl border font-medium transition-all flex items-center gap-2.5 text-left cursor-pointer select-none ${
                 isSelected
-                  ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-400 dark:border-emerald-600/80 text-emerald-950 dark:text-emerald-100 shadow-xs'
-                  : 'bg-white dark:bg-[#111113] border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-[#161618] hover:border-neutral-300 dark:hover:border-neutral-700'
+                  ? 'bg-neutral-900 dark:bg-neutral-100 border-neutral-900 dark:border-neutral-100 text-white dark:text-neutral-950 shadow-xs'
+                  : 'bg-white dark:bg-[#111113] border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-[#161618] hover:border-neutral-300 dark:hover:border-neutral-700 dark:hover:text-neutral-200'
               }`}
             >
               <div
                 className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 transition-colors ${
                   isSelected
-                    ? 'border-2 border-emerald-600 dark:border-emerald-400 bg-white dark:bg-[#111113]'
-                    : 'border border-neutral-300 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800/60'
+                    ? 'border-2 border-white dark:border-neutral-950 bg-neutral-900 dark:bg-neutral-100'
+                    : 'border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800/60'
                 }`}
               >
-                {isSelected && <div className="w-2 h-2 rounded-full bg-emerald-600 dark:bg-emerald-400" />}
+                {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white dark:bg-neutral-950" />}
               </div>
               <span>{opt}</span>
             </button>
@@ -393,15 +393,15 @@ function MultiSelectFieldInput({ label, variableKey, options, rawType: _rawType,
               onClick={() => toggleOption(opt)}
               className={`text-xs px-3 py-2 rounded-xl border font-medium transition-all flex items-center gap-2.5 text-left cursor-pointer select-none ${
                 isSelected
-                  ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-400 dark:border-emerald-600/80 text-emerald-950 dark:text-emerald-100 shadow-xs'
-                  : 'bg-white dark:bg-[#111113] border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-[#161618] hover:border-neutral-300 dark:hover:border-neutral-700'
+                  ? 'bg-neutral-900 dark:bg-neutral-100 border-neutral-900 dark:border-neutral-100 text-white dark:text-neutral-950 shadow-xs'
+                  : 'bg-white dark:bg-[#111113] border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-[#161618] hover:border-neutral-300 dark:hover:border-neutral-700 dark:hover:text-neutral-200'
               }`}
             >
               <div
                 className={`w-4 h-4 rounded flex items-center justify-center shrink-0 transition-colors ${
                   isSelected
-                    ? 'bg-emerald-600 dark:bg-emerald-500 text-white shadow-xs'
-                    : 'border border-neutral-300 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800/60'
+                    ? 'bg-white dark:bg-neutral-950 text-neutral-900 dark:text-white'
+                    : 'border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800/60'
                 }`}
               >
                 {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
